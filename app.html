@@ -603,6 +603,7 @@
     .sidebar-exam-row,
     .sidebar-exam-new,
     .sidebar-help-row,
+    .sidebar-feedback-row,
     .sidebar-settings-row,
     .sidebar-theme-row,
     .logout-btn{
@@ -669,7 +670,8 @@
     }
     .sidebar-settings-row,
     .sidebar-theme-row{width:100%}
-    .sidebar-help-row{
+    .sidebar-help-row,
+    .sidebar-feedback-row{
       position:relative;
       display:flex;
       align-items:center;
@@ -739,6 +741,7 @@
     .sidebar.expanded .sidebar-exam-row,
     .sidebar.expanded .sidebar-exam-new,
     .sidebar.expanded .sidebar-help-row,
+    .sidebar.expanded .sidebar-feedback-row,
     .sidebar.expanded .sidebar-settings-row,
     .sidebar.expanded .sidebar-theme-row,
     .sidebar.expanded .logout-btn{justify-content:flex-start;gap:10px}
@@ -757,6 +760,7 @@
     .sidebar:not(.expanded) .sidebar-header{padding:1rem 0;justify-content:center}
     .sidebar:not(.expanded) .sidebar-exam-row,
     .sidebar:not(.expanded) .sidebar-help-row,
+    .sidebar:not(.expanded) .sidebar-feedback-row,
     .sidebar:not(.expanded) .sidebar-settings-row,
     .sidebar:not(.expanded) .sidebar-theme-row,
     .sidebar:not(.expanded) .logout-btn{padding:10px 0;width:100%;justify-content:center}
@@ -770,11 +774,13 @@
     [data-theme="light"] .sidebar-exam-row:hover,
     [data-theme="light"] .sidebar-exam-new:hover,
     [data-theme="light"] .sidebar-help-row:hover,
+    [data-theme="light"] .sidebar-feedback-row:hover,
     [data-theme="light"] .sidebar-settings-row:hover,
     [data-theme="light"] .sidebar-theme-row:hover{background:rgba(0,0,0,0.04)}
     [data-theme="dark"] .sidebar-exam-row:hover,
     [data-theme="dark"] .sidebar-exam-new:hover,
     [data-theme="dark"] .sidebar-help-row:hover,
+    [data-theme="dark"] .sidebar-feedback-row:hover,
     [data-theme="dark"] .sidebar-settings-row:hover,
     [data-theme="dark"] .sidebar-theme-row:hover{background:rgba(255,255,255,0.06)}
 
@@ -804,6 +810,7 @@
       body.sidebar-mobile-open .sidebar .sidebar-exam-row,
       body.sidebar-mobile-open .sidebar .sidebar-exam-new,
       body.sidebar-mobile-open .sidebar .sidebar-help-row,
+      body.sidebar-mobile-open .sidebar .sidebar-feedback-row,
       body.sidebar-mobile-open .sidebar .sidebar-settings-row,
       body.sidebar-mobile-open .sidebar .sidebar-theme-row,
       body.sidebar-mobile-open .sidebar .logout-btn{justify-content:flex-start;gap:10px}
@@ -1110,6 +1117,7 @@
     [data-theme="dark"] .sidebar-exam-row:hover,
     [data-theme="dark"] .sidebar-exam-new:hover,
     [data-theme="dark"] .sidebar-help-row:hover,
+    [data-theme="dark"] .sidebar-feedback-row:hover,
     [data-theme="dark"] .sidebar-settings-row:hover,
     [data-theme="dark"] .sidebar-theme-row:hover{background:rgba(108,99,255,0.07)}
     [data-theme="dark"] .logout-btn:hover{background:rgba(239,68,68,0.1);color:#EF4444}
@@ -1284,6 +1292,44 @@
       .welcome-bg-orb,.welcome-card,.welcome-logo,.welcome-greeting,.welcome-quote,.welcome-stats,.welcome-cta,.welcome-tutorial-link,.tutorial-slide,.tutorial-dot,.tutorial-btn-next,.tutorial-books-3d{animation:none!important;transition:none!important}
     }
 
+
+.star-btn {
+  background: none;
+  border: none;
+  font-size: 2rem;
+  cursor: pointer;
+  color: var(--border);
+  transition: color 0.15s, transform 0.1s;
+  padding: 0 2px;
+  line-height: 1;
+}
+.star-btn:hover,
+.star-btn.active {
+  color: #F0C040;
+  transform: scale(1.15);
+}
+.feedback-cat-btn {
+  background: var(--bg-body);
+  border: 1.5px solid var(--border);
+  border-radius: 999px;
+  padding: 6px 14px;
+  font-family: inherit;
+  font-size: 0.82rem;
+  color: var(--text-sub);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.feedback-cat-btn:hover {
+  border-color: var(--primary);
+  color: var(--text-main);
+}
+.feedback-cat-btn.selected {
+  background: var(--primary-light);
+  border-color: var(--primary);
+  color: var(--primary);
+  font-weight: 600;
+}
+
   </style>
   <!-- ── Anti-flash: apply theme before first paint ── -->
   <script>
@@ -1439,6 +1485,12 @@
       </svg>
       <span class="logout-label">Log Out</span>
     </button>
+    <div class="sidebar-settings-row sidebar-feedback-row" id="sidebarFeedbackRow"
+      onclick="openFeedbackModal()" role="button" tabindex="0"
+      title="Send Feedback" aria-label="Send Feedback">
+      <span class="sidebar-settings-icon">💬</span>
+      <span class="sidebar-settings-label">Send Feedback</span>
+    </div>
     <div class="sidebar-settings-row" id="sidebarHelpRow"
       onclick="openTutorial()" role="button" tabindex="0"
       title="Help &amp; Tutorial" aria-label="Help and tutorial">
@@ -6256,6 +6308,219 @@ document.addEventListener('keydown', function(e) {
   if (e.key === 'Escape') closeTutorial();
 });
 
+
+// ═══════════════════════════════════════
+// FEEDBACK
+// ═══════════════════════════════════════
+let _feedbackRating = 0;
+let _feedbackCategory = '';
+
+function openFeedbackModal() {
+  _feedbackRating = 0;
+  _feedbackCategory = '';
+  const msgEl = document.getElementById('feedbackMessage');
+  const errEl = document.getElementById('feedbackError');
+  const successEl = document.getElementById('feedbackSuccess');
+  const formEl = document.getElementById('feedbackFormBody');
+  const submitBtn = document.getElementById('feedbackSubmitBtn');
+  if (msgEl) msgEl.value = '';
+  if (errEl) { errEl.textContent = ''; errEl.style.display = 'none'; }
+  if (successEl) successEl.style.display = 'none';
+  if (formEl) formEl.style.display = 'block';
+  if (submitBtn) {
+    submitBtn.style.display = 'block';
+    submitBtn.disabled = false;
+    submitBtn.textContent = 'Submit Feedback';
+  }
+  document.querySelectorAll('.star-btn').forEach(btn => {
+    btn.classList.remove('active');
+  });
+  document.querySelectorAll('.feedback-cat-btn').forEach(btn => {
+    btn.classList.remove('selected');
+  });
+  openModal('feedbackModal');
+}
+
+function setRating(value) {
+  _feedbackRating = value;
+  document.querySelectorAll('.star-btn').forEach(btn => {
+    const v = parseInt(btn.getAttribute('data-value'));
+    btn.classList.toggle('active', v <= value);
+  });
+}
+
+function setFeedbackCategory(el, category) {
+  _feedbackCategory = category;
+  document.querySelectorAll('.feedback-cat-btn').forEach(btn => {
+    btn.classList.remove('selected');
+  });
+  el.classList.add('selected');
+}
+
+async function submitFeedback() {
+  const message = document.getElementById('feedbackMessage')
+    ?.value.trim();
+  const errEl = document.getElementById('feedbackError');
+  const submitBtn = document.getElementById('feedbackSubmitBtn');
+
+  if (!message) {
+    if (errEl) {
+      errEl.textContent = 'Please write a message before submitting.';
+      errEl.style.display = 'block';
+    }
+    return;
+  }
+
+  if (errEl) errEl.style.display = 'none';
+  if (submitBtn) {
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<span style="display:inline-block;'
+      + 'width:14px;height:14px;border:2px solid rgba(255,255,255,0.35);'
+      + 'border-top-color:white;border-radius:50%;'
+      + 'animation:spin 0.8s linear infinite;'
+      + 'vertical-align:middle;margin-right:6px"></span>Sending...';
+  }
+
+  try {
+    const user = window._userSession?.user;
+    const { error } = await window._supabase
+      .from('feedback')
+      .insert({
+        user_id: user?.id || null,
+        user_email: user?.email || null,
+        rating: _feedbackRating || null,
+        category: _feedbackCategory || null,
+        message: message
+      });
+
+    if (error) throw error;
+
+    const formEl = document.getElementById('feedbackFormBody');
+    const successEl = document.getElementById('feedbackSuccess');
+    if (formEl) formEl.style.display = 'none';
+    if (successEl) successEl.style.display = 'block';
+    setTimeout(() => closeModal('feedbackModal'), 3000);
+
+  } catch (err) {
+    if (errEl) {
+      errEl.textContent = 'Something went wrong. Please try again.';
+      errEl.style.display = 'block';
+    }
+    if (submitBtn) {
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Submit Feedback';
+    }
+  }
+}
+
 </script>
+
+
+<div class="modal-overlay" id="feedbackModal" role="dialog"
+  aria-modal="true" aria-label="Send Feedback">
+  <div class="modal" style="max-width:480px;padding:2rem">
+
+    <div style="display:flex;align-items:center;
+      justify-content:space-between;margin-bottom:1.5rem">
+      <h3 style="font-size:1.2rem;font-weight:700;
+        color:var(--text-main)">💬 Send Feedback</h3>
+      <button onclick="closeModal('feedbackModal')"
+        style="background:none;border:1px solid var(--border);
+        border-radius:8px;width:30px;height:30px;cursor:pointer;
+        color:var(--text-main);font-size:1rem;display:flex;
+        align-items:center;justify-content:center">×</button>
+    </div>
+
+    <div id="feedbackFormBody">
+      <div style="margin-bottom:1.25rem">
+        <label style="font-size:0.82rem;font-weight:600;
+          color:var(--text-sub);display:block;margin-bottom:0.5rem;
+          text-transform:uppercase;letter-spacing:0.05em">
+          How would you rate Marga?
+        </label>
+        <div id="starRating" style="display:flex;gap:0.4rem">
+          <button class="star-btn" data-value="1"
+            onclick="setRating(1)">★</button>
+          <button class="star-btn" data-value="2"
+            onclick="setRating(2)">★</button>
+          <button class="star-btn" data-value="3"
+            onclick="setRating(3)">★</button>
+          <button class="star-btn" data-value="4"
+            onclick="setRating(4)">★</button>
+          <button class="star-btn" data-value="5"
+            onclick="setRating(5)">★</button>
+        </div>
+      </div>
+
+      <div style="margin-bottom:1.25rem">
+        <label style="font-size:0.82rem;font-weight:600;
+          color:var(--text-sub);display:block;margin-bottom:0.5rem;
+          text-transform:uppercase;letter-spacing:0.05em">
+          Category
+        </label>
+        <div style="display:flex;flex-wrap:wrap;gap:0.5rem">
+          <button class="feedback-cat-btn"
+            onclick="setFeedbackCategory(this,'Bug Report')">
+            🐛 Bug Report</button>
+          <button class="feedback-cat-btn"
+            onclick="setFeedbackCategory(this,'Feature Request')">
+            💡 Feature Request</button>
+          <button class="feedback-cat-btn"
+            onclick="setFeedbackCategory(this,'UI / Design')">
+            🎨 UI / Design</button>
+          <button class="feedback-cat-btn"
+            onclick="setFeedbackCategory(this,'General')">
+            💬 General</button>
+        </div>
+      </div>
+
+      <div style="margin-bottom:1.5rem">
+        <label style="font-size:0.82rem;font-weight:600;
+          color:var(--text-sub);display:block;margin-bottom:0.5rem;
+          text-transform:uppercase;letter-spacing:0.05em">
+          Your Message
+        </label>
+        <textarea id="feedbackMessage" rows="4"
+          placeholder="Tell us what you think, what could be better, or report a bug..."
+          style="width:100%;background:var(--bg-body);
+          color:var(--text-main);border:1px solid var(--border);
+          border-radius:10px;padding:10px 14px;font-family:inherit;
+          font-size:0.9rem;resize:vertical;line-height:1.5;
+          transition:border-color 0.15s;outline:none"
+          onfocus="this.style.borderColor='var(--primary)'"
+          onblur="this.style.borderColor='var(--border)'">
+        </textarea>
+        <div id="feedbackError" style="color:#EF4444;
+          font-size:0.78rem;margin-top:0.3rem;display:none"></div>
+      </div>
+
+      <button id="feedbackSubmitBtn" onclick="submitFeedback()"
+        style="width:100%;padding:12px;
+        background:linear-gradient(135deg,var(--primary),#9B8FFF);
+        color:white;border:none;border-radius:10px;
+        font-family:inherit;font-size:0.95rem;font-weight:700;
+        cursor:pointer;transition:opacity 0.15s;
+        box-shadow:0 4px 16px rgba(var(--primary-rgb),0.35)">
+        Submit Feedback
+      </button>
+    </div>
+
+    <div id="feedbackSuccess" style="display:none;
+      text-align:center;padding:1.5rem 0">
+      <div style="font-size:3rem;margin-bottom:0.75rem">🎉</div>
+      <div style="font-weight:700;font-size:1.15rem;
+        color:var(--text-main);margin-bottom:0.5rem">
+        Thank you!
+      </div>
+      <div style="color:var(--text-sub);font-size:0.9rem;
+        line-height:1.6">
+        Your feedback has been received.<br>
+        We really appreciate you taking the time!
+      </div>
+    </div>
+
+  </div>
+</div>
+
 </body>
 </html>

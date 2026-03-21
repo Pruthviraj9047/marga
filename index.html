@@ -1,6 +1,25 @@
 <!DOCTYPE html>
+
+<!--
+  ╔═══════════════════════════════════════════════════╗
+  ║                                                   ║
+  ║   MARGA — Study Chapter Tracker                   ║
+  ║   Built by Pruthviraj Arun                        ║
+  ║   © 2026 All rights reserved                      ║
+  ║                                                   ║
+  ║   This project was designed and developed         ║
+  ║   entirely by Pruthviraj Arun.                    ║
+  ║   Unauthorised copying or redistribution          ║
+  ║   is prohibited.                                  ║
+  ║                                                   ║
+  ╚═══════════════════════════════════════════════════╝
+-->
+
 <html lang="en">
 <head>
+  <meta name="author" content="Pruthviraj Arun">
+  <meta name="description" content="Marga — A study chapter tracker for Indian students. Built by Pruthviraj Arun.">
+  <meta name="copyright" content="© 2026 Pruthviraj Arun. All rights reserved.">
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Marga — Track Every Chapter</title>
@@ -366,9 +385,9 @@
           <line x1="32" y1="5" x2="33.2" y2="5" stroke="#F0C040" stroke-width="1" stroke-linecap="round"/>
           <line x1="36.8" y1="5" x2="38" y2="5" stroke="#F0C040" stroke-width="1" stroke-linecap="round"/>
         </svg>
-        <span>© 2025 Marga</span>
+        <span>© 2026 Marga</span>
       </div>
-      <div>Made with <span class="heart-gold">❤️</span> for Indian students</div>
+      <div>Built by Pruthviraj Arun. Made with <span class="heart-gold">❤️</span> for Indian students</div>
     </div>
   </footer>
 
@@ -496,6 +515,12 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
+    console.log(
+    '%c Marga %c Built by Pruthviraj Arun ',
+    'background:#6C63FF;color:white;padding:4px 8px;border-radius:4px 0 0 4px;font-weight:800;font-size:13px',
+    'background:#38E8C5;color:#0D0F1A;padding:4px 8px;border-radius:0 4px 4px 0;font-weight:700;font-size:13px'
+    );
+    console.log('%c© 2026 Pruthviraj Arun. All rights reserved.', 'color:#8892B8;font-size:11px');
     const { createClient } = supabase;
     const supabaseClient = createClient(
       'https://wnzayybdjqlaenrecwtm.supabase.co',
