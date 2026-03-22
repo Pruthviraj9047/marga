@@ -6051,7 +6051,8 @@ function init() {
   } catch(e) { examSelections = {}; }
   sanitizeSortPrefsByFeatures();
   const needsVersionReset = localStorage.getItem(DATA_VERSION_KEY) !== DATA_VERSION;
-  if (needsVersionReset) {
+  const cloudJustLoaded = sessionStorage.getItem('marga_cloud_loaded') === 'true';
+  if (needsVersionReset && !cloudJustLoaded) {
     try { localStorage.removeItem(STORAGE_KEY); } catch(e) {}
   }
   loadData();
@@ -6416,6 +6417,7 @@ async function loadFromCloud() {
 
     // Write merged blob back to STORAGE_KEY so the app reads it correctly
     localStorage.setItem(STORAGE_KEY, JSON.stringify(localBlob));
+    sessionStorage.setItem('marga_cloud_loaded', 'true');
   } catch(e) { console.warn('Cloud load failed:', e); }
 }
 
