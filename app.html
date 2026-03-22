@@ -1,6 +1,25 @@
 <!DOCTYPE html>
+
+<!--
+  ╔═══════════════════════════════════════════════════╗
+  ║                                                   ║
+  ║   MARGA — Study Chapter Tracker                   ║
+  ║   Built by Pruthviraj Arun                        ║
+  ║   © 2026 All rights reserved                      ║
+  ║                                                   ║
+  ║   This project was designed and developed         ║
+  ║   entirely by Pruthviraj Arun.                    ║
+  ║   Unauthorised copying or redistribution          ║
+  ║   is prohibited.                                  ║
+  ║                                                   ║
+  ╚═══════════════════════════════════════════════════╝
+-->
+
 <html lang="en">
 <head>
+  <meta name="author" content="Pruthviraj Arun">
+  <meta name="description" content="Marga — A study chapter tracker for Indian students. Built by Pruthviraj Arun.">
+  <meta name="copyright" content="© 2026 Pruthviraj Arun. All rights reserved.">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Marga — Track Every Chapter</title>
@@ -35,7 +54,7 @@
       background-size:28px 28px;opacity:0.55;pointer-events:none;
     }
     .header-center{text-align:center;flex:1;position:relative;z-index:1}
-    .header-title{display:flex;align-items:center;justify-content:center;gap:0.75rem}
+    .header-title{display:flex;align-items:center;justify-content:center;gap:0.75rem;overflow:visible}
     h1{font-size:2.2rem;font-weight:800;letter-spacing:-0.04em;line-height:1.15}
     .header-subtitle{color:var(--text-sub);font-size:0.92rem;margin-top:0.4rem;font-weight:400;font-style:italic}
 
@@ -603,7 +622,6 @@
     .sidebar-exam-row,
     .sidebar-exam-new,
     .sidebar-help-row,
-    .sidebar-feedback-row,
     .sidebar-settings-row,
     .sidebar-theme-row,
     .logout-btn{
@@ -670,8 +688,7 @@
     }
     .sidebar-settings-row,
     .sidebar-theme-row{width:100%}
-    .sidebar-help-row,
-    .sidebar-feedback-row{
+    .sidebar-help-row{
       position:relative;
       display:flex;
       align-items:center;
@@ -741,7 +758,6 @@
     .sidebar.expanded .sidebar-exam-row,
     .sidebar.expanded .sidebar-exam-new,
     .sidebar.expanded .sidebar-help-row,
-    .sidebar.expanded .sidebar-feedback-row,
     .sidebar.expanded .sidebar-settings-row,
     .sidebar.expanded .sidebar-theme-row,
     .sidebar.expanded .logout-btn{justify-content:flex-start;gap:10px}
@@ -760,7 +776,6 @@
     .sidebar:not(.expanded) .sidebar-header{padding:1rem 0;justify-content:center}
     .sidebar:not(.expanded) .sidebar-exam-row,
     .sidebar:not(.expanded) .sidebar-help-row,
-    .sidebar:not(.expanded) .sidebar-feedback-row,
     .sidebar:not(.expanded) .sidebar-settings-row,
     .sidebar:not(.expanded) .sidebar-theme-row,
     .sidebar:not(.expanded) .logout-btn{padding:10px 0;width:100%;justify-content:center}
@@ -774,13 +789,11 @@
     [data-theme="light"] .sidebar-exam-row:hover,
     [data-theme="light"] .sidebar-exam-new:hover,
     [data-theme="light"] .sidebar-help-row:hover,
-    [data-theme="light"] .sidebar-feedback-row:hover,
     [data-theme="light"] .sidebar-settings-row:hover,
     [data-theme="light"] .sidebar-theme-row:hover{background:rgba(0,0,0,0.04)}
     [data-theme="dark"] .sidebar-exam-row:hover,
     [data-theme="dark"] .sidebar-exam-new:hover,
     [data-theme="dark"] .sidebar-help-row:hover,
-    [data-theme="dark"] .sidebar-feedback-row:hover,
     [data-theme="dark"] .sidebar-settings-row:hover,
     [data-theme="dark"] .sidebar-theme-row:hover{background:rgba(255,255,255,0.06)}
 
@@ -810,7 +823,6 @@
       body.sidebar-mobile-open .sidebar .sidebar-exam-row,
       body.sidebar-mobile-open .sidebar .sidebar-exam-new,
       body.sidebar-mobile-open .sidebar .sidebar-help-row,
-      body.sidebar-mobile-open .sidebar .sidebar-feedback-row,
       body.sidebar-mobile-open .sidebar .sidebar-settings-row,
       body.sidebar-mobile-open .sidebar .sidebar-theme-row,
       body.sidebar-mobile-open .sidebar .logout-btn{justify-content:flex-start;gap:10px}
@@ -1093,7 +1105,7 @@
 
     /* ── Theme-neutral structural rules ───────────────── */
     .app-header{border-radius:20px}
-    .app-header h1{font-size:2.4rem;font-weight:800}
+    .app-header h1{font-size:2.4rem;font-weight:800;line-height:1.2;padding-bottom:4px}
     .header-deco{position:absolute;top:20%;opacity:.04;pointer-events:none}
     .header-deco.pencil{left:2%;color:#6C63FF}
     .header-deco.cap{right:2%;color:#38E8C5}
@@ -1117,7 +1129,6 @@
     [data-theme="dark"] .sidebar-exam-row:hover,
     [data-theme="dark"] .sidebar-exam-new:hover,
     [data-theme="dark"] .sidebar-help-row:hover,
-    [data-theme="dark"] .sidebar-feedback-row:hover,
     [data-theme="dark"] .sidebar-settings-row:hover,
     [data-theme="dark"] .sidebar-theme-row:hover{background:rgba(108,99,255,0.07)}
     [data-theme="dark"] .logout-btn:hover{background:rgba(239,68,68,0.1);color:#EF4444}
@@ -1292,44 +1303,6 @@
       .welcome-bg-orb,.welcome-card,.welcome-logo,.welcome-greeting,.welcome-quote,.welcome-stats,.welcome-cta,.welcome-tutorial-link,.tutorial-slide,.tutorial-dot,.tutorial-btn-next,.tutorial-books-3d{animation:none!important;transition:none!important}
     }
 
-
-.star-btn {
-  background: none;
-  border: none;
-  font-size: 2rem;
-  cursor: pointer;
-  color: var(--border);
-  transition: color 0.15s, transform 0.1s;
-  padding: 0 2px;
-  line-height: 1;
-}
-.star-btn:hover,
-.star-btn.active {
-  color: #F0C040;
-  transform: scale(1.15);
-}
-.feedback-cat-btn {
-  background: var(--bg-body);
-  border: 1.5px solid var(--border);
-  border-radius: 999px;
-  padding: 6px 14px;
-  font-family: inherit;
-  font-size: 0.82rem;
-  color: var(--text-sub);
-  cursor: pointer;
-  transition: all 0.15s;
-}
-.feedback-cat-btn:hover {
-  border-color: var(--primary);
-  color: var(--text-main);
-}
-.feedback-cat-btn.selected {
-  background: var(--primary-light);
-  border-color: var(--primary);
-  color: var(--primary);
-  font-weight: 600;
-}
-
   </style>
   <!-- ── Anti-flash: apply theme before first paint ── -->
   <script>
@@ -1348,28 +1321,8 @@
 
   <div class="welcome-card">
     <div class="welcome-logo">
-      <svg width="56" height="56" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <rect x="4" y="26" width="28" height="7" rx="2" fill="#38E8C5" opacity="0.9"/>
-        <rect x="4" y="26" width="4" height="7" rx="1.5" fill="#2BC4A4"/>
-        <line x1="10" y1="27.5" x2="10" y2="32.5" stroke="#2BC4A4" stroke-width="0.6" opacity="0.5"/>
-        <path d="M32 26 L34 24 L34 31 L32 33 Z" fill="#2BC4A4" opacity="0.7"/>
-        <path d="M4 26 L6 24 L34 24 L32 26 Z" fill="#38E8C5" opacity="0.5"/>
-        <rect x="5" y="17" width="26" height="7" rx="2" fill="#F0C040" opacity="0.92"/>
-        <rect x="5" y="17" width="4" height="7" rx="1.5" fill="#D4A820"/>
-        <line x1="11" y1="18.5" x2="11" y2="23.5" stroke="#D4A820" stroke-width="0.6" opacity="0.5"/>
-        <path d="M31 17 L33 15 L33 22 L31 24 Z" fill="#D4A820" opacity="0.7"/>
-        <path d="M5 17 L7 15 L33 15 L31 17 Z" fill="#F0C040" opacity="0.5"/>
-        <rect x="6" y="8" width="24" height="7" rx="2" fill="#6C63FF" opacity="0.95"/>
-        <rect x="6" y="8" width="4" height="7" rx="1.5" fill="#5549E0"/>
-        <line x1="12" y1="9.5" x2="12" y2="14.5" stroke="#5549E0" stroke-width="0.6" opacity="0.5"/>
-        <path d="M30 8 L32 6 L32 13 L30 15 Z" fill="#5549E0" opacity="0.7"/>
-        <path d="M6 8 L8 6 L32 6 L30 8 Z" fill="#6C63FF" opacity="0.5"/>
-        <circle cx="35" cy="5" r="1.8" fill="#F0C040"/>
-        <line x1="35" y1="2" x2="35" y2="3.2" stroke="#F0C040" stroke-width="1" stroke-linecap="round"/>
-        <line x1="35" y1="6.8" x2="35" y2="8" stroke="#F0C040" stroke-width="1" stroke-linecap="round"/>
-        <line x1="32" y1="5" x2="33.2" y2="5" stroke="#F0C040" stroke-width="1" stroke-linecap="round"/>
-        <line x1="36.8" y1="5" x2="38" y2="5" stroke="#F0C040" stroke-width="1" stroke-linecap="round"/>
-      </svg>
+      <img src="logo.png" alt="Marga"
+        style="width:72px;height:72px;object-fit:contain;border-radius:16px">
     </div>
 
     <div class="welcome-greeting">
@@ -1429,28 +1382,8 @@
   <div class="sidebar-header">
     <div class="sidebar-brand">
       <span class="sidebar-brand-icon">
-        <svg width="36" height="36" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-          <rect x="4" y="26" width="28" height="7" rx="2" fill="#38E8C5" opacity="0.9"/>
-          <rect x="4" y="26" width="4" height="7" rx="1.5" fill="#2BC4A4"/>
-          <line x1="10" y1="27.5" x2="10" y2="32.5" stroke="#2BC4A4" stroke-width="0.6" opacity="0.5"/>
-          <path d="M32 26 L34 24 L34 31 L32 33 Z" fill="#2BC4A4" opacity="0.7"/>
-          <path d="M4 26 L6 24 L34 24 L32 26 Z" fill="#38E8C5" opacity="0.5"/>
-          <rect x="5" y="17" width="26" height="7" rx="2" fill="#F0C040" opacity="0.92"/>
-          <rect x="5" y="17" width="4" height="7" rx="1.5" fill="#D4A820"/>
-          <line x1="11" y1="18.5" x2="11" y2="23.5" stroke="#D4A820" stroke-width="0.6" opacity="0.5"/>
-          <path d="M31 17 L33 15 L33 22 L31 24 Z" fill="#D4A820" opacity="0.7"/>
-          <path d="M5 17 L7 15 L33 15 L31 17 Z" fill="#F0C040" opacity="0.5"/>
-          <rect x="6" y="8" width="24" height="7" rx="2" fill="#6C63FF" opacity="0.95"/>
-          <rect x="6" y="8" width="4" height="7" rx="1.5" fill="#5549E0"/>
-          <line x1="12" y1="9.5" x2="12" y2="14.5" stroke="#5549E0" stroke-width="0.6" opacity="0.5"/>
-          <path d="M30 8 L32 6 L32 13 L30 15 Z" fill="#5549E0" opacity="0.7"/>
-          <path d="M6 8 L8 6 L32 6 L30 8 Z" fill="#6C63FF" opacity="0.5"/>
-          <circle cx="35" cy="5" r="1.8" fill="#F0C040"/>
-          <line x1="35" y1="2" x2="35" y2="3.2" stroke="#F0C040" stroke-width="1" stroke-linecap="round"/>
-          <line x1="35" y1="6.8" x2="35" y2="8" stroke="#F0C040" stroke-width="1" stroke-linecap="round"/>
-          <line x1="32" y1="5" x2="33.2" y2="5" stroke="#F0C040" stroke-width="1" stroke-linecap="round"/>
-          <line x1="36.8" y1="5" x2="38" y2="5" stroke="#F0C040" stroke-width="1" stroke-linecap="round"/>
-        </svg>
+        <img src="logo.png" alt="Marga"
+          style="width:32px;height:32px;object-fit:contain;border-radius:6px">
       </span>
       <span class="sidebar-brand-text">Marga</span>
     </div>
@@ -1485,12 +1418,6 @@
       </svg>
       <span class="logout-label">Log Out</span>
     </button>
-    <div class="sidebar-settings-row sidebar-feedback-row" id="sidebarFeedbackRow"
-      onclick="openFeedbackModal()" role="button" tabindex="0"
-      title="Send Feedback" aria-label="Send Feedback">
-      <span class="sidebar-settings-icon">💬</span>
-      <span class="sidebar-settings-label">Send Feedback</span>
-    </div>
     <div class="sidebar-settings-row" id="sidebarHelpRow"
       onclick="openTutorial()" role="button" tabindex="0"
       title="Help &amp; Tutorial" aria-label="Help and tutorial">
@@ -1822,28 +1749,8 @@
   <div class="app-header">
     <div class="header-center">
       <div class="header-title">
-        <svg width="36" height="36" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-          <rect x="4" y="26" width="28" height="7" rx="2" fill="#38E8C5" opacity="0.9"/>
-          <rect x="4" y="26" width="4" height="7" rx="1.5" fill="#2BC4A4"/>
-          <line x1="10" y1="27.5" x2="10" y2="32.5" stroke="#2BC4A4" stroke-width="0.6" opacity="0.5"/>
-          <path d="M32 26 L34 24 L34 31 L32 33 Z" fill="#2BC4A4" opacity="0.7"/>
-          <path d="M4 26 L6 24 L34 24 L32 26 Z" fill="#38E8C5" opacity="0.5"/>
-          <rect x="5" y="17" width="26" height="7" rx="2" fill="#F0C040" opacity="0.92"/>
-          <rect x="5" y="17" width="4" height="7" rx="1.5" fill="#D4A820"/>
-          <line x1="11" y1="18.5" x2="11" y2="23.5" stroke="#D4A820" stroke-width="0.6" opacity="0.5"/>
-          <path d="M31 17 L33 15 L33 22 L31 24 Z" fill="#D4A820" opacity="0.7"/>
-          <path d="M5 17 L7 15 L33 15 L31 17 Z" fill="#F0C040" opacity="0.5"/>
-          <rect x="6" y="8" width="24" height="7" rx="2" fill="#6C63FF" opacity="0.95"/>
-          <rect x="6" y="8" width="4" height="7" rx="1.5" fill="#5549E0"/>
-          <line x1="12" y1="9.5" x2="12" y2="14.5" stroke="#5549E0" stroke-width="0.6" opacity="0.5"/>
-          <path d="M30 8 L32 6 L32 13 L30 15 Z" fill="#5549E0" opacity="0.7"/>
-          <path d="M6 8 L8 6 L32 6 L30 8 Z" fill="#6C63FF" opacity="0.5"/>
-          <circle cx="35" cy="5" r="1.8" fill="#F0C040"/>
-          <line x1="35" y1="2" x2="35" y2="3.2" stroke="#F0C040" stroke-width="1" stroke-linecap="round"/>
-          <line x1="35" y1="6.8" x2="35" y2="8" stroke="#F0C040" stroke-width="1" stroke-linecap="round"/>
-          <line x1="32" y1="5" x2="33.2" y2="5" stroke="#F0C040" stroke-width="1" stroke-linecap="round"/>
-          <line x1="36.8" y1="5" x2="38" y2="5" stroke="#F0C040" stroke-width="1" stroke-linecap="round"/>
-        </svg>
+        <img src="logo.png" alt="Marga"
+          style="width:40px;height:40px;object-fit:contain;border-radius:8px;padding:4px;box-sizing:content-box">
         <h1>Marga</h1>
       </div>
       <p class="header-subtitle">Track every chapter. Ace every exam.</p>
@@ -1872,6 +1779,13 @@
 </div></div>
 
 <script>
+  console.log(
+  '%c Marga %c Built by Pruthviraj Arun ',
+  'background:#6C63FF;color:white;padding:4px 8px;border-radius:4px 0 0 4px;font-weight:800;font-size:13px',
+  'background:#38E8C5;color:#0D0F1A;padding:4px 8px;border-radius:0 4px 4px 0;font-weight:700;font-size:13px'
+  );
+  console.log('%c© 2026 Pruthviraj Arun. All rights reserved.', 'color:#8892B8;font-size:11px');
+
 // ═══════════════════════════════════════════════════════════
 // EXAM OPTIONS (for modal cards)
 // ═══════════════════════════════════════════════════════════
@@ -6308,219 +6222,6 @@ document.addEventListener('keydown', function(e) {
   if (e.key === 'Escape') closeTutorial();
 });
 
-
-// ═══════════════════════════════════════
-// FEEDBACK
-// ═══════════════════════════════════════
-let _feedbackRating = 0;
-let _feedbackCategory = '';
-
-function openFeedbackModal() {
-  _feedbackRating = 0;
-  _feedbackCategory = '';
-  const msgEl = document.getElementById('feedbackMessage');
-  const errEl = document.getElementById('feedbackError');
-  const successEl = document.getElementById('feedbackSuccess');
-  const formEl = document.getElementById('feedbackFormBody');
-  const submitBtn = document.getElementById('feedbackSubmitBtn');
-  if (msgEl) msgEl.value = '';
-  if (errEl) { errEl.textContent = ''; errEl.style.display = 'none'; }
-  if (successEl) successEl.style.display = 'none';
-  if (formEl) formEl.style.display = 'block';
-  if (submitBtn) {
-    submitBtn.style.display = 'block';
-    submitBtn.disabled = false;
-    submitBtn.textContent = 'Submit Feedback';
-  }
-  document.querySelectorAll('.star-btn').forEach(btn => {
-    btn.classList.remove('active');
-  });
-  document.querySelectorAll('.feedback-cat-btn').forEach(btn => {
-    btn.classList.remove('selected');
-  });
-  openModal('feedbackModal');
-}
-
-function setRating(value) {
-  _feedbackRating = value;
-  document.querySelectorAll('.star-btn').forEach(btn => {
-    const v = parseInt(btn.getAttribute('data-value'));
-    btn.classList.toggle('active', v <= value);
-  });
-}
-
-function setFeedbackCategory(el, category) {
-  _feedbackCategory = category;
-  document.querySelectorAll('.feedback-cat-btn').forEach(btn => {
-    btn.classList.remove('selected');
-  });
-  el.classList.add('selected');
-}
-
-async function submitFeedback() {
-  const message = document.getElementById('feedbackMessage')
-    ?.value.trim();
-  const errEl = document.getElementById('feedbackError');
-  const submitBtn = document.getElementById('feedbackSubmitBtn');
-
-  if (!message) {
-    if (errEl) {
-      errEl.textContent = 'Please write a message before submitting.';
-      errEl.style.display = 'block';
-    }
-    return;
-  }
-
-  if (errEl) errEl.style.display = 'none';
-  if (submitBtn) {
-    submitBtn.disabled = true;
-    submitBtn.innerHTML = '<span style="display:inline-block;'
-      + 'width:14px;height:14px;border:2px solid rgba(255,255,255,0.35);'
-      + 'border-top-color:white;border-radius:50%;'
-      + 'animation:spin 0.8s linear infinite;'
-      + 'vertical-align:middle;margin-right:6px"></span>Sending...';
-  }
-
-  try {
-    const user = window._userSession?.user;
-    const { error } = await window._supabase
-      .from('feedback')
-      .insert({
-        user_id: user?.id || null,
-        user_email: user?.email || null,
-        rating: _feedbackRating || null,
-        category: _feedbackCategory || null,
-        message: message
-      });
-
-    if (error) throw error;
-
-    const formEl = document.getElementById('feedbackFormBody');
-    const successEl = document.getElementById('feedbackSuccess');
-    if (formEl) formEl.style.display = 'none';
-    if (successEl) successEl.style.display = 'block';
-    setTimeout(() => closeModal('feedbackModal'), 3000);
-
-  } catch (err) {
-    if (errEl) {
-      errEl.textContent = 'Something went wrong. Please try again.';
-      errEl.style.display = 'block';
-    }
-    if (submitBtn) {
-      submitBtn.disabled = false;
-      submitBtn.textContent = 'Submit Feedback';
-    }
-  }
-}
-
 </script>
-
-
-<div class="modal-overlay" id="feedbackModal" role="dialog"
-  aria-modal="true" aria-label="Send Feedback">
-  <div class="modal" style="max-width:480px;padding:2rem">
-
-    <div style="display:flex;align-items:center;
-      justify-content:space-between;margin-bottom:1.5rem">
-      <h3 style="font-size:1.2rem;font-weight:700;
-        color:var(--text-main)">💬 Send Feedback</h3>
-      <button onclick="closeModal('feedbackModal')"
-        style="background:none;border:1px solid var(--border);
-        border-radius:8px;width:30px;height:30px;cursor:pointer;
-        color:var(--text-main);font-size:1rem;display:flex;
-        align-items:center;justify-content:center">×</button>
-    </div>
-
-    <div id="feedbackFormBody">
-      <div style="margin-bottom:1.25rem">
-        <label style="font-size:0.82rem;font-weight:600;
-          color:var(--text-sub);display:block;margin-bottom:0.5rem;
-          text-transform:uppercase;letter-spacing:0.05em">
-          How would you rate Marga?
-        </label>
-        <div id="starRating" style="display:flex;gap:0.4rem">
-          <button class="star-btn" data-value="1"
-            onclick="setRating(1)">★</button>
-          <button class="star-btn" data-value="2"
-            onclick="setRating(2)">★</button>
-          <button class="star-btn" data-value="3"
-            onclick="setRating(3)">★</button>
-          <button class="star-btn" data-value="4"
-            onclick="setRating(4)">★</button>
-          <button class="star-btn" data-value="5"
-            onclick="setRating(5)">★</button>
-        </div>
-      </div>
-
-      <div style="margin-bottom:1.25rem">
-        <label style="font-size:0.82rem;font-weight:600;
-          color:var(--text-sub);display:block;margin-bottom:0.5rem;
-          text-transform:uppercase;letter-spacing:0.05em">
-          Category
-        </label>
-        <div style="display:flex;flex-wrap:wrap;gap:0.5rem">
-          <button class="feedback-cat-btn"
-            onclick="setFeedbackCategory(this,'Bug Report')">
-            🐛 Bug Report</button>
-          <button class="feedback-cat-btn"
-            onclick="setFeedbackCategory(this,'Feature Request')">
-            💡 Feature Request</button>
-          <button class="feedback-cat-btn"
-            onclick="setFeedbackCategory(this,'UI / Design')">
-            🎨 UI / Design</button>
-          <button class="feedback-cat-btn"
-            onclick="setFeedbackCategory(this,'General')">
-            💬 General</button>
-        </div>
-      </div>
-
-      <div style="margin-bottom:1.5rem">
-        <label style="font-size:0.82rem;font-weight:600;
-          color:var(--text-sub);display:block;margin-bottom:0.5rem;
-          text-transform:uppercase;letter-spacing:0.05em">
-          Your Message
-        </label>
-        <textarea id="feedbackMessage" rows="4"
-          placeholder="Tell us what you think, what could be better, or report a bug..."
-          style="width:100%;background:var(--bg-body);
-          color:var(--text-main);border:1px solid var(--border);
-          border-radius:10px;padding:10px 14px;font-family:inherit;
-          font-size:0.9rem;resize:vertical;line-height:1.5;
-          transition:border-color 0.15s;outline:none"
-          onfocus="this.style.borderColor='var(--primary)'"
-          onblur="this.style.borderColor='var(--border)'">
-        </textarea>
-        <div id="feedbackError" style="color:#EF4444;
-          font-size:0.78rem;margin-top:0.3rem;display:none"></div>
-      </div>
-
-      <button id="feedbackSubmitBtn" onclick="submitFeedback()"
-        style="width:100%;padding:12px;
-        background:linear-gradient(135deg,var(--primary),#9B8FFF);
-        color:white;border:none;border-radius:10px;
-        font-family:inherit;font-size:0.95rem;font-weight:700;
-        cursor:pointer;transition:opacity 0.15s;
-        box-shadow:0 4px 16px rgba(var(--primary-rgb),0.35)">
-        Submit Feedback
-      </button>
-    </div>
-
-    <div id="feedbackSuccess" style="display:none;
-      text-align:center;padding:1.5rem 0">
-      <div style="font-size:3rem;margin-bottom:0.75rem">🎉</div>
-      <div style="font-weight:700;font-size:1.15rem;
-        color:var(--text-main);margin-bottom:0.5rem">
-        Thank you!
-      </div>
-      <div style="color:var(--text-sub);font-size:0.9rem;
-        line-height:1.6">
-        Your feedback has been received.<br>
-        We really appreciate you taking the time!
-      </div>
-    </div>
-
-  </div>
-</div>
-
 </body>
 </html>

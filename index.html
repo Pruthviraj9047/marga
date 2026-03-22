@@ -21,6 +21,13 @@
   <meta name="description" content="Marga — A study chapter tracker for Indian students. Built by Pruthviraj Arun.">
   <meta name="copyright" content="© 2026 Pruthviraj Arun. All rights reserved.">
   <meta charset="UTF-8" />
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#6C63FF">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Marga">
+  <link rel="apple-touch-icon" href="/icon-192.png">
+  <link rel="icon" type="image/svg+xml" href="/icon-192.png">
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Marga — Track Every Chapter</title>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -46,6 +53,15 @@
     *{box-sizing:border-box;margin:0;padding:0}
     html{scroll-behavior:smooth}
     body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg-body);color:var(--text-main);min-height:100vh}
+    .marga-logo-img {
+      object-fit: contain;
+    }
+    [data-theme="dark"] .marga-logo-img {
+      mix-blend-mode: screen;
+    }
+    [data-theme="light"] .marga-logo-img {
+      mix-blend-mode: normal;
+    }
     a{color:inherit;text-decoration:none}
     ::selection{background:rgba(108,99,255,0.3);color:#EEF0FF}
     ::-webkit-scrollbar{width:5px;height:5px}
@@ -69,7 +85,7 @@
     .btn-primary{background:linear-gradient(135deg,#6C63FF,#9B8FFF);color:#fff;box-shadow:0 4px 20px rgba(108,99,255,0.4)}
     .btn-primary:hover{transform:translateY(-1px)}
 
-    .hero{min-height:100vh;display:flex;align-items:center;background:radial-gradient(ellipse at 30% 50%,rgba(108,99,255,0.18) 0%,transparent 60%),radial-gradient(ellipse at 75% 30%,rgba(56,232,197,0.1) 0%,transparent 50%),#0D0F1A;position:relative;overflow:hidden;padding-top:6rem}
+    .hero{min-height:100vh;display:flex;align-items:center;background:radial-gradient(ellipse at 30% 50%,rgba(108,99,255,0.18) 0%,transparent 60%),radial-gradient(ellipse at 75% 30%,rgba(93,222,203,0.1) 0%,transparent 50%),#0D0F1A;position:relative;overflow:hidden;padding-top:6rem}
     .hero .container{padding:0 2rem;position:relative;z-index:2}
     .hero-content{text-align:center;max-width:850px;margin:0 auto}
     .hero h1{font-size:4rem;line-height:1.08;letter-spacing:-.03em}
@@ -125,11 +141,11 @@
     .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;position:relative}
     .steps::before{content:'';position:absolute;top:28px;left:14%;right:14%;border-top:2px dashed rgba(108,99,255,0.3);z-index:0}
     .step{position:relative;z-index:1;background:#141727;border:1px solid #252A45;border-radius:16px;padding:1.25rem}
-    .step-no{width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#6C63FF,#38E8C5);color:#fff;font-size:1.5rem;font-weight:800;margin-bottom:.8rem;box-shadow:0 4px 20px rgba(108,99,255,0.35)}
+    .step-no{width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:rgba(108,99,255,0.15);color:#6C63FF;font-size:1.5rem;font-weight:800;margin-bottom:.8rem;box-shadow:0 4px 20px rgba(108,99,255,0.35)}
     .step h3{margin-bottom:.35rem}.step p{color:#8892B8;font-size:.92rem;line-height:1.55}
 
     .cta-banner{padding:0 2rem 5rem}
-    .cta-inner{max-width:1100px;margin:0 auto;background:linear-gradient(135deg,#1a1538 0%,#0D0F1A 40%,#0D1F1A 100%);border:1px solid rgba(108,99,255,0.2);border-radius:24px;padding:4rem 2rem;text-align:center;box-shadow:inset 0 1px 0 rgba(108,99,255,0.2),0 0 80px rgba(108,99,255,0.08)}
+    .cta-inner{max-width:1100px;margin:0 auto;background:linear-gradient(135deg, #2D2575 0%, #0D0F1A 40%, #0D0F1A 100%);border:1px solid rgba(108,99,255,0.2);border-radius:24px;padding:4rem 2rem;text-align:center;box-shadow:inset 0 1px 0 rgba(108,99,255,0.2),0 0 80px rgba(108,99,255,0.08)}
     .cta-inner h2{font-size:2rem;background:linear-gradient(135deg,#EEF0FF,#9B8FFF);-webkit-background-clip:text;background-clip:text;color:transparent}
     .cta-inner p{margin:.5rem 0 1.4rem;color:#8892B8}
     .btn-white{background:linear-gradient(135deg,#6C63FF,#38E8C5);color:#0D0F1A;font-weight:800}
@@ -186,28 +202,7 @@
   <nav class="navbar" id="navbar">
     <div class="nav-inner">
       <div class="brand">
-        <svg class="book-logo" width="36" height="36" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-          <rect x="4" y="26" width="28" height="7" rx="2" fill="#38E8C5" opacity="0.9"/>
-          <rect x="4" y="26" width="4" height="7" rx="1.5" fill="#2BC4A4"/>
-          <line x1="10" y1="27.5" x2="10" y2="32.5" stroke="#2BC4A4" stroke-width="0.6" opacity="0.5"/>
-          <path d="M32 26 L34 24 L34 31 L32 33 Z" fill="#2BC4A4" opacity="0.7"/>
-          <path d="M4 26 L6 24 L34 24 L32 26 Z" fill="#38E8C5" opacity="0.5"/>
-          <rect x="5" y="17" width="26" height="7" rx="2" fill="#F0C040" opacity="0.92"/>
-          <rect x="5" y="17" width="4" height="7" rx="1.5" fill="#D4A820"/>
-          <line x1="11" y1="18.5" x2="11" y2="23.5" stroke="#D4A820" stroke-width="0.6" opacity="0.5"/>
-          <path d="M31 17 L33 15 L33 22 L31 24 Z" fill="#D4A820" opacity="0.7"/>
-          <path d="M5 17 L7 15 L33 15 L31 17 Z" fill="#F0C040" opacity="0.5"/>
-          <rect x="6" y="8" width="24" height="7" rx="2" fill="#6C63FF" opacity="0.95"/>
-          <rect x="6" y="8" width="4" height="7" rx="1.5" fill="#5549E0"/>
-          <line x1="12" y1="9.5" x2="12" y2="14.5" stroke="#5549E0" stroke-width="0.6" opacity="0.5"/>
-          <path d="M30 8 L32 6 L32 13 L30 15 Z" fill="#5549E0" opacity="0.7"/>
-          <path d="M6 8 L8 6 L32 6 L30 8 Z" fill="#6C63FF" opacity="0.5"/>
-          <circle cx="35" cy="5" r="1.8" fill="#F0C040"/>
-          <line x1="35" y1="2" x2="35" y2="3.2" stroke="#F0C040" stroke-width="1" stroke-linecap="round"/>
-          <line x1="35" y1="6.8" x2="35" y2="8" stroke="#F0C040" stroke-width="1" stroke-linecap="round"/>
-          <line x1="32" y1="5" x2="33.2" y2="5" stroke="#F0C040" stroke-width="1" stroke-linecap="round"/>
-          <line x1="36.8" y1="5" x2="38" y2="5" stroke="#F0C040" stroke-width="1" stroke-linecap="round"/>
-        </svg>
+        <img src="logo.png" alt="Marga logo" class="marga-logo-img" style="width:36px;height:36px;object-fit:contain;mix-blend-mode:screen">
         <span>Marga</span>
       </div>
       <div class="nav-actions">
@@ -218,15 +213,9 @@
   </nav>
 
   <section class="hero" id="top">
-    <svg class="float-book b1" width="80" height="80" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-      <rect x="4" y="26" width="28" height="7" rx="2" fill="#38E8C5" opacity="0.9"/><rect x="5" y="17" width="26" height="7" rx="2" fill="#F0C040" opacity="0.92"/><rect x="6" y="8" width="24" height="7" rx="2" fill="#6C63FF" opacity="0.95"/>
-    </svg>
-    <svg class="float-book b2" width="80" height="80" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-      <rect x="4" y="26" width="28" height="7" rx="2" fill="#38E8C5" opacity="0.9"/><rect x="5" y="17" width="26" height="7" rx="2" fill="#F0C040" opacity="0.92"/><rect x="6" y="8" width="24" height="7" rx="2" fill="#6C63FF" opacity="0.95"/>
-    </svg>
-    <svg class="float-book b3" width="80" height="80" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-      <rect x="4" y="26" width="28" height="7" rx="2" fill="#38E8C5" opacity="0.9"/><rect x="5" y="17" width="26" height="7" rx="2" fill="#F0C040" opacity="0.92"/><rect x="6" y="8" width="24" height="7" rx="2" fill="#6C63FF" opacity="0.95"/>
-    </svg>
+    <img class="float-book b1 marga-logo-img" src="logo.png" alt="Marga logo" style="width:80px;height:80px;object-fit:contain;mix-blend-mode:screen">
+    <img class="float-book b2 marga-logo-img" src="logo.png" alt="Marga logo" style="width:80px;height:80px;object-fit:contain;mix-blend-mode:screen">
+    <img class="float-book b3 marga-logo-img" src="logo.png" alt="Marga logo" style="width:80px;height:80px;object-fit:contain;mix-blend-mode:screen">
 
     <div class="container">
       <div class="hero-content">
@@ -363,28 +352,7 @@
   <footer>
     <div class="foot-inner">
       <div class="foot-brand">
-        <svg class="book-logo" width="36" height="36" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-          <rect x="4" y="26" width="28" height="7" rx="2" fill="#38E8C5" opacity="0.9"/>
-          <rect x="4" y="26" width="4" height="7" rx="1.5" fill="#2BC4A4"/>
-          <line x1="10" y1="27.5" x2="10" y2="32.5" stroke="#2BC4A4" stroke-width="0.6" opacity="0.5"/>
-          <path d="M32 26 L34 24 L34 31 L32 33 Z" fill="#2BC4A4" opacity="0.7"/>
-          <path d="M4 26 L6 24 L34 24 L32 26 Z" fill="#38E8C5" opacity="0.5"/>
-          <rect x="5" y="17" width="26" height="7" rx="2" fill="#F0C040" opacity="0.92"/>
-          <rect x="5" y="17" width="4" height="7" rx="1.5" fill="#D4A820"/>
-          <line x1="11" y1="18.5" x2="11" y2="23.5" stroke="#D4A820" stroke-width="0.6" opacity="0.5"/>
-          <path d="M31 17 L33 15 L33 22 L31 24 Z" fill="#D4A820" opacity="0.7"/>
-          <path d="M5 17 L7 15 L33 15 L31 17 Z" fill="#F0C040" opacity="0.5"/>
-          <rect x="6" y="8" width="24" height="7" rx="2" fill="#6C63FF" opacity="0.95"/>
-          <rect x="6" y="8" width="4" height="7" rx="1.5" fill="#5549E0"/>
-          <line x1="12" y1="9.5" x2="12" y2="14.5" stroke="#5549E0" stroke-width="0.6" opacity="0.5"/>
-          <path d="M30 8 L32 6 L32 13 L30 15 Z" fill="#5549E0" opacity="0.7"/>
-          <path d="M6 8 L8 6 L32 6 L30 8 Z" fill="#6C63FF" opacity="0.5"/>
-          <circle cx="35" cy="5" r="1.8" fill="#F0C040"/>
-          <line x1="35" y1="2" x2="35" y2="3.2" stroke="#F0C040" stroke-width="1" stroke-linecap="round"/>
-          <line x1="35" y1="6.8" x2="35" y2="8" stroke="#F0C040" stroke-width="1" stroke-linecap="round"/>
-          <line x1="32" y1="5" x2="33.2" y2="5" stroke="#F0C040" stroke-width="1" stroke-linecap="round"/>
-          <line x1="36.8" y1="5" x2="38" y2="5" stroke="#F0C040" stroke-width="1" stroke-linecap="round"/>
-        </svg>
+        <img src="logo.png" alt="Marga logo" class="marga-logo-img" style="width:28px;height:28px;object-fit:contain;mix-blend-mode:screen">
         <span>© 2026 Marga</span>
       </div>
       <div>Built by Pruthviraj Arun. Made with <span class="heart-gold">❤️</span> for Indian students</div>
@@ -394,28 +362,7 @@
   <div class="auth-overlay" id="authOverlay" role="dialog" aria-modal="true" aria-label="Authentication">
     <div class="auth-card">
       <div class="auth-head">
-        <svg class="book-logo" width="36" height="36" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-          <rect x="4" y="26" width="28" height="7" rx="2" fill="#38E8C5" opacity="0.9"/>
-          <rect x="4" y="26" width="4" height="7" rx="1.5" fill="#2BC4A4"/>
-          <line x1="10" y1="27.5" x2="10" y2="32.5" stroke="#2BC4A4" stroke-width="0.6" opacity="0.5"/>
-          <path d="M32 26 L34 24 L34 31 L32 33 Z" fill="#2BC4A4" opacity="0.7"/>
-          <path d="M4 26 L6 24 L34 24 L32 26 Z" fill="#38E8C5" opacity="0.5"/>
-          <rect x="5" y="17" width="26" height="7" rx="2" fill="#F0C040" opacity="0.92"/>
-          <rect x="5" y="17" width="4" height="7" rx="1.5" fill="#D4A820"/>
-          <line x1="11" y1="18.5" x2="11" y2="23.5" stroke="#D4A820" stroke-width="0.6" opacity="0.5"/>
-          <path d="M31 17 L33 15 L33 22 L31 24 Z" fill="#D4A820" opacity="0.7"/>
-          <path d="M5 17 L7 15 L33 15 L31 17 Z" fill="#F0C040" opacity="0.5"/>
-          <rect x="6" y="8" width="24" height="7" rx="2" fill="#6C63FF" opacity="0.95"/>
-          <rect x="6" y="8" width="4" height="7" rx="1.5" fill="#5549E0"/>
-          <line x1="12" y1="9.5" x2="12" y2="14.5" stroke="#5549E0" stroke-width="0.6" opacity="0.5"/>
-          <path d="M30 8 L32 6 L32 13 L30 15 Z" fill="#5549E0" opacity="0.7"/>
-          <path d="M6 8 L8 6 L32 6 L30 8 Z" fill="#6C63FF" opacity="0.5"/>
-          <circle cx="35" cy="5" r="1.8" fill="#F0C040"/>
-          <line x1="35" y1="2" x2="35" y2="3.2" stroke="#F0C040" stroke-width="1" stroke-linecap="round"/>
-          <line x1="35" y1="6.8" x2="35" y2="8" stroke="#F0C040" stroke-width="1" stroke-linecap="round"/>
-          <line x1="32" y1="5" x2="33.2" y2="5" stroke="#F0C040" stroke-width="1" stroke-linecap="round"/>
-          <line x1="36.8" y1="5" x2="38" y2="5" stroke="#F0C040" stroke-width="1" stroke-linecap="round"/>
-        </svg>
+        <img src="logo.png" alt="Marga logo" class="marga-logo-img" style="width:48px;height:48px;object-fit:contain;mix-blend-mode:screen">
         <h3>Welcome to Marga</h3>
       </div>
 
@@ -703,6 +650,14 @@
       const { data: { session } } = await supabaseClient.auth.getSession();
       if(session) window.location.replace('app.html');
     })();
+
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/service-worker.js')
+          .then(reg => console.log('SW registered:', reg.scope))
+          .catch(err => console.log('SW failed:', err));
+      });
+    }
   </script>
 </body>
 </html>
