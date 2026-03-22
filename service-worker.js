@@ -1,4 +1,4 @@
-const CACHE = 'marga-v1';
+const CACHE = 'marga-v3';
 const ASSETS = [
   '/',
   '/index.html',

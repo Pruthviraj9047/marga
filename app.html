@@ -60,7 +60,7 @@
       background-size:28px 28px;opacity:0.55;pointer-events:none;
     }
     .header-center{text-align:center;flex:1;position:relative;z-index:1}
-    .header-title{display:flex;align-items:center;justify-content:center;gap:0.75rem}
+    .header-title{display:flex;align-items:center;justify-content:center;gap:0.75rem;overflow:visible}
     h1{font-size:2.2rem;font-weight:800;letter-spacing:-0.04em;line-height:1.15}
     .header-subtitle{color:var(--text-sub);font-size:0.92rem;margin-top:0.4rem;font-weight:400;font-style:italic}
 
@@ -558,6 +558,7 @@
         visibility:visible;
       }
       .stats-actions{flex-wrap:wrap;justify-content:center}
+      .stat-number{text-align:center;width:100%;min-width:unset}
       .mode-actions-bar{
         display:flex;
         flex-wrap:wrap;
@@ -808,12 +809,14 @@
       z-index:90;display:none;
     }
     body.sidebar-mobile-open .sidebar-overlay{display:block}
+    body.sidebar-mobile-open .hamburger-btn{display:none !important}
     .hamburger-btn{
       position:fixed;top:1rem;left:1rem;z-index:110;
       width:40px;height:40px;border-radius:8px;
       background:var(--bg-card);border:1px solid var(--border);
       box-shadow:var(--shadow);cursor:pointer;
       font-size:1.2rem;display:none;align-items:center;justify-content:center;
+      color:var(--text-main);
     }
     .main-wrap{margin-left:60px}
 
@@ -825,6 +828,20 @@
       }
       [data-theme="light"] .sidebar{
         background:#FFFFFF !important;
+      }
+      .sidebar-header{
+        padding:1rem 12px !important;
+        justify-content:flex-start !important;
+      }
+      .sidebar-brand{
+        justify-content:flex-start !important;
+        gap:10px !important;
+        width:100% !important;
+      }
+      .sidebar-brand-text{
+        opacity:1 !important;
+        max-width:200px !important;
+        display:inline !important;
       }
       .sidebar.expanded{width:min(280px,100vw)}
       body.sidebar-mobile-open .sidebar{transform:translateX(0)}
@@ -1103,6 +1120,17 @@
         radial-gradient(ellipse at 80% 50%,
           rgba(56,232,197,0.05) 0%, transparent 50%);
     }
+    .marga-logo-img{object-fit:contain}
+    [data-theme="dark"] .marga-logo-img{
+      background:rgba(255,255,255,0.08);
+      border-radius:10px;
+      padding:3px;
+    }
+    [data-theme="light"] .marga-logo-img{
+      background:transparent;
+      border-radius:0;
+      padding:0;
+    }
     [data-theme="dark"] ::selection{background:rgba(108,99,255,0.3);color:#EEF0FF}
     [data-theme="light"] ::selection{background:rgba(85,72,224,0.2);color:#0D0F2A}
     ::-webkit-scrollbar{width:5px;height:5px}
@@ -1115,7 +1143,7 @@
 
     /* ── Theme-neutral structural rules ───────────────── */
     .app-header{border-radius:20px}
-    .app-header h1{font-size:2.4rem;font-weight:800}
+    .app-header h1{font-size:2.4rem;font-weight:800;line-height:1.2;padding-bottom:4px}
     .header-deco{position:absolute;top:20%;opacity:.04;pointer-events:none}
     .header-deco.pencil{left:2%;color:#6C63FF}
     .header-deco.cap{right:2%;color:#38E8C5}
@@ -1331,8 +1359,8 @@
 
   <div class="welcome-card">
     <div class="welcome-logo">
-      <img src="logo.png" alt="Marga"
-        style="width:72px;height:72px;object-fit:contain;border-radius:16px">
+      <img src="logo.png" alt="Marga" class="marga-logo-img"
+        style="width:80px;height:80px;object-fit:contain">
     </div>
 
     <div class="welcome-greeting">
@@ -1392,8 +1420,8 @@
   <div class="sidebar-header">
     <div class="sidebar-brand">
       <span class="sidebar-brand-icon">
-        <img src="logo.png" alt="Marga"
-          style="width:32px;height:32px;object-fit:contain;border-radius:6px">
+        <img src="logo.png" alt="Marga" class="marga-logo-img"
+          style="width:34px;height:34px;object-fit:contain">
       </span>
       <span class="sidebar-brand-text">Marga</span>
     </div>
@@ -1759,8 +1787,8 @@
   <div class="app-header">
     <div class="header-center">
       <div class="header-title">
-        <img src="logo.png" alt="Marga"
-          style="width:40px;height:40px;object-fit:contain;border-radius:8px;padding:4px;box-sizing:content-box">
+        <img src="logo.png" alt="Marga" class="marga-logo-img"
+          style="width:48px;height:48px;object-fit:contain">
         <h1>Marga</h1>
       </div>
       <p class="header-subtitle">Track every chapter. Ace every exam.</p>
@@ -2959,8 +2987,9 @@ async function logoutUser() {
   window.location.replace('index.html');
 }
 function handleLogout() { logoutUser(); }
-window.addEventListener('marga-session-ready', () => {
+window.addEventListener('marga-session-ready', async () => {
   applyUserStorageKeys();
+  await loadFromCloud();
   renderSidebarUser();
   showWelcomeScreen();
   init();
@@ -6062,7 +6091,13 @@ function saveData() {
     _loadedExams: loadedExams,
     _currentMode: currentMode,
   };
+  payload._savedAt = new Date().toISOString();
   localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+  loadedExams.forEach(examKey => {
+    if (!appData[examKey] || typeof appData[examKey] !== 'object') return;
+    appData[examKey]._savedAt = new Date().toISOString();
+    saveToCloud(examKey, appData[examKey]);
+  });
   // Also persist active tabs separately as required
   localStorage.setItem(TABS_KEY, JSON.stringify(loadedExams));
   updateStats();
@@ -6231,6 +6266,51 @@ document.addEventListener('keydown', function(e) {
   if (e.key === 'ArrowLeft') tutPrev();
   if (e.key === 'Escape') closeTutorial();
 });
+
+async function saveToCloud(examKey, dataObj) {
+  try {
+    const _sb = window._supabase;
+    if (!_sb) return;
+    const { data: { user } } = await _sb.auth.getUser();
+    if (!user) return;
+    await _sb.from('user_data').upsert({
+      user_id: user.id,
+      exam_key: examKey,
+      data: dataObj,
+      updated_at: new Date().toISOString()
+    }, { onConflict: 'user_id,exam_key' });
+  } catch(e) { console.warn('Cloud save failed:', e); }
+}
+
+async function loadFromCloud() {
+  try {
+    const _sb = window._supabase;
+    if (!_sb) return;
+    const { data: { user } } = await _sb.auth.getUser();
+    if (!user) return;
+    const { data: rows, error } = await _sb
+      .from('user_data')
+      .select('exam_key, data, updated_at')
+      .eq('user_id', user.id);
+    if (error || !rows) return;
+    for (const row of rows) {
+      const lsKey = 'marga_data_' + row.exam_key + '_' + user.id;
+      const local = localStorage.getItem(lsKey);
+      let shouldUseCloud = true;
+      if (local) {
+        try {
+          const localObj = JSON.parse(local);
+          const localTime = localObj._savedAt ? new Date(localObj._savedAt) : new Date(0);
+          const cloudTime = new Date(row.updated_at);
+          if (localTime > cloudTime) shouldUseCloud = false;
+        } catch(e) {}
+      }
+      if (shouldUseCloud) {
+        localStorage.setItem(lsKey, JSON.stringify(row.data));
+      }
+    }
+  } catch(e) { console.warn('Cloud load failed:', e); }
+}
 
 // ── PWA Service Worker Registration ──
 if ('serviceWorker' in navigator) {
