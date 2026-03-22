@@ -5753,6 +5753,7 @@ function render() {
     localStorage.setItem(CARD_ORDER_KEY, JSON.stringify(cardOrder));
 
     subjectOrder.forEach((subject, cardIndex) => {
+    if (subject === '_savedAt') return;
     const subjectData = modeData[subject];
     if (!subjectData) return;
     const { chapters, total: chapterTotal, completed: completedCount } = getSubjectCompletionStats(subjectData);
@@ -6177,11 +6178,11 @@ function saveData() {
     _loadedExams: loadedExams,
     _currentMode: currentMode,
   };
-  payload._savedAt = new Date().toISOString();
   localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+  const _nowIso = new Date().toISOString();
+  localStorage.setItem('marga_savedAt_global', _nowIso);
   loadedExams.forEach(examKey => {
     if (!appData[examKey] || typeof appData[examKey] !== 'object') return;
-    appData[examKey]._savedAt = new Date().toISOString();
     saveToCloud(examKey, appData[examKey]);
   });
   // Also persist active tabs separately as required
@@ -6378,23 +6379,43 @@ async function loadFromCloud() {
       .from('user_data')
       .select('exam_key, data, updated_at')
       .eq('user_id', user.id);
-    if (error || !rows) return;
-    for (const row of rows) {
-      const lsKey = 'marga_data_' + row.exam_key + '_' + user.id;
-      const local = localStorage.getItem(lsKey);
-      let shouldUseCloud = true;
-      if (local) {
-        try {
-          const localObj = JSON.parse(local);
-          const localTime = localObj._savedAt ? new Date(localObj._savedAt) : new Date(0);
-          const cloudTime = new Date(row.updated_at);
-          if (localTime > cloudTime) shouldUseCloud = false;
-        } catch(e) {}
+    if (error || !rows || rows.length === 0) return;
+
+    // Read the existing local blob (if any)
+    const localRaw = localStorage.getItem(STORAGE_KEY);
+    let localBlob = {};
+    try { if (localRaw) localBlob = JSON.parse(localRaw); } catch(e) {}
+
+    // Determine the newest cloud timestamp across all rows
+    let newestCloudTime = new Date(0);
+    rows.forEach(row => {
+      const t = new Date(row.updated_at);
+      if (t > newestCloudTime) newestCloudTime = t;
+    });
+
+    // Determine the local save time
+    let localTime = new Date(0);
+    const localSavedAt = localStorage.getItem('marga_savedAt_global');
+    if (localSavedAt) localTime = new Date(localSavedAt);
+
+    // If local is newer than all cloud rows, keep local as-is
+    if (localTime > newestCloudTime) return;
+
+    // Merge cloud rows into the local blob
+    // Cloud wins for each exam key it has a row for
+    rows.forEach(row => {
+      if (row.exam_key && typeof row.data === 'object') {
+        localBlob[row.exam_key] = row.data;
+        // Make sure this exam is in _loadedExams
+        if (!Array.isArray(localBlob._loadedExams)) localBlob._loadedExams = [];
+        if (!localBlob._loadedExams.includes(row.exam_key)) {
+          localBlob._loadedExams.push(row.exam_key);
+        }
       }
-      if (shouldUseCloud) {
-        localStorage.setItem(lsKey, JSON.stringify(row.data));
-      }
-    }
+    });
+
+    // Write merged blob back to STORAGE_KEY so the app reads it correctly
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(localBlob));
   } catch(e) { console.warn('Cloud load failed:', e); }
 }
 
