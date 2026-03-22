@@ -23,6 +23,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Marga — Track Every Chapter</title>
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#6C63FF">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Marga">
+  <link rel="apple-touch-icon" href="/icon-192.png">
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     /* ── Design Tokens ─────────────────────────────────────── */
@@ -54,7 +60,7 @@
       background-size:28px 28px;opacity:0.55;pointer-events:none;
     }
     .header-center{text-align:center;flex:1;position:relative;z-index:1}
-    .header-title{display:flex;align-items:center;justify-content:center;gap:0.75rem;overflow:visible}
+    .header-title{display:flex;align-items:center;justify-content:center;gap:0.75rem}
     h1{font-size:2.2rem;font-weight:800;letter-spacing:-0.04em;line-height:1.15}
     .header-subtitle{color:var(--text-sub);font-size:0.92rem;margin-top:0.4rem;font-weight:400;font-style:italic}
 
@@ -815,6 +821,10 @@
       .sidebar{
         width:min(280px,100vw);max-width:280px;
         transform:translateX(-100%);z-index:100;
+        background:#141727 !important;
+      }
+      [data-theme="light"] .sidebar{
+        background:#FFFFFF !important;
       }
       .sidebar.expanded{width:min(280px,100vw)}
       body.sidebar-mobile-open .sidebar{transform:translateX(0)}
@@ -1105,7 +1115,7 @@
 
     /* ── Theme-neutral structural rules ───────────────── */
     .app-header{border-radius:20px}
-    .app-header h1{font-size:2.4rem;font-weight:800;line-height:1.2;padding-bottom:4px}
+    .app-header h1{font-size:2.4rem;font-weight:800}
     .header-deco{position:absolute;top:20%;opacity:.04;pointer-events:none}
     .header-deco.pencil{left:2%;color:#6C63FF}
     .header-deco.cap{right:2%;color:#38E8C5}
@@ -6221,6 +6231,15 @@ document.addEventListener('keydown', function(e) {
   if (e.key === 'ArrowLeft') tutPrev();
   if (e.key === 'Escape') closeTutorial();
 });
+
+// ── PWA Service Worker Registration ──
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/service-worker.js')
+      .then(reg => console.log('SW registered:', reg.scope))
+      .catch(err => console.log('SW failed:', err));
+  });
+}
 
 </script>
 </body>
