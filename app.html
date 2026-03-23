@@ -6158,6 +6158,8 @@ function init() {
   const lastMode = appData._currentMode;
   if (lastMode && (config[lastMode] !== undefined || isCustomMode(lastMode))) {
     activateExam(lastMode);
+  } else if (loadedExams.length > 0) {
+    activateExam(loadedExams[0]);
   } else {
     openExamModal();
   }
