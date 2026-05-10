@@ -17,19 +17,54 @@
 
 <html lang="en">
 <head>
-  <meta name="author" content="Pruthviraj Arun">
-  <meta name="description" content="Marga — A study chapter tracker for Indian students. Built by Pruthviraj Arun.">
-  <meta name="copyright" content="© 2026 Pruthviraj Arun. All rights reserved.">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Marga — Track Every Chapter</title>
+  <meta name="author" content="Pruthviraj Arun">
+  <meta name="copyright" content="© 2026 Pruthviraj Arun. All rights reserved.">
+  <title>Marga — Study Chapter Tracker for Students</title>
+  <meta name="description" content="Marga is a modern study chapter tracker for JEE, NEET, ISC, CBSE and competitive exam students. Organize chapters, monitor progress and ace every exam.">
+  <meta name="keywords" content="Marga, study tracker, JEE tracker, NEET tracker, ISC study planner, chapter tracker, student productivity">
+  <meta name="robots" content="index, follow">
+  <meta name="googlebot" content="index, follow">
+  <link rel="canonical" href="https://marga-study.netlify.app/">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Marga — Study Chapter Tracker">
+  <meta property="og:description" content="Track every chapter. Ace every exam.">
+  <meta property="og:url" content="https://marga-study.netlify.app/">
+  <meta property="og:image" content="https://marga-study.netlify.app/icon-512.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Marga">
+  <meta name="twitter:description" content="Modern study tracker for students">
+  <meta name="twitter:image" content="https://marga-study.netlify.app/icon-512.png">
   <link rel="manifest" href="/manifest.json">
   <meta name="theme-color" content="#6C63FF">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Marga">
-  <link rel="apple-touch-icon" href="/icon-192.png">
+  <link rel="apple-touch-icon" sizes="192x192" href="/icon-192.png">
+  <link rel="icon" href="/favicon.ico" sizes="any">
+  <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="/icon-512.png">
+  <link rel="shortcut icon" href="/favicon.ico">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap">
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"WebApplication",
+    "name":"Marga",
+    "url":"https://marga-study.netlify.app/",
+    "applicationCategory":"EducationalApplication",
+    "operatingSystem":"Any",
+    "description":"Study chapter tracker for students preparing for exams like JEE, NEET, ISC and CBSE.",
+    "author":{
+      "@type":"Person",
+      "name":"Pruthviraj Arun"
+    }
+  }
+  </script>
   <style>
     /* ── Design Tokens ─────────────────────────────────────── */
     :root {
@@ -1419,9 +1454,9 @@
   </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
 <script>
-(async () => {
+window.addEventListener('DOMContentLoaded', async () => {
   const { createClient } = supabase;
   // Supabase anon key is safe to expose client-side.
   // Security is enforced via Row Level Security (RLS)
@@ -1440,7 +1475,7 @@
     window._userId = session.user.id;
     window.dispatchEvent(new Event('marga-session-ready'));
   }
-})();
+});
 </script>
 
 <!-- ══════════════════════════════════════════════════════════
@@ -3034,6 +3069,7 @@ let _idCounter = 1;
 let lastAddedGroupBySubject = {};
 let examNames = {};
 let examSelections = {};
+let deletedExamTombstones = {};
 let syllabusSelection = null;
 let renamingExamId = null;
 let _conflictState = { baseExamId:null, targetExamId:null };
@@ -3958,6 +3994,7 @@ function loadData() {
     if (s) {
       appData     = JSON.parse(s);
       loadedExams = appData._loadedExams || [];
+      deletedExamTombstones = appData._deletedExams || {};
     }
   } catch(e) { appData = {}; }
 }
@@ -4381,6 +4418,7 @@ function deleteExam(examId) {
   }
 
   saveData();
+  deleteExamFromCloud(examId);
   renderTabBar();
 
   if (loadedExams.length === 0) {
@@ -4772,6 +4810,7 @@ function removeExamData(examId) {
   delete examNames[examId];
   delete examSelections[examId];
   delete cardOrder[examId];
+  deletedExamTombstones[examId] = new Date().toISOString();
   if (isCustomMode(examId)) delete config[examId];
   loadedExams = loadedExams.filter(id => id !== examId);
   localStorage.setItem(EXAM_NAMES_KEY, JSON.stringify(examNames));
@@ -4788,6 +4827,7 @@ function confirmReplaceAndContinue() {
     currentMode = loadedExams[0] || null;
   }
   saveData();
+  deleteExamFromCloud(replaceId);
   renderTabBar();
   if (currentMode) activateExam(currentMode); else render();
   openSyllabusPane(replaceId, false, baseId);
@@ -5200,6 +5240,17 @@ function _refreshSubjectHeader(subject) {
   if (pfill) pfill.style.width = `${subjPct}%`;
 }
 
+function _rerenderIfIncompleteSorted(subject, card=null, listScrollTop=0) {
+  if (normalizeSortByFeature(getSortPref(subject)) !== 'incomplete') return false;
+  const targetCard = card || [...document.querySelectorAll('.subject-card')]
+    .find(c => c.dataset.subject === subject);
+  if (!targetCard) return false;
+  _rerenderChapterList(targetCard, subject, 'incomplete');
+  const list = targetCard.querySelector('.chapter-list');
+  if (list) list.scrollTop = Math.min(listScrollTop, list.scrollHeight);
+  return true;
+}
+
 // ═══════════════════════════════════════════════════════════
 // CHAPTER CRUD
 // ═══════════════════════════════════════════════════════════
@@ -5235,6 +5286,7 @@ function toggleComplete(subject, id) {
     }
   }
   _refreshSubjectHeader(subject);
+  _rerenderIfIncompleteSorted(subject, card, listScrollTop);
 
   // Restore scroll
   window.scrollTo({ top: scrollY, behavior: 'instant' });
@@ -5394,6 +5446,7 @@ function toggleScene(mode, subject, groupLabel, chapterId, sceneId) {
   refreshGroupCounter(mode, subject, groupLabel);
   refreshCardCounter(mode, subject);
   updateStats();
+  _rerenderIfIncompleteSorted(subject);
 }
 
 function toggleActWithScenes(mode, subject, groupLabel, chapterId) {
@@ -5422,6 +5475,7 @@ function toggleActWithScenes(mode, subject, groupLabel, chapterId) {
   refreshGroupCounter(mode, subject, groupLabel);
   refreshCardCounter(mode, subject);
   updateStats();
+  _rerenderIfIncompleteSorted(subject);
 }
 
 function refreshGroupCounter(mode, subject, groupLabel) {
@@ -6168,6 +6222,7 @@ function init() {
 }
 
 function saveData() {
+  loadedExams.forEach(examId => { delete deletedExamTombstones[examId]; });
   // Build per-custom-exam subject metadata (hue + icon for each subject)
   const customMetas = {};
   loadedExams.filter(isCustomMode).forEach(examId => {
@@ -6181,6 +6236,7 @@ function saveData() {
     ...appData,
     _customMetas: customMetas,
     _loadedExams: loadedExams,
+    _deletedExams: deletedExamTombstones,
     _currentMode: currentMode,
   };
   localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
@@ -6388,6 +6444,21 @@ async function saveToCloud(examKey, dataObj) {
   } catch(e) { console.warn('Cloud save failed:', e); }
 }
 
+async function deleteExamFromCloud(examKey) {
+  try {
+    const _sb = window._supabase;
+    if (!_sb) return;
+    const { data: { user } } = await _sb.auth.getUser();
+    if (!user) return;
+    const { error } = await _sb
+      .from('user_data')
+      .delete()
+      .eq('user_id', user.id)
+      .eq('exam_key', examKey);
+    if (error) console.warn('Cloud delete failed:', error);
+  } catch(e) { console.warn('Cloud delete failed:', e); }
+}
+
 async function loadFromCloud() {
   try {
     const _sb = window._supabase;
@@ -6404,6 +6475,10 @@ async function loadFromCloud() {
     const localRaw = localStorage.getItem(STORAGE_KEY);
     let localBlob = {};
     try { if (localRaw) localBlob = JSON.parse(localRaw); } catch(e) {}
+    const deletedExams = localBlob._deletedExams || {};
+    if (Array.isArray(localBlob._loadedExams)) {
+      localBlob._loadedExams = localBlob._loadedExams.filter(examKey => !deletedExams[examKey]);
+    }
 
     // Determine the newest cloud timestamp across all rows
     let newestCloudTime = new Date(0);
@@ -6424,6 +6499,8 @@ async function loadFromCloud() {
     // Cloud wins for each exam key it has a row for
     rows.forEach(row => {
       if (row.exam_key && typeof row.data === 'object') {
+        const deletedAt = deletedExams[row.exam_key];
+        if (deletedAt && new Date(deletedAt) >= new Date(row.updated_at || 0)) return;
         localBlob[row.exam_key] = row.data;
         // Make sure this exam is in _loadedExams
         if (!Array.isArray(localBlob._loadedExams)) localBlob._loadedExams = [];

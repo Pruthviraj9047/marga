@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://marga-study.netlify.app/sitemap.xml

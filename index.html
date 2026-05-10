@@ -17,20 +17,54 @@
 
 <html lang="en">
 <head>
-  <meta name="author" content="Pruthviraj Arun">
-  <meta name="description" content="Marga — A study chapter tracker for Indian students. Built by Pruthviraj Arun.">
-  <meta name="copyright" content="© 2026 Pruthviraj Arun. All rights reserved.">
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="author" content="Pruthviraj Arun">
+  <meta name="copyright" content="© 2026 Pruthviraj Arun. All rights reserved.">
+  <title>Marga — Study Chapter Tracker for Students</title>
+  <meta name="description" content="Marga is a modern study chapter tracker for JEE, NEET, ISC, CBSE and competitive exam students. Organize chapters, monitor progress and ace every exam.">
+  <meta name="keywords" content="Marga, study tracker, JEE tracker, NEET tracker, ISC study planner, chapter tracker, student productivity">
+  <meta name="robots" content="index, follow">
+  <meta name="googlebot" content="index, follow">
+  <link rel="canonical" href="https://marga-study.netlify.app/">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Marga — Study Chapter Tracker">
+  <meta property="og:description" content="Track every chapter. Ace every exam.">
+  <meta property="og:url" content="https://marga-study.netlify.app/">
+  <meta property="og:image" content="https://marga-study.netlify.app/icon-512.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Marga">
+  <meta name="twitter:description" content="Modern study tracker for students">
+  <meta name="twitter:image" content="https://marga-study.netlify.app/icon-512.png">
   <link rel="manifest" href="/manifest.json">
   <meta name="theme-color" content="#6C63FF">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Marga">
-  <link rel="apple-touch-icon" href="/icon-192.png">
-  <link rel="icon" type="image/svg+xml" href="/icon-192.png">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Marga — Track Every Chapter</title>
+  <link rel="apple-touch-icon" sizes="192x192" href="/icon-192.png">
+  <link rel="icon" href="/favicon.ico" sizes="any">
+  <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="/icon-512.png">
+  <link rel="shortcut icon" href="/favicon.ico">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap">
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"WebApplication",
+    "name":"Marga",
+    "url":"https://marga-study.netlify.app/",
+    "applicationCategory":"EducationalApplication",
+    "operatingSystem":"Any",
+    "description":"Study chapter tracker for students preparing for exams like JEE, NEET, ISC and CBSE.",
+    "author":{
+      "@type":"Person",
+      "name":"Pruthviraj Arun"
+    }
+  }
+  </script>
   <style>
 
     :root {
@@ -628,8 +662,9 @@
     </div>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
   <script>
+    window.addEventListener('DOMContentLoaded', () => {
     console.log(
     '%c Marga %c Built by Pruthviraj Arun ',
     'background:#6C63FF;color:white;padding:4px 8px;border-radius:4px 0 0 4px;font-weight:800;font-size:13px',
@@ -826,6 +861,7 @@
           .catch(err => console.log('SW failed:', err));
       });
     }
+    });
   </script>
 </body>
 </html>
