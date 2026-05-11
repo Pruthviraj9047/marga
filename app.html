@@ -1470,9 +1470,11 @@ window.addEventListener('DOMContentLoaded', async () => {
   if (!session) {
     window.location.replace('index.html');
   } else {
+    const { data: { user: freshUser } } = await _sb.auth.getUser();
+    const activeUser = freshUser || session.user;
     window._supabase = _sb;
-    window._userSession = session;
-    window._userId = session.user.id;
+    window._userSession = { ...session, user: activeUser };
+    window._userId = activeUser.id;
     window.dispatchEvent(new Event('marga-session-ready'));
   }
 });
@@ -3070,6 +3072,7 @@ let lastAddedGroupBySubject = {};
 let examNames = {};
 let examSelections = {};
 let deletedExamTombstones = {};
+let accountProfile = {};
 let syllabusSelection = null;
 let renamingExamId = null;
 let _conflictState = { baseExamId:null, targetExamId:null };
@@ -3077,7 +3080,8 @@ let _conflictState = { baseExamId:null, targetExamId:null };
 function getUserDisplayName() {
   const user = window._userSession?.user;
   if (!user) return { name:'User', email:'' };
-  const full = user.user_metadata?.full_name || user.user_metadata?.name || '';
+  const profileName = accountProfile.displayName || '';
+  const full = profileName || user.user_metadata?.full_name || user.user_metadata?.name || '';
   const email = user.email || '';
   return { name: full || email || 'User', email };
 }
@@ -3153,8 +3157,8 @@ function showWelcomeScreen() {
   if (titleEl) titleEl.textContent = greeting;
   if (emojiEl) emojiEl.textContent = emoji;
 
-  const user = window._userSession?.user;
-  const fullName = user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'Scholar';
+  const displayMeta = getUserDisplayName();
+  const fullName = displayMeta.name || displayMeta.email?.split('@')[0] || 'Scholar';
   const firstName = String(fullName).split(' ')[0] || 'Scholar';
   const nameEl = document.getElementById('welcomeName');
   if (nameEl) nameEl.textContent = firstName;
@@ -3301,9 +3305,9 @@ function toggleProfilePassword(id) {
 }
 
 function openProfileModal() {
-  const user = window._userSession?.user;
-  const currentName = user?.user_metadata?.full_name || user?.email?.split('@')[0] || '';
-  const currentEmail = user?.email || '';
+  const meta = getUserDisplayName();
+  const currentName = meta.name || '';
+  const currentEmail = meta.email || '';
   document.getElementById('profileNameInput').value = currentName;
   document.getElementById('profileEmailInput').value = currentEmail;
   document.getElementById('profilePasswordInput').value = '';
@@ -3319,7 +3323,8 @@ function closeProfileModal() {
 
 async function saveProfileChanges() {
   const user = window._userSession?.user;
-  const currentName = user?.user_metadata?.full_name || user?.email?.split('@')[0] || '';
+  const currentMeta = getUserDisplayName();
+  const currentName = currentMeta.name || user?.email?.split('@')[0] || '';
   const currentEmail = user?.email || '';
   const newName = document.getElementById('profileNameInput').value.trim();
   const newEmail = document.getElementById('profileEmailInput').value.trim();
@@ -3328,7 +3333,9 @@ async function saveProfileChanges() {
 
   clearProfileMessages();
   const updates = {};
-  if (newName && newName !== currentName) updates.data = { full_name: newName };
+  if (newName && newName !== currentName) {
+    updates.data = { ...(user?.user_metadata || {}), full_name: newName, name: newName };
+  }
   if (newEmail && newEmail !== currentEmail) updates.email = newEmail;
   if (newPassword || confirmPassword) {
     if (newPassword !== confirmPassword) {
@@ -3355,9 +3362,16 @@ async function saveProfileChanges() {
   }
 
   if (data?.user) window._userSession = { ...window._userSession, user: data.user };
-  const effectiveName = updates.data?.full_name || currentName || data?.user?.user_metadata?.full_name || '';
-  const effectiveEmail = updates.email || currentEmail;
-  updateSidebarProfile(effectiveName || effectiveEmail || 'User', effectiveEmail);
+  const effectiveName = updates.data?.full_name || data?.user?.user_metadata?.full_name || currentName || '';
+  const effectiveEmail = data?.user?.email || currentEmail;
+  accountProfile = {
+    ...accountProfile,
+    displayName: effectiveName,
+    updatedAt: new Date().toISOString(),
+  };
+  touchAccountMetaSavedAt(accountProfile.updatedAt);
+  await saveAccountMetaToCloud();
+  renderSidebarUser();
 
   if (updates.email) {
     showProfileSuccess('Verification email sent to ' + updates.email + '. Please check your inbox and click the link to confirm your new email address.');
@@ -3378,6 +3392,7 @@ let DATA_VERSION_KEY = 'margaDataVer_v1';
 let EXAM_NAMES_KEY = 'margaExamNames_v1';
 let SELECTIONS_KEY = 'margaSelections_v1';
 let META_SAVED_AT_KEY = 'margaAccountMetaSavedAt_v1';
+let GLOBAL_SAVED_AT_KEY = 'margaSavedAtGlobal_v1';
 const CLOUD_META_KEY = '__marga_account_meta_v1';
 
 function getUserStorageKey(base) {
@@ -3397,6 +3412,7 @@ function applyUserStorageKeys() {
   EXAM_NAMES_KEY = getUserStorageKey('margaExamNames_v1');
   SELECTIONS_KEY = getUserStorageKey('margaSelections_v1');
   META_SAVED_AT_KEY = getUserStorageKey('margaAccountMetaSavedAt_v1');
+  GLOBAL_SAVED_AT_KEY = getUserStorageKey('margaSavedAtGlobal_v1');
 }
 
 const DATA_VERSION = '4';
@@ -3920,6 +3936,7 @@ function loadFeaturePrefs() {
 
 function saveFeaturePrefs() {
   localStorage.setItem(FEATURES_KEY, JSON.stringify(featurePrefs));
+  persistAccountMetaChange();
 }
 
 function normalizeSortByFeature(sortBy) {
@@ -3956,7 +3973,7 @@ function buildSortOptions(currentSort) {
 // ═══════════════════════════════════════════════════════════
 // THEME
 // ═══════════════════════════════════════════════════════════
-function applyTheme(theme) {
+function applyTheme(theme, persistCloud = false) {
   document.documentElement.setAttribute('data-theme', theme);
   // Legacy fixed button (no longer in HTML but guard just in case)
   const icon = document.getElementById('themeToggleIcon');
@@ -3968,11 +3985,12 @@ function applyTheme(theme) {
   if (ico) ico.textContent = theme === 'dark' ? '🌙' : '☀️';
   if (row) row.classList.toggle('active', theme === 'dark');
   localStorage.setItem('studyTracker_theme', theme);
+  if (persistCloud) persistAccountMetaChange();
 }
 
 function toggleTheme() {
   const current = document.documentElement.getAttribute('data-theme') || 'dark';
-  applyTheme(current === 'dark' ? 'light' : 'dark');
+  applyTheme(current === 'dark' ? 'light' : 'dark', true);
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -5417,6 +5435,7 @@ function toggleActExpand(safeId) {
   if (key) {
     groupCollapseState[key] = isExpanded; // true = collapsed
     localStorage.setItem(GROUP_COLLAPSE_KEY, JSON.stringify(groupCollapseState));
+    persistAccountMetaChange();
   }
 }
 
@@ -5431,6 +5450,7 @@ function toggleGroupCollapse(subject, groupLabel) {
   if (arrowEl) arrowEl.classList.toggle('expanded', isCollapsed);
   groupCollapseState[safeKey] = !isCollapsed;
   localStorage.setItem(GROUP_COLLAPSE_KEY, JSON.stringify(groupCollapseState));
+  persistAccountMetaChange();
 }
 
 function toggleScene(mode, subject, groupLabel, chapterId, sceneId) {
@@ -5881,6 +5901,7 @@ function render() {
       order.splice(toIdx, 0, dragSrcCard);
       cardOrder[currentMode] = order;
       localStorage.setItem(CARD_ORDER_KEY, JSON.stringify(cardOrder));
+      persistAccountMetaChange();
       dragSrcCard = null;
       render();
     };
@@ -6252,7 +6273,7 @@ function saveData() {
   };
   localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
   const _nowIso = new Date().toISOString();
-  localStorage.setItem('marga_savedAt_global', _nowIso);
+  localStorage.setItem(GLOBAL_SAVED_AT_KEY, _nowIso);
   localStorage.setItem(META_SAVED_AT_KEY, _nowIso);
   loadedExams.forEach(examKey => {
     if (!appData[examKey] || typeof appData[examKey] !== 'object') return;
@@ -6446,6 +6467,11 @@ function touchAccountMetaSavedAt(iso = new Date().toISOString()) {
   try { localStorage.setItem(META_SAVED_AT_KEY, iso); } catch(e) {}
 }
 
+function persistAccountMetaChange() {
+  touchAccountMetaSavedAt();
+  saveAccountMetaToCloud();
+}
+
 function mergeTimestampMaps(localMap = {}, cloudMap = {}) {
   const merged = { ...(localMap || {}) };
   Object.entries(cloudMap || {}).forEach(([key, cloudTime]) => {
@@ -6458,10 +6484,18 @@ function mergeTimestampMaps(localMap = {}, cloudMap = {}) {
 }
 
 function buildAccountMetaPayload(savedAt = new Date().toISOString()) {
+  const user = window._userSession?.user;
+  const authName = user?.user_metadata?.full_name || user?.user_metadata?.name || '';
+  const displayName = accountProfile.displayName || authName || '';
   return {
     kind: 'marga_account_meta',
     version: 1,
     savedAt,
+    profile: {
+      displayName,
+      updatedAt: accountProfile.updatedAt || savedAt,
+    },
+    theme: document.documentElement.getAttribute('data-theme') || localStorage.getItem('studyTracker_theme') || 'dark',
     loadedExams: [...loadedExams],
     deletedExams: { ...deletedExamTombstones },
     currentMode,
@@ -6481,6 +6515,36 @@ function applyCloudAccountMeta(meta, cloudUpdatedAt, localBlob) {
   const cloudDeleted = meta.deletedExams || {};
   deletedExamTombstones = mergeTimestampMaps(deletedExamTombstones, cloudDeleted);
   localBlob._deletedExams = mergeTimestampMaps(localBlob._deletedExams || {}, cloudDeleted);
+  if (meta.profile && typeof meta.profile === 'object') {
+    const cloudProfileName = meta.profile.displayName || '';
+    const cloudProfileAt = meta.profile.updatedAt || meta.savedAt || cloudUpdatedAt || '';
+    const user = window._userSession?.user;
+    const authName = user?.user_metadata?.full_name || user?.user_metadata?.name || '';
+    const localProfileAt = accountProfile.updatedAt || user?.updated_at || '';
+    const cloudIsNewer = new Date(cloudProfileAt || 0) >= new Date(localProfileAt || 0);
+    if (cloudProfileName && (cloudIsNewer || !authName)) {
+      accountProfile = {
+        ...accountProfile,
+        displayName: cloudProfileName,
+        updatedAt: cloudProfileAt || accountProfile.updatedAt,
+      };
+      if (window._userSession?.user) {
+        window._userSession = {
+          ...window._userSession,
+          user: {
+            ...window._userSession.user,
+            user_metadata: {
+              ...(window._userSession.user.user_metadata || {}),
+              full_name: accountProfile.displayName,
+            },
+          },
+        };
+      }
+    }
+  }
+  if (meta.theme === 'dark' || meta.theme === 'light') {
+    applyTheme(meta.theme, false);
+  }
 
   if (cloudMetaTime <= localMetaTime) return localBlob;
 
@@ -6596,7 +6660,7 @@ async function loadFromCloud() {
 
     // Determine the local save time
     let localTime = new Date(0);
-    const localSavedAt = localStorage.getItem('marga_savedAt_global');
+    const localSavedAt = localStorage.getItem(GLOBAL_SAVED_AT_KEY);
     if (localSavedAt) localTime = new Date(localSavedAt);
 
     // Merge cloud rows into the local blob

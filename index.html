@@ -799,7 +799,7 @@
       const { data, error } = await supabaseClient.auth.signUp({
         email,
         password,
-        options: { data: { full_name: name } }
+        options: { data: { full_name: name, name } }
       });
       setLoading(submit,false,'Create Account');
       if(error){ const m = mapAuthError(error,'signup'); showErr(m.id,m.text); return; }
