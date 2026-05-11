@@ -3377,6 +3377,8 @@ let FEATURES_KEY = 'margaFeatures_v1';
 let DATA_VERSION_KEY = 'margaDataVer_v1';
 let EXAM_NAMES_KEY = 'margaExamNames_v1';
 let SELECTIONS_KEY = 'margaSelections_v1';
+let META_SAVED_AT_KEY = 'margaAccountMetaSavedAt_v1';
+const CLOUD_META_KEY = '__marga_account_meta_v1';
 
 function getUserStorageKey(base) {
   const uid = window._userId || 'anon';
@@ -3394,6 +3396,7 @@ function applyUserStorageKeys() {
   DATA_VERSION_KEY = getUserStorageKey('margaDataVer_v1');
   EXAM_NAMES_KEY = getUserStorageKey('margaExamNames_v1');
   SELECTIONS_KEY = getUserStorageKey('margaSelections_v1');
+  META_SAVED_AT_KEY = getUserStorageKey('margaAccountMetaSavedAt_v1');
 }
 
 const DATA_VERSION = '4';
@@ -3478,6 +3481,8 @@ function getSortPref(subject) { return sortPrefs[sortPrefKey(currentMode, subjec
 function setSortPref(subject, val) {
   sortPrefs[sortPrefKey(currentMode, subject)] = val;
   try { localStorage.setItem(SORT_KEY, JSON.stringify(sortPrefs)); } catch(e) {}
+  touchAccountMetaSavedAt();
+  saveAccountMetaToCloud();
 }
 function applySort(chapters, sortBy) {
   if (sortBy === 'custom') return [...chapters];
@@ -4234,6 +4239,8 @@ function renameExam(examId, newDisplayName) {
   if (!trimmed) return;
   examNames[examId] = trimmed;
   localStorage.setItem(EXAM_NAMES_KEY, JSON.stringify(examNames));
+  touchAccountMetaSavedAt();
+  saveAccountMetaToCloud();
   const labelEl = document.querySelector('[data-exam-label="' + examId + '"]');
   if (labelEl) labelEl.textContent = trimmed;
   if (examId === currentMode) {
@@ -4403,7 +4410,7 @@ function confirmDeleteExam(examId, displayName) {
   openModal('deleteExamModal');
 }
 
-function deleteExam(examId) {
+async function deleteExam(examId) {
   removeExamData(examId);
 
   const wasActive = (currentMode === examId);
@@ -4418,7 +4425,8 @@ function deleteExam(examId) {
   }
 
   saveData();
-  deleteExamFromCloud(examId);
+  await deleteExamFromCloud(examId);
+  await saveAccountMetaToCloud();
   renderTabBar();
 
   if (loadedExams.length === 0) {
@@ -4816,9 +4824,11 @@ function removeExamData(examId) {
   localStorage.setItem(EXAM_NAMES_KEY, JSON.stringify(examNames));
   localStorage.setItem(SELECTIONS_KEY, JSON.stringify(examSelections));
   localStorage.setItem(CARD_ORDER_KEY, JSON.stringify(cardOrder));
+  touchAccountMetaSavedAt();
+  saveAccountMetaToCloud();
 }
 
-function confirmReplaceAndContinue() {
+async function confirmReplaceAndContinue() {
   const replaceId = _conflictState.selectedExamId;
   const baseId = _conflictState.baseExamId;
   if (!replaceId) return;
@@ -4827,7 +4837,8 @@ function confirmReplaceAndContinue() {
     currentMode = loadedExams[0] || null;
   }
   saveData();
-  deleteExamFromCloud(replaceId);
+  await deleteExamFromCloud(replaceId);
+  await saveAccountMetaToCloud();
   renderTabBar();
   if (currentMode) activateExam(currentMode); else render();
   openSyllabusPane(replaceId, false, baseId);
@@ -6242,10 +6253,12 @@ function saveData() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
   const _nowIso = new Date().toISOString();
   localStorage.setItem('marga_savedAt_global', _nowIso);
+  localStorage.setItem(META_SAVED_AT_KEY, _nowIso);
   loadedExams.forEach(examKey => {
     if (!appData[examKey] || typeof appData[examKey] !== 'object') return;
     saveToCloud(examKey, appData[examKey]);
   });
+  saveAccountMetaToCloud();
   // Also persist active tabs separately as required
   localStorage.setItem(TABS_KEY, JSON.stringify(loadedExams));
   updateStats();
@@ -6429,12 +6442,103 @@ document.addEventListener('keydown', function(e) {
   if (e.key === 'Escape') closeTutorial();
 });
 
+function touchAccountMetaSavedAt(iso = new Date().toISOString()) {
+  try { localStorage.setItem(META_SAVED_AT_KEY, iso); } catch(e) {}
+}
+
+function mergeTimestampMaps(localMap = {}, cloudMap = {}) {
+  const merged = { ...(localMap || {}) };
+  Object.entries(cloudMap || {}).forEach(([key, cloudTime]) => {
+    const localTime = merged[key];
+    if (!localTime || new Date(cloudTime) > new Date(localTime)) {
+      merged[key] = cloudTime;
+    }
+  });
+  return merged;
+}
+
+function buildAccountMetaPayload(savedAt = new Date().toISOString()) {
+  return {
+    kind: 'marga_account_meta',
+    version: 1,
+    savedAt,
+    loadedExams: [...loadedExams],
+    deletedExams: { ...deletedExamTombstones },
+    currentMode,
+    examNames: { ...examNames },
+    examSelections: JSON.parse(JSON.stringify(examSelections || {})),
+    sortPrefs: { ...sortPrefs },
+    cardOrder: JSON.parse(JSON.stringify(cardOrder || {})),
+    groupCollapseState: { ...groupCollapseState },
+    featurePrefs: { ...featurePrefs },
+  };
+}
+
+function applyCloudAccountMeta(meta, cloudUpdatedAt, localBlob) {
+  if (!meta || typeof meta !== 'object') return localBlob;
+  const localMetaTime = new Date(localStorage.getItem(META_SAVED_AT_KEY) || 0);
+  const cloudMetaTime = new Date(meta.savedAt || cloudUpdatedAt || 0);
+  const cloudDeleted = meta.deletedExams || {};
+  deletedExamTombstones = mergeTimestampMaps(deletedExamTombstones, cloudDeleted);
+  localBlob._deletedExams = mergeTimestampMaps(localBlob._deletedExams || {}, cloudDeleted);
+
+  if (cloudMetaTime <= localMetaTime) return localBlob;
+
+  if (meta.examNames && typeof meta.examNames === 'object') {
+    examNames = meta.examNames;
+    localStorage.setItem(EXAM_NAMES_KEY, JSON.stringify(examNames));
+  }
+  if (meta.examSelections && typeof meta.examSelections === 'object') {
+    examSelections = meta.examSelections;
+    localStorage.setItem(SELECTIONS_KEY, JSON.stringify(examSelections));
+  }
+  if (meta.sortPrefs && typeof meta.sortPrefs === 'object') {
+    sortPrefs = meta.sortPrefs;
+    localStorage.setItem(SORT_KEY, JSON.stringify(sortPrefs));
+  }
+  if (meta.cardOrder && typeof meta.cardOrder === 'object') {
+    cardOrder = meta.cardOrder;
+    localStorage.setItem(CARD_ORDER_KEY, JSON.stringify(cardOrder));
+  }
+  if (meta.groupCollapseState && typeof meta.groupCollapseState === 'object') {
+    groupCollapseState = meta.groupCollapseState;
+    localStorage.setItem(GROUP_COLLAPSE_KEY, JSON.stringify(groupCollapseState));
+  }
+  if (meta.featurePrefs && typeof meta.featurePrefs === 'object') {
+    featurePrefs = { ...DEFAULT_FEATURES, ...meta.featurePrefs };
+    localStorage.setItem(FEATURES_KEY, JSON.stringify(featurePrefs));
+  }
+  if (typeof meta.currentMode === 'string') localBlob._currentMode = meta.currentMode;
+  touchAccountMetaSavedAt(meta.savedAt || cloudUpdatedAt || new Date().toISOString());
+  return localBlob;
+}
+
+async function saveAccountMetaToCloud() {
+  try {
+    const _sb = window._supabase;
+    if (!_sb) return;
+    const { data: { user } } = await _sb.auth.getUser();
+    if (!user) return;
+    const savedAt = localStorage.getItem(META_SAVED_AT_KEY) || new Date().toISOString();
+    await _sb.from('user_data').upsert({
+      user_id: user.id,
+      exam_key: CLOUD_META_KEY,
+      data: buildAccountMetaPayload(savedAt),
+      updated_at: savedAt
+    }, { onConflict: 'user_id,exam_key' });
+  } catch(e) { console.warn('Cloud metadata save failed:', e); }
+}
+
 async function saveToCloud(examKey, dataObj) {
   try {
     const _sb = window._supabase;
     if (!_sb) return;
     const { data: { user } } = await _sb.auth.getUser();
     if (!user) return;
+    if (deletedExamTombstones[examKey]) {
+      await deleteExamFromCloud(examKey);
+      return;
+    }
     await _sb.from('user_data').upsert({
       user_id: user.id,
       exam_key: examKey,
@@ -6470,37 +6574,42 @@ async function loadFromCloud() {
       .select('exam_key, data, updated_at')
       .eq('user_id', user.id);
     if (error || !rows || rows.length === 0) return;
+    const metaRows = rows
+      .filter(row => row.exam_key === CLOUD_META_KEY)
+      .sort((a, b) => new Date(b.updated_at || 0) - new Date(a.updated_at || 0));
+    const examRows = rows.filter(row => row.exam_key !== CLOUD_META_KEY);
 
     // Read the existing local blob (if any)
     const localRaw = localStorage.getItem(STORAGE_KEY);
     let localBlob = {};
     try { if (localRaw) localBlob = JSON.parse(localRaw); } catch(e) {}
-    const deletedExams = localBlob._deletedExams || {};
+    if (localBlob._deletedExams) {
+      deletedExamTombstones = mergeTimestampMaps(deletedExamTombstones, localBlob._deletedExams);
+    }
+    if (metaRows.length) {
+      localBlob = applyCloudAccountMeta(metaRows[0].data, metaRows[0].updated_at, localBlob);
+    }
+    const deletedExams = localBlob._deletedExams || deletedExamTombstones || {};
     if (Array.isArray(localBlob._loadedExams)) {
       localBlob._loadedExams = localBlob._loadedExams.filter(examKey => !deletedExams[examKey]);
     }
-
-    // Determine the newest cloud timestamp across all rows
-    let newestCloudTime = new Date(0);
-    rows.forEach(row => {
-      const t = new Date(row.updated_at);
-      if (t > newestCloudTime) newestCloudTime = t;
-    });
 
     // Determine the local save time
     let localTime = new Date(0);
     const localSavedAt = localStorage.getItem('marga_savedAt_global');
     if (localSavedAt) localTime = new Date(localSavedAt);
 
-    // If local is newer than all cloud rows, keep local as-is
-    if (localTime > newestCloudTime) return;
-
     // Merge cloud rows into the local blob
-    // Cloud wins for each exam key it has a row for
-    rows.forEach(row => {
+    // Cloud wins for each exam key unless this browser has newer local data
+    examRows.forEach(row => {
       if (row.exam_key && typeof row.data === 'object') {
         const deletedAt = deletedExams[row.exam_key];
-        if (deletedAt && new Date(deletedAt) >= new Date(row.updated_at || 0)) return;
+        if (deletedAt) {
+          deleteExamFromCloud(row.exam_key);
+          return;
+        }
+        const cloudTime = new Date(row.updated_at || 0);
+        if (localTime > cloudTime && localBlob[row.exam_key]) return;
         localBlob[row.exam_key] = row.data;
         // Make sure this exam is in _loadedExams
         if (!Array.isArray(localBlob._loadedExams)) localBlob._loadedExams = [];
@@ -6509,6 +6618,10 @@ async function loadFromCloud() {
         }
       }
     });
+    localBlob._deletedExams = deletedExamTombstones = mergeTimestampMaps(localBlob._deletedExams || {}, deletedExams);
+    if (Array.isArray(localBlob._loadedExams)) {
+      localBlob._loadedExams = localBlob._loadedExams.filter(examKey => !localBlob._deletedExams[examKey]);
+    }
 
     // Write merged blob back to STORAGE_KEY so the app reads it correctly
     localStorage.setItem(STORAGE_KEY, JSON.stringify(localBlob));
