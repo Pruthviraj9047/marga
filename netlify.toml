@@ -1,0 +1,68 @@
+[[redirects]]
+  from = "https://marga-study.netlify.app/*"
+  to = "https://mymarga.in/:splat"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "http://marga-study.netlify.app/*"
+  to = "https://mymarga.in/:splat"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "https://www.mymarga.in/*"
+  to = "https://mymarga.in/:splat"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "http://www.mymarga.in/*"
+  to = "https://mymarga.in/:splat"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/app.html"
+  to = "/app"
+  status = 301
+  force = false
+
+[[redirects]]
+  from = "/app"
+  to = "/app.html"
+  status = 200
+
+[[redirects]]
+  from = "/jee-study-tracker"
+  to = "/jee-study-tracker/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/neet-study-planner"
+  to = "/neet-study-planner/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/isc-study-organizer"
+  to = "/isc-study-organizer/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/cbse-study-planner"
+  to = "/cbse-study-planner/index.html"
+  status = 200
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://*.supabase.co; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https://mymarga.in; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://*.supabase.co wss://*.supabase.co; frame-src 'self' https://accounts.google.com; form-action 'self'; base-uri 'self'; frame-ancestors 'none'; upgrade-insecure-requests"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=(), payment=(), usb=(), interest-cohort=()"
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+
+[[headers]]
+  for = "/service-worker.js"
+  [headers.values]
+    Cache-Control = "no-cache"

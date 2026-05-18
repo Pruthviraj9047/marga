@@ -1,12 +1,15 @@
 {
   "name": "Marga",
   "short_name": "Marga",
-  "description": "Track every chapter. Ace every exam.",
-  "start_url": "/index.html",
+  "description": "JEE, NEET, ISC and CBSE study tracker for chapter tracking, syllabus completion and revision planning.",
+  "id": "https://mymarga.in/",
+  "start_url": "/app",
+  "scope": "/",
   "display": "standalone",
   "background_color": "#0D0F1A",
   "theme_color": "#6C63FF",
   "orientation": "portrait",
+  "categories": ["education", "productivity"],
   "icons": [
     {
       "src": "icon-192.png",

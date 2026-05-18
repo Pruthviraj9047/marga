@@ -21,21 +21,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="author" content="Pruthviraj Arun">
   <meta name="copyright" content="© 2026 Pruthviraj Arun. All rights reserved.">
-  <title>Marga — Study Chapter Tracker for Students</title>
-  <meta name="description" content="Marga is a modern study chapter tracker for JEE, NEET, ISC, CBSE and competitive exam students. Organize chapters, monitor progress and ace every exam.">
-  <meta name="keywords" content="Marga, study tracker, JEE tracker, NEET tracker, ISC study planner, chapter tracker, student productivity">
+  <title>Marga – JEE, NEET, ISC & CBSE Study Tracker</title>
+  <meta name="description" content="Marga is a free JEE study tracker, NEET study planner, ISC revision tracker and chapter tracking exam preparation tool for Indian students.">
+  <meta name="keywords" content="Marga, JEE study tracker, NEET study planner, ISC revision tracker, CBSE study planner, chapter tracking, exam preparation tool, syllabus tracker">
   <meta name="robots" content="index, follow">
   <meta name="googlebot" content="index, follow">
-  <link rel="canonical" href="https://marga-study.netlify.app/">
+  <link rel="canonical" href="https://mymarga.in/">
   <meta property="og:type" content="website">
-  <meta property="og:title" content="Marga — Study Chapter Tracker">
-  <meta property="og:description" content="Track every chapter. Ace every exam.">
-  <meta property="og:url" content="https://marga-study.netlify.app/">
-  <meta property="og:image" content="https://marga-study.netlify.app/icon-512.png">
+  <meta property="og:title" content="Marga – JEE, NEET, ISC & CBSE Study Tracker">
+  <meta property="og:description" content="Track chapters, plan revision and monitor syllabus progress for JEE, NEET, ISC and CBSE preparation.">
+  <meta property="og:url" content="https://mymarga.in/">
+  <meta property="og:image" content="https://mymarga.in/icon-512.png">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Marga">
-  <meta name="twitter:description" content="Modern study tracker for students">
-  <meta name="twitter:image" content="https://marga-study.netlify.app/icon-512.png">
+  <meta name="twitter:title" content="Marga – JEE, NEET, ISC & CBSE Study Tracker">
+  <meta name="twitter:description" content="A free study tracker for chapter completion, revision planning and exam preparation.">
+  <meta name="twitter:image" content="https://mymarga.in/icon-512.png">
   <link rel="manifest" href="/manifest.json">
   <meta name="theme-color" content="#6C63FF">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -52,17 +52,126 @@
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <script type="application/ld+json">
   {
-    "@context":"https://schema.org",
-    "@type":"WebApplication",
-    "name":"Marga",
-    "url":"https://marga-study.netlify.app/",
-    "applicationCategory":"EducationalApplication",
-    "operatingSystem":"Any",
-    "description":"Study chapter tracker for students preparing for exams like JEE, NEET, ISC and CBSE.",
-    "author":{
-      "@type":"Person",
-      "name":"Pruthviraj Arun"
-    }
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": ["WebApplication", "EducationalApplication"],
+        "@id": "https://mymarga.in/#app",
+        "name": "Marga",
+        "alternateName": "Marga Study Tracker",
+        "url": "https://mymarga.in/",
+        "applicationCategory": "EducationalApplication",
+        "applicationSubCategory": "Study planner and chapter tracker",
+        "operatingSystem": "Any",
+        "browserRequirements": "Requires JavaScript. Works as a Progressive Web App with offline support.",
+        "description": "Marga is a free JEE, NEET, ISC and CBSE study tracker for chapter tracking, syllabus completion, revision planning and progress analytics.",
+        "audience": {
+          "@type": "EducationalAudience",
+          "educationalRole": "student",
+          "audienceType": "Indian school and entrance exam students"
+        },
+        "educationalUse": ["Study planning", "Chapter tracking", "Revision planning", "Exam preparation"],
+        "learningResourceType": "Educational application",
+        "featureList": [
+          "Chapter tracking",
+          "Syllabus completion tracking",
+          "Revision planning",
+          "Progress analytics",
+          "Offline support",
+          "JEE, NEET, ISC and CBSE syllabus organization"
+        ],
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "INR"
+        },
+        "publisher": {
+          "@type": "Person",
+          "name": "Pruthviraj Arun"
+        },
+        "author": {
+          "@type": "Person",
+          "name": "Pruthviraj Arun"
+        }
+      },
+      {
+        "@type": "Organization",
+        "@id": "https://mymarga.in/#organization",
+        "name": "Marga",
+        "url": "https://mymarga.in/",
+        "logo": "https://mymarga.in/icon-512.png",
+        "founder": {
+          "@type": "Person",
+          "name": "Pruthviraj Arun"
+        }
+      },
+      {
+        "@type": "BreadcrumbList",
+        "@id": "https://mymarga.in/#breadcrumb",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Home",
+            "item": "https://mymarga.in/"
+          }
+        ]
+      },
+      {
+        "@type": "FAQPage",
+        "@id": "https://mymarga.in/#faq",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Is Marga free?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. Marga is free for students who want to track chapters, syllabus progress and revision."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Can I use Marga offline?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. Marga is built as a lightweight PWA with offline support for saved app assets."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Is Marga useful for JEE preparation?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. JEE aspirants can track Physics, Chemistry and Mathematics chapters, confidence levels, revision dates and syllabus completion."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Does Marga work on mobile devices?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. Marga is responsive and works on phones, tablets and desktops."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Can ISC students use Marga?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. ISC students can organize Class 11 and Class 12 chapters, monitor backlog and plan revision before boards."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How does Marga help with revision planning?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Marga lets students record revision dates and confidence levels so weak or untouched chapters are easier to identify before exams."
+            }
+          }
+        ]
+      }
+    ]
   }
   </script>
   <style>
@@ -85,8 +194,11 @@
     }
 
     *{box-sizing:border-box;margin:0;padding:0}
+    *:focus-visible{outline:3px solid rgba(56,232,197,0.85);outline-offset:3px}
     html{scroll-behavior:smooth}
     body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg-body);color:var(--text-main);min-height:100vh}
+    .skip-link{position:fixed;top:0;left:1rem;z-index:100000;transform:translateY(-120%);background:#6C63FF;color:#fff;padding:.75rem 1rem;border-radius:0 0 10px 10px;font-weight:800}
+    .skip-link:focus{transform:translateY(0)}
     .marga-logo-img{display:inline-block;vertical-align:middle;flex-shrink:0}
     [data-theme="dark"] .marga-logo-img{background:rgba(255,255,255,0.08);border-radius:10px;padding:3px;}
     [data-theme="light"] .marga-logo-img{background:transparent;border-radius:0;padding:0;}
@@ -107,6 +219,8 @@
     .book-logo{width:36px;height:36px;flex-shrink:0}
 
     .nav-actions{display:flex;gap:.7rem;align-items:center}
+    .nav-links{display:flex;gap:.85rem;align-items:center;color:#8892B8;font-size:.9rem;font-weight:700}
+    .nav-links a:hover{color:#EEF0FF}
     .btn{border:none;border-radius:999px;padding:10px 18px;font-family:inherit;font-weight:700;cursor:pointer;transition:all .18s ease}
     .btn-ghost{background:transparent;color:#8892B8;border:1px solid rgba(108,99,255,0.4)}
     .btn-ghost:hover{border-color:#6C63FF;color:#EEF0FF}
@@ -165,6 +279,24 @@
     .exam-strip{display:flex;flex-wrap:wrap;gap:.65rem;justify-content:center;padding-bottom:.35rem}
     .exam-pill{display:inline-flex;align-items:center;gap:6px;background:rgba(20,23,39,0.8);border:1px solid #252A45;border-radius:999px;padding:8px 16px;font-size:.875rem;white-space:nowrap;color:#8892B8}
     .exam-pill:hover{border-color:#6C63FF;color:#EEF0FF}
+    .exam-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem}
+    .exam-card{background:#141727;border:1px solid #252A45;border-radius:16px;padding:1.35rem;min-height:100%;display:flex;flex-direction:column;gap:.7rem}
+    .exam-card h3{font-size:1.05rem;color:#EEF0FF}
+    .exam-card p{color:#8892B8;line-height:1.6;font-size:.9rem}
+    .text-link{color:#38E8C5;font-weight:800;margin-top:auto}
+    .text-link:hover{color:#EEF0FF}
+    .benefit-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem}
+    .benefit{background:#101321;border:1px solid #252A45;border-radius:16px;padding:1.25rem}
+    .benefit h3{font-size:1rem;margin-bottom:.45rem;color:#EEF0FF}
+    .benefit p{color:#8892B8;line-height:1.65;font-size:.92rem}
+    .faq-list{display:grid;gap:.8rem;max-width:850px;margin:0 auto}
+    .faq-list details{background:#141727;border:1px solid #252A45;border-radius:14px;padding:1rem 1.1rem}
+    .faq-list summary{cursor:pointer;font-weight:800;color:#EEF0FF}
+    .faq-list p{color:#8892B8;line-height:1.65;margin-top:.7rem}
+    .resource-links{display:flex;flex-wrap:wrap;justify-content:center;gap:.7rem;margin-top:1.3rem}
+    .resource-links a{border:1px solid #252A45;border-radius:999px;padding:8px 14px;color:#8892B8;background:#141727;font-weight:700;font-size:.88rem}
+    .resource-links a:hover{border-color:#38E8C5;color:#EEF0FF}
+    footer .resource-links{margin-top:0}
 
     .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;position:relative}
     .steps::before{content:'';position:absolute;top:28px;left:14%;right:14%;border-top:2px dashed rgba(108,99,255,0.3);z-index:0}
@@ -219,14 +351,16 @@
 
     @keyframes spin{to{transform:rotate(360deg)}}
 
-    @media (max-width:900px){.feature-grid,.steps{grid-template-columns:1fr}.steps::before{display:none}}
+    @media (max-width:1000px){.exam-grid{grid-template-columns:repeat(2,1fr)}}
+    @media (max-width:900px){.feature-grid,.steps,.benefit-grid{grid-template-columns:1fr}.steps::before{display:none}.nav-links{display:none}}
     @media(max-width:768px){.hero-mockup{display:none}}
-    @media (max-width:768px){section{padding:3rem 1.25rem}.hero .container,.nav-inner{padding:0 1.25rem}.hero h1{font-size:2.4rem}.nav-actions .btn{padding:9px 12px;font-size:.82rem}.cta-banner{padding:0 1.25rem 3rem}footer{padding:1.25rem}.foot-inner{flex-direction:column;align-items:flex-start}}
+    @media (max-width:768px){section{padding:3rem 1.25rem}.hero .container,.nav-inner{padding:0 1.25rem}.hero h1{font-size:2.4rem}.nav-actions .btn{padding:9px 12px;font-size:.82rem}.exam-grid{grid-template-columns:1fr}.cta-banner{padding:0 1.25rem 3rem}footer{padding:1.25rem}.foot-inner{flex-direction:column;align-items:flex-start}}
     @media (prefers-reduced-motion: reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
 
   </style>
 </head>
 <body>
+  <a class="skip-link" href="#mainContent">Skip to content</a>
   <nav class="navbar" id="navbar">
     <div class="nav-inner">
       <div class="brand">
@@ -262,6 +396,12 @@
 </svg>
         <span>Marga</span>
       </div>
+      <div class="nav-links" aria-label="Primary">
+        <a href="#features">Features</a>
+        <a href="#exams">Exams</a>
+        <a href="#faq">FAQ</a>
+        <a href="/app">Open App</a>
+      </div>
       <div class="nav-actions">
         <button class="btn btn-ghost" data-open-auth="login">Log In</button>
         <button class="btn btn-primary" data-open-auth="signup">Sign Up Free</button>
@@ -269,6 +409,7 @@
     </div>
   </nav>
 
+  <main id="mainContent">
   <section class="hero" id="top">
     <svg class="float-book b1 marga-logo-img" id="Layer_2" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 29.3 25" style="width:80px;height:80px">
   <defs>
@@ -364,13 +505,13 @@
     <div class="container">
       <div class="hero-content">
         <h1>
-          <span>Track Every Chapter.</span>
-          <span class="grad">Ace Every Exam.</span>
+          <span>Track Your JEE, NEET, ISC & CBSE Preparation</span>
+          <span class="grad">One Chapter at a Time.</span>
         </h1>
-        <p>The smartest chapter tracker for JEE, NEET, CBSE, ISC and more. Built for Indian students.</p>
+        <p>Marga is a focused study tracker for Indian students who want clearer chapter tracking, revision planning, syllabus completion and exam preparation progress.</p>
         <div class="hero-cta">
-          <button class="btn btn-primary" data-open-auth="signup">Get Started Free →</button>
-          <a class="btn btn-ghost" href="#how">See How It Works</a>
+          <button class="btn btn-primary" data-open-auth="signup">Start Tracking Free</button>
+          <a class="btn btn-ghost" href="#features">Explore Features</a>
         </div>
         <div class="hero-proof">
           <span><em>✦</em> Free forever</span>
@@ -412,50 +553,85 @@
     </div>
   </section>
 
-  <section>
+  <section id="features">
     <div class="container">
       <div class="section-head">
         <h2>Everything you need to stay on track</h2>
-        <p>Built specifically for Indian board and competitive exam students</p>
+        <p>Built specifically for Indian board and competitive exam students who need a simple study planner that stays fast.</p>
       </div>
       <div class="feature-grid">
         <article class="feature-card">
           <div class="feat-icon-wrap">📚</div>
-          <h3>Full Syllabus Built-in</h3>
+          <h3>Chapter Tracking</h3>
           <span class="watermark">📚</span>
-          <p>JEE, NEET, CBSE, ISC, KCET, MHT-CET — every subject and chapter pre-loaded. Just pick your exam and start.</p>
+          <p>Track completed, pending and weak chapters across Physics, Chemistry, Mathematics, Biology and board subjects.</p>
         </article>
         <article class="feature-card">
           <div class="feat-icon-wrap">🎯</div>
-          <h3>Confidence Tracking</h3>
+          <h3>Syllabus Completion</h3>
           <span class="watermark">🎯</span>
-          <p>Rate every chapter as New, Low, Mid or High confidence. Know exactly what needs more attention before your exam.</p>
+          <p>See how much of your JEE, NEET, ISC or CBSE syllabus is done so backlog never stays invisible.</p>
         </article>
         <article class="feature-card">
           <div class="feat-icon-wrap">📅</div>
-          <h3>Revision History</h3>
+          <h3>Revision Planning</h3>
           <span class="watermark">📅</span>
-          <p>Log when you last revised each chapter. Sort by date to make sure nothing slips through the cracks.</p>
+          <p>Log revision dates and confidence levels to decide what deserves time before tests, boards and entrance exams.</p>
+        </article>
+        <article class="feature-card">
+          <div class="feat-icon-wrap">📊</div>
+          <h3>Progress Analytics</h3>
+          <span class="watermark">📊</span>
+          <p>Use clean progress views to compare subjects, spot low-confidence topics and plan your next study session.</p>
+        </article>
+        <article class="feature-card">
+          <div class="feat-icon-wrap">⚡</div>
+          <h3>Offline Support</h3>
+          <span class="watermark">⚡</span>
+          <p>Install Marga as a lightweight PWA and keep the core study tracker available even when your connection is unreliable.</p>
         </article>
       </div>
     </div>
   </section>
 
-  <section>
+  <section id="exams">
     <div class="container">
       <div class="section-head">
-        <h2>Supports every major Indian exam</h2>
+        <h2>Study trackers for your exam path</h2>
+        <p>Choose the preparation style that matches your syllabus, coaching schedule and revision cycle.</p>
       </div>
-      <div class="exam-strip" aria-label="Supported exams">
-        <span class="exam-pill">⚛️ JEE</span>
-        <span class="exam-pill">🧬 NEET</span>
-        <span class="exam-pill">📘 CBSE Class 11</span>
-        <span class="exam-pill">📗 CBSE Class 12</span>
-        <span class="exam-pill">📙 ISC Class 11</span>
-        <span class="exam-pill">📕 ISC Class 12</span>
-        <span class="exam-pill">📒 ICSE Class 10</span>
-        <span class="exam-pill">🏛️ KCET</span>
-        <span class="exam-pill">🎯 MHT-CET</span>
+      <div class="exam-grid">
+        <article class="exam-card">
+          <h3>JEE Aspirants</h3>
+          <p>Manage Physics, Chemistry and Mathematics chapters with confidence tracking for mains and advanced preparation.</p>
+          <a class="text-link" href="/jee-study-tracker/">JEE study tracker</a>
+        </article>
+        <article class="exam-card">
+          <h3>NEET Students</h3>
+          <p>Plan Biology-heavy revision while keeping Physics and Chemistry chapters visible before every mock test.</p>
+          <a class="text-link" href="/neet-study-planner/">NEET study planner</a>
+        </article>
+        <article class="exam-card">
+          <h3>ISC Students</h3>
+          <p>Organize Class 11 and Class 12 board preparation with chapter status, revision dates and subject progress.</p>
+          <a class="text-link" href="/isc-study-organizer/">ISC study organizer</a>
+        </article>
+        <article class="exam-card">
+          <h3>CBSE Students</h3>
+          <p>Keep NCERT chapter completion, school tests and board revision in one simple study planning workflow.</p>
+          <a class="text-link" href="/cbse-study-planner/">CBSE study planner</a>
+        </article>
+      </div>
+      <div class="resource-links" aria-label="Supported exams">
+        <span class="exam-pill">JEE</span>
+        <span class="exam-pill">NEET</span>
+        <span class="exam-pill">CBSE Class 11</span>
+        <span class="exam-pill">CBSE Class 12</span>
+        <span class="exam-pill">ISC Class 11</span>
+        <span class="exam-pill">ISC Class 12</span>
+        <span class="exam-pill">ICSE Class 10</span>
+        <span class="exam-pill">KCET</span>
+        <span class="exam-pill">MHT-CET</span>
       </div>
     </div>
   </section>
@@ -485,6 +661,75 @@
     </div>
   </section>
 
+  <section id="why-marga">
+    <div class="container">
+      <div class="section-head">
+        <h2>Why use Marga?</h2>
+        <p>Exam preparation feels lighter when every chapter has a clear status and every revision cycle has a place to land.</p>
+      </div>
+      <div class="benefit-grid">
+        <article class="benefit">
+          <h3>Backlog Management</h3>
+          <p>Marga makes pending chapters visible so students can stop guessing and start clearing the highest-impact backlog first.</p>
+        </article>
+        <article class="benefit">
+          <h3>Revision Consistency</h3>
+          <p>Revision dates and confidence labels help you return to weak chapters before they fade from memory.</p>
+        </article>
+        <article class="benefit">
+          <h3>Syllabus Overwhelm</h3>
+          <p>Large JEE, NEET, ISC and CBSE syllabuses become smaller, trackable chapter lists with progress you can actually read.</p>
+        </article>
+        <article class="benefit">
+          <h3>Exam Stress</h3>
+          <p>A clear study tracker reduces last-minute panic by showing what is done, what is weak and what needs revision next.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="faq">
+    <div class="container">
+      <div class="section-head">
+        <h2>Frequently asked questions</h2>
+        <p>Quick answers for students comparing study trackers, revision planners and exam preparation tools.</p>
+      </div>
+      <div class="faq-list">
+        <details>
+          <summary>Is Marga free?</summary>
+          <p>Yes. Marga is free for students who want to track chapters, syllabus progress and revision.</p>
+        </details>
+        <details>
+          <summary>Can I use Marga offline?</summary>
+          <p>Yes. Marga is built as a lightweight PWA with offline support for saved app assets.</p>
+        </details>
+        <details>
+          <summary>Is Marga useful for JEE preparation?</summary>
+          <p>Yes. JEE aspirants can track Physics, Chemistry and Mathematics chapters, confidence levels, revision dates and syllabus completion.</p>
+        </details>
+        <details>
+          <summary>Does Marga work on mobile devices?</summary>
+          <p>Yes. Marga is responsive and works on phones, tablets and desktops.</p>
+        </details>
+        <details>
+          <summary>Can ISC students use Marga?</summary>
+          <p>Yes. ISC students can organize Class 11 and Class 12 chapters, monitor backlog and plan revision before boards.</p>
+        </details>
+        <details>
+          <summary>How does Marga help with revision planning?</summary>
+          <p>Marga lets students record revision dates and confidence levels so weak or untouched chapters are easier to identify before exams.</p>
+        </details>
+      </div>
+      <div class="resource-links">
+        <a href="/jee-study-tracker/">JEE study tracker</a>
+        <a href="/neet-study-planner/">NEET study planner</a>
+        <a href="/isc-study-organizer/">ISC study organizer</a>
+        <a href="/cbse-study-planner/">CBSE study planner</a>
+        <a href="/app">Open app</a>
+      </div>
+    </div>
+  </section>
+
   <div class="cta-banner">
     <div class="cta-inner">
       <h2>Ready to take control of your studies?</h2>
@@ -492,6 +737,7 @@
       <button class="btn btn-white" data-open-auth="signup">Create Free Account →</button>
     </div>
   </div>
+  </main>
 
   <footer>
     <div class="foot-inner">
@@ -527,6 +773,14 @@
   </g>
 </svg>
         <span>© 2026 Marga</span>
+      </div>
+      <div class="resource-links" aria-label="Footer links">
+        <a href="/">Home</a>
+        <a href="/jee-study-tracker/">JEE</a>
+        <a href="/neet-study-planner/">NEET</a>
+        <a href="/isc-study-organizer/">ISC</a>
+        <a href="/cbse-study-planner/">CBSE</a>
+        <a href="/app">App</a>
       </div>
       <div>Built by Pruthviraj Arun. Made with <span class="heart-gold">❤️</span> for Indian students</div>
     </div>
@@ -674,7 +928,17 @@
     const { createClient } = supabase;
     const supabaseClient = createClient(
       'https://wnzayybdjqlaenrecwtm.supabase.co',
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InduemF5eWJkanFsYWVucmVjd3RtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQwOTIwNzAsImV4cCI6MjA4OTY2ODA3MH0.39YjkW-UGymqPN4f8rTWO68r5skqZ__FbGK3HFuDXeI'
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InduemF5eWJkanFsYWVucmVjd3RtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQwOTIwNzAsImV4cCI6MjA4OTY2ODA3MH0.39YjkW-UGymqPN4f8rTWO68r5skqZ__FbGK3HFuDXeI',
+      {
+        auth: {
+          persistSession: true,
+          autoRefreshToken: true,
+          detectSessionInUrl: true,
+          flowType: 'pkce',
+          storageKey: 'marga-supabase-auth',
+          storage: window.localStorage
+        }
+      }
     );
 
     const authOverlay = document.getElementById('authOverlay');
@@ -731,6 +995,21 @@
       document.getElementById('resendSentMsg').classList.remove('show');
     }
 
+    async function syncSignupProfile(user, displayName){
+      if (!user || !displayName) return;
+      try {
+        await supabaseClient.from('profiles').upsert({
+          id: user.id,
+          email: user.email,
+          display_name: displayName,
+          full_name: displayName,
+          updated_at: new Date().toISOString()
+        }, { onConflict: 'id' });
+      } catch (err) {
+        console.warn('Profile table sync skipped:', err);
+      }
+    }
+
     function mapAuthError(err,mode){
       const msg = err?.message || 'Something went wrong';
       if(mode==='signup'){
@@ -777,7 +1056,7 @@
       const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
       setLoading(submit,false,'Log In');
       if(error){ const m = mapAuthError(error,'login'); showErr(m.id,m.text); return; }
-      window.location.replace('app.html');
+      window.location.replace('/app');
     });
 
     signupForm.addEventListener('submit', async (e)=>{
@@ -799,12 +1078,16 @@
       const { data, error } = await supabaseClient.auth.signUp({
         email,
         password,
-        options: { data: { full_name: name, name } }
+        options: {
+          data: { full_name: name, name, display_name: name },
+          emailRedirectTo: window.location.origin + '/app'
+        }
       });
       setLoading(submit,false,'Create Account');
       if(error){ const m = mapAuthError(error,'signup'); showErr(m.id,m.text); return; }
+      await syncSignupProfile(data?.user, name);
       if(data && data.session){
-        window.location.replace('app.html');
+        window.location.replace('/app');
         return;
       }
       showEmailVerificationScreen(email);
@@ -817,7 +1100,7 @@
       const submit = document.getElementById('resetSubmit');
       setLoading(submit,true,'Send Reset Link');
       const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
-        redirectTo: window.location.origin + '/index.html'
+        redirectTo: window.location.origin + '/'
       });
       setLoading(submit,false,'Send Reset Link');
       if(error){ const m = mapAuthError(error,'reset'); showErr(m.id,m.text); return; }
@@ -828,7 +1111,7 @@
       btn.addEventListener('click', async ()=>{
         await supabaseClient.auth.signInWithOAuth({
           provider:'google',
-          options:{ redirectTo: window.location.origin + '/app.html' }
+          options:{ redirectTo: window.location.origin + '/app' }
         });
       });
     });
@@ -838,7 +1121,7 @@
       await supabaseClient.auth.resend({
         type: 'signup',
         email: pendingVerifyEmail,
-        options: { emailRedirectTo: window.location.origin + '/app.html' }
+        options: { emailRedirectTo: window.location.origin + '/app' }
       });
       const sent = document.getElementById('resendSentMsg');
       sent.classList.add('show');
@@ -851,14 +1134,25 @@
 
     (async ()=>{
       const { data: { session } } = await supabaseClient.auth.getSession();
-      if(session) window.location.replace('app.html');
+      if(session) window.location.replace('/app');
     })();
 
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('/service-worker.js')
-          .then(reg => console.log('SW registered:', reg.scope))
-          .catch(err => console.log('SW failed:', err));
+          .then(reg => {
+            if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
+            reg.addEventListener('updatefound', () => {
+              const worker = reg.installing;
+              if (!worker) return;
+              worker.addEventListener('statechange', () => {
+                if (worker.state === 'installed' && navigator.serviceWorker.controller) {
+                  worker.postMessage({ type: 'SKIP_WAITING' });
+                }
+              });
+            });
+          })
+          .catch(err => console.warn('SW failed:', err));
       });
     }
     });
