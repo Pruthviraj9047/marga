@@ -916,7 +916,9 @@
     </div>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+  <!-- Supabase must load synchronously (no defer) so the auth check below
+       can safely call getSession() on DOMContentLoaded. -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
     window.addEventListener('DOMContentLoaded', () => {
     console.log(

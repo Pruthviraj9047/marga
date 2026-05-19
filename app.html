@@ -1534,9 +1534,33 @@
   </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+<!-- Supabase must load synchronously (no defer/async) so the auth init
+     script below can safely reference `supabase` on DOMContentLoaded. -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
+// ── Auth Initialization ───────────────────────────────────────────────────
+// IMPORTANT: The Supabase CDN script above loads synchronously (no defer)
+// so `supabase` is guaranteed to be available here at DOMContentLoaded.
+//
+// Race condition that was fixed:
+//   - Using `defer` on the CDN script caused it to load at the same time
+//     as DOMContentLoaded. If the CDN script hadn't finished yet, `supabase`
+//     was undefined, the init function silently crashed, getSession() was
+//     never called, and the page immediately redirected to /?auth=required.
+//
+// onAuthStateChange fix:
+//   - INITIAL_SESSION fires once on every page load even when the user IS
+//     authenticated. The old code did not guard against this causing a
+//     redirect loop on /app refresh. Now INITIAL_SESSION is routed through
+//     the same boot path as getSession(), not treated as a sign-out.
 window.addEventListener('DOMContentLoaded', async () => {
+  // Guard: if Supabase failed to load (network error), bail gracefully
+  if (typeof supabase === 'undefined') {
+    console.error('[Marga] Supabase SDK not loaded. Retrying in 1s...');
+    setTimeout(() => window.location.reload(), 1000);
+    return;
+  }
+
   const { createClient } = supabase;
   // Supabase anon key is safe to expose client-side.
   // Security is enforced via Row Level Security (RLS)
@@ -1557,15 +1581,26 @@ window.addEventListener('DOMContentLoaded', async () => {
     }
   );
   window._supabase = _sb;
-  let booted = false;
 
+  // Track boot state — prevent double-init from onAuthStateChange
+  let booted = false;
+  // Track if we have already performed the auth-required redirect this
+  // page load, to prevent double redirect if both getSession and
+  // onAuthStateChange fire a not-authenticated result.
+  let redirected = false;
+
+  // Boot the app UI once we have a confirmed valid session.
   async function bootWithSession(session) {
     if (!session?.user || booted) return;
     booted = true;
+    // Re-validate the session server-side (catches expired/revoked tokens)
     const { data: { user: freshUser }, error } = await _sb.auth.getUser();
     if (error || !freshUser) {
-      await _sb.auth.signOut();
-      window.location.replace('/?auth=expired');
+      if (!redirected) {
+        redirected = true;
+        await _sb.auth.signOut();
+        window.location.replace('/?auth=expired');
+      }
       return;
     }
     window._userSession = { ...session, user: freshUser };
@@ -1573,24 +1608,66 @@ window.addEventListener('DOMContentLoaded', async () => {
     window.dispatchEvent(new Event('marga-session-ready'));
   }
 
+  // ── Step 1: Restore session from localStorage synchronously ──────────
+  // getSession() reads the persisted session without a network round-trip.
+  // This is the primary check — if this returns a session, the user is
+  // authenticated and the app boots normally.
   const { data: { session }, error: sessionError } = await _sb.auth.getSession();
+
   if (sessionError || !session) {
-    window.location.replace('/?auth=required');
+    // No stored session found — user must log in.
+    if (!redirected) {
+      redirected = true;
+      window.location.replace('/?auth=required');
+    }
     return;
   }
+
+  // Valid session found — boot the app
   await bootWithSession(session);
 
-  _sb.auth.onAuthStateChange(async (event, session) => {
-    if (event === 'SIGNED_OUT' || !session) {
-      window.location.replace('/?auth=signed-out');
+  // ── Step 2: Subscribe to auth state changes ───────────────────────
+  // Handles: token refresh, sign-out from another tab, OAuth callbacks.
+  //
+  // Events we care about:
+  //   SIGNED_IN       — OAuth redirect or email confirm landed here
+  //   TOKEN_REFRESHED — Access token was silently refreshed
+  //   USER_UPDATED    — Profile data changed
+  //   SIGNED_OUT      — User signed out (or session expired server-side)
+  //   INITIAL_SESSION — Fires once on load with the persisted session
+  //                     (already handled above via getSession, safe to
+  //                     route through bootWithSession, NOT a sign-out).
+  _sb.auth.onAuthStateChange(async (event, newSession) => {
+    if (event === 'SIGNED_OUT') {
+      // Real sign-out: user clicked logout or session was revoked.
+      if (!redirected) {
+        redirected = true;
+        window.location.replace('/?auth=signed-out');
+      }
       return;
     }
-    window._userSession = { ...session, user: session.user };
-    window._userId = session.user.id;
-    if (event === 'TOKEN_REFRESHED' || event === 'USER_UPDATED') {
-      window.dispatchEvent(new CustomEvent('marga-auth-updated', { detail: { event, session } }));
+
+    if (!newSession) {
+      // No session in an event that should have one — treat as expired.
+      // Guard: don't redirect if we already booted successfully (avoids
+      // spurious redirects during token refresh edge cases).
+      if (!booted && !redirected) {
+        redirected = true;
+        window.location.replace('/?auth=required');
+      }
+      return;
     }
-    if (!booted) await bootWithSession(session);
+
+    // Update cached session data
+    window._userSession = { ...newSession, user: newSession.user };
+    window._userId = newSession.user?.id;
+
+    if (event === 'TOKEN_REFRESHED' || event === 'USER_UPDATED') {
+      window.dispatchEvent(new CustomEvent('marga-auth-updated', { detail: { event, session: newSession } }));
+    }
+
+    // Boot if not yet booted (handles OAuth redirect landing on /app)
+    if (!booted) await bootWithSession(newSession);
   });
 });
 </script>

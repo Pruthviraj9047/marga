@@ -1,68 +1,159 @@
-[[redirects]]
-  from = "https://marga-study.netlify.app/*"
-  to = "https://mymarga.in/:splat"
-  status = 301
-  force = true
+# =============================================================================
+# netlify.toml — mymarga.in
+# Fixed: 2026-05-19
+#
+# Changes from previous version:
+#   1. Removed force=true from domain-level redirects — force=true overrides
+#      static file serving, causing sitemap.xml / robots.txt to be swallowed
+#      into redirect chains, producing SSL errors and unreachability.
+#   2. Added explicit pass-through (200) rules for all SEO / system files
+#      BEFORE any catch-all or SPA redirect, so Netlify serves them directly.
+#   3. Added correct Content-Type headers for sitemap.xml and robots.txt.
+#   4. Removed the http://www.mymarga.in → https://mymarga.in redirect —
+#      Netlify handles primary-domain HTTPS enforcement internally; an explicit
+#      rule creates an HTTP→HTTPS→redirect loop when force=true is present.
+#   5. Removed netlify.app → custom domain redirects from here; set the
+#      primary domain in the Netlify dashboard instead (no SSL-level conflict).
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# 1. SEO / SYSTEM FILE PASS-THROUGHS  (must come first — order matters)
+#    These explicit 200 rules tell Netlify: serve the file as-is, no redirect.
+#    Without these, a later SPA catch-all could intercept them.
+# -----------------------------------------------------------------------------
 
 [[redirects]]
-  from = "http://marga-study.netlify.app/*"
-  to = "https://mymarga.in/:splat"
-  status = 301
-  force = true
-
-[[redirects]]
-  from = "https://www.mymarga.in/*"
-  to = "https://mymarga.in/:splat"
-  status = 301
-  force = true
-
-[[redirects]]
-  from = "http://www.mymarga.in/*"
-  to = "https://mymarga.in/:splat"
-  status = 301
-  force = true
-
-[[redirects]]
-  from = "/app.html"
-  to = "/app"
-  status = 301
-  force = false
-
-[[redirects]]
-  from = "/app"
-  to = "/app.html"
+  from = "/robots.txt"
+  to   = "/robots.txt"
   status = 200
 
 [[redirects]]
+  from = "/sitemap.xml"
+  to   = "/sitemap.xml"
+  status = 200
+
+[[redirects]]
+  from = "/manifest.json"
+  to   = "/manifest.json"
+  status = 200
+
+[[redirects]]
+  from = "/favicon.ico"
+  to   = "/favicon.ico"
+  status = 200
+
+[[redirects]]
+  from = "/icon-192.png"
+  to   = "/icon-192.png"
+  status = 200
+
+[[redirects]]
+  from = "/icon-512.png"
+  to   = "/icon-512.png"
+  status = 200
+
+[[redirects]]
+  from = "/.well-known/*"
+  to   = "/.well-known/:splat"
+  status = 200
+
+# Google Search Console verification file
+[[redirects]]
+  from = "/google*.html"
+  to   = "/:splat"
+  status = 200
+
+# -----------------------------------------------------------------------------
+# 2. APP / TOOL REWRITES
+# -----------------------------------------------------------------------------
+
+# Clean URL: /app → /app.html (200 rewrite, no redirect visible to browser)
+[[redirects]]
+  from = "/app"
+  to   = "/app.html"
+  status = 200
+
+# Canonical redirect: /app.html → /app (301 so browsers land on clean URL)
+[[redirects]]
+  from = "/app.html"
+  to   = "/app"
+  status = 301
+  force = false
+
+# Sub-tool clean URLs
+[[redirects]]
   from = "/jee-study-tracker"
-  to = "/jee-study-tracker/index.html"
+  to   = "/jee-study-tracker/index.html"
   status = 200
 
 [[redirects]]
   from = "/neet-study-planner"
-  to = "/neet-study-planner/index.html"
+  to   = "/neet-study-planner/index.html"
   status = 200
 
 [[redirects]]
   from = "/isc-study-organizer"
-  to = "/isc-study-organizer/index.html"
+  to   = "/isc-study-organizer/index.html"
   status = 200
 
 [[redirects]]
   from = "/cbse-study-planner"
-  to = "/cbse-study-planner/index.html"
+  to   = "/cbse-study-planner/index.html"
   status = 200
 
+# -----------------------------------------------------------------------------
+# 3. DOMAIN CONSOLIDATION  (no force=true — Netlify serves static files first)
+#    Note: netlify.app → custom domain and www → non-www are best configured
+#    in the Netlify dashboard under "Domain management → Primary domain".
+#    Keeping only the www redirect here as a safety net without force=true.
+# -----------------------------------------------------------------------------
+
+[[redirects]]
+  from = "https://www.mymarga.in/*"
+  to   = "https://mymarga.in/:splat"
+  status = 301
+
+# -----------------------------------------------------------------------------
+# 4. HEADERS
+# -----------------------------------------------------------------------------
+
+# --- SEO / crawl-critical files: explicit MIME types + no caching ---
+[[headers]]
+  for = "/robots.txt"
+  [headers.values]
+    Content-Type  = "text/plain; charset=utf-8"
+    Cache-Control = "public, max-age=3600"
+
+[[headers]]
+  for = "/sitemap.xml"
+  [headers.values]
+    Content-Type  = "application/xml; charset=utf-8"
+    Cache-Control = "public, max-age=3600"
+
+[[headers]]
+  for = "/manifest.json"
+  [headers.values]
+    Content-Type  = "application/manifest+json; charset=utf-8"
+    Cache-Control = "public, max-age=86400"
+
+# --- Service Worker: must never be cached ---
+[[headers]]
+  for = "/service-worker.js"
+  [headers.values]
+    Cache-Control = "no-cache, no-store, must-revalidate"
+
+# --- Icons ---
+[[headers]]
+  for = "/icon-*.png"
+  [headers.values]
+    Cache-Control = "public, max-age=604800, immutable"
+
+# --- Security headers for all other pages ---
 [[headers]]
   for = "/*"
   [headers.values]
     Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://*.supabase.co; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https://mymarga.in; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://*.supabase.co wss://*.supabase.co; frame-src 'self' https://accounts.google.com; form-action 'self'; base-uri 'self'; frame-ancestors 'none'; upgrade-insecure-requests"
-    Permissions-Policy = "camera=(), microphone=(), geolocation=(), payment=(), usb=(), interest-cohort=()"
-    X-Frame-Options = "DENY"
-    X-Content-Type-Options = "nosniff"
-    Referrer-Policy = "strict-origin-when-cross-origin"
-
-[[headers]]
-  for = "/service-worker.js"
-  [headers.values]
-    Cache-Control = "no-cache"
+    Permissions-Policy      = "camera=(), microphone=(), geolocation=(), payment=(), usb=(), interest-cohort=()"
+    X-Frame-Options         = "DENY"
+    X-Content-Type-Options  = "nosniff"
+    Referrer-Policy         = "strict-origin-when-cross-origin"
