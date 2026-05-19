@@ -357,6 +357,18 @@
     @media (max-width:768px){section{padding:3rem 1.25rem}.hero .container,.nav-inner{padding:0 1.25rem}.hero h1{font-size:2.4rem}.nav-actions .btn{padding:9px 12px;font-size:.82rem}.exam-grid{grid-template-columns:1fr}.cta-banner{padding:0 1.25rem 3rem}footer{padding:1.25rem}.foot-inner{flex-direction:column;align-items:flex-start}}
     @media (prefers-reduced-motion: reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
 
+    /* "Open App" smart button — matches .nav-links <a> styling */
+    .nav-links .nav-open-app{
+      background:none;border:none;cursor:pointer;padding:0;
+      font-family:inherit;font-size:.9rem;font-weight:700;
+      color:#8892B8;line-height:inherit;
+      transition:color .15s;
+    }
+    .nav-links .nav-open-app:hover{color:#EEF0FF}
+    .nav-links .nav-open-app:disabled{opacity:.5;cursor:default}
+
+
+
   </style>
 </head>
 <body>
@@ -400,7 +412,7 @@
         <a href="#features">Features</a>
         <a href="#exams">Exams</a>
         <a href="#faq">FAQ</a>
-        <a href="/app">Open App</a>
+        <button class="nav-open-app" id="navOpenAppBtn" data-label="Open App">Open App</button>
       </div>
       <div class="nav-actions">
         <button class="btn btn-ghost" data-open-auth="login">Log In</button>
@@ -725,7 +737,7 @@
         <a href="/neet-study-planner/">NEET study planner</a>
         <a href="/isc-study-organizer/">ISC study organizer</a>
         <a href="/cbse-study-planner/">CBSE study planner</a>
-        <a href="/app">Open app</a>
+        <button class="open-app-btn" data-label="Open app" style="background:none;border:none;color:#38E8C5;font-weight:800;cursor:pointer;font-family:inherit;font-size:inherit;padding:0">Open app</button>
       </div>
     </div>
   </section>
@@ -819,7 +831,9 @@
     </g>
   </g>
 </svg>
-        <h3>Welcome to Marga</h3>
+        <h3 id="authModalTitle">Welcome to Marga</h3>
+        <!-- Context message shown when user arrives from "Open App" or session expiry -->
+        <p id="authContextMsg" style="display:none;margin:.45rem 0 0;font-size:.82rem;color:#38E8C5;font-weight:600;line-height:1.4"></p>
       </div>
 
       <div class="tabs">
@@ -968,9 +982,15 @@
       btn.innerHTML = loading ? '<span class="spinner"></span>' : label;
     }
 
-    function openAuth(mode='signup'){
+    function openAuth(mode='signup', contextMsg=''){
       clearErrors();
       authOverlay.classList.add('open');
+      // Show optional context message (e.g. "Sign in to continue to your study dashboard")
+      const ctxEl = document.getElementById('authContextMsg');
+      if (ctxEl) {
+        ctxEl.textContent = contextMsg || '';
+        ctxEl.style.display = contextMsg ? 'block' : 'none';
+      }
       if(mode==='login') showLogin(); else showSignup();
     }
     function closeAuth(){ authOverlay.classList.remove('open'); }
@@ -1031,7 +1051,11 @@
     document.getElementById('resetBack').addEventListener('click', showLogin);
 
     document.querySelectorAll('[data-open-auth]').forEach(btn=>{
-      btn.addEventListener('click', ()=>openAuth(btn.getAttribute('data-open-auth')));
+      btn.addEventListener('click', ()=>{
+        // data-open-auth buttons (Log In / Sign Up) do not carry a next destination
+        // so they keep whatever authNextDestination is already set (default: '/app')
+        openAuth(btn.getAttribute('data-open-auth'));
+      });
     });
     authOverlay.addEventListener('click', (e)=>{ if(e.target===authOverlay) closeAuth(); });
     document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') closeAuth(); });
@@ -1058,7 +1082,8 @@
       const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
       setLoading(submit,false,'Log In');
       if(error){ const m = mapAuthError(error,'login'); showErr(m.id,m.text); return; }
-      window.location.replace('/app');
+      // Redirect to the stored destination (set by handleOpenApp or URL param)
+      window.location.replace(window._authNextDestination || '/app');
     });
 
     signupForm.addEventListener('submit', async (e)=>{
@@ -1089,7 +1114,8 @@
       if(error){ const m = mapAuthError(error,'signup'); showErr(m.id,m.text); return; }
       await syncSignupProfile(data?.user, name);
       if(data && data.session){
-        window.location.replace('/app');
+        // Redirect to the stored destination (set by handleOpenApp or URL param)
+        window.location.replace(window._authNextDestination || '/app');
         return;
       }
       showEmailVerificationScreen(email);
@@ -1134,6 +1160,56 @@
       document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 12);
     });
 
+    // ── Auth-Aware "Open App" handler ──────────────────────────────────
+    // Checks session before navigating — authenticated → /app, else → modal.
+    window._authNextDestination = '/app'; // Global: where to go after login
+
+    async function handleOpenApp(e) {
+      if (e) e.preventDefault();
+      const btn = e?.currentTarget;
+      const originalLabel = btn?.dataset.label || btn?.textContent || 'Open App';
+      if (btn) { btn.disabled = true; btn.textContent = '…'; }
+      try {
+        const { data: { session } } = await supabaseClient.auth.getSession();
+        if (session) { window.location.href = '/app'; return; }
+      } catch (_) {}
+      if (btn) { btn.disabled = false; btn.textContent = originalLabel; }
+      window._authNextDestination = '/app';
+      openAuth('login', 'Sign in to continue to your study dashboard');
+    }
+
+    // Wire up all "Open App" buttons
+    document.querySelectorAll('.nav-open-app, .open-app-btn').forEach(btn => {
+      btn.addEventListener('click', handleOpenApp);
+    });
+
+    // ── URL Param Handler ─────────────────────────────────────────────
+    // app.html redirects unauthenticated users to /?open=login&next=/app
+    // instead of /?auth=required. This reads those params and auto-opens
+    // the modal so the user sees the login UI, not a broken bounce.
+    (()=>{
+      const params = new URLSearchParams(window.location.search);
+      const openParam = params.get('open');    // 'login' | 'signup'
+      const nextParam = params.get('next');    // e.g. '/app'
+      const msgParam  = params.get('msg');     // 'expired' | 'signin'
+      if (openParam === 'login' || openParam === 'signup') {
+        // Store the destination so after login we go there, not homepage
+        if (nextParam) window._authNextDestination = nextParam;
+        // Clean up the URL so the browser Back button works correctly
+        const cleanUrl = window.location.origin + window.location.pathname;
+        history.replaceState({}, '', cleanUrl);
+        // Pick the appropriate context message
+        let ctxMsg = 'Sign in to continue to your study dashboard';
+        if (msgParam === 'expired') ctxMsg = 'Your session expired. Please sign in again.';
+        // Auto-open the modal
+        openAuth(openParam, ctxMsg);
+      }
+    })();
+
+    // ── Session Check (for authenticated users on homepage) ────────────
+    // If already logged in and visiting the homepage, redirect to /app.
+    // This runs AFTER the URL param handler so the modal isn't shown
+    // to already-authenticated users.
     (async ()=>{
       const { data: { session } } = await supabaseClient.auth.getSession();
       if(session) window.location.replace('/app');

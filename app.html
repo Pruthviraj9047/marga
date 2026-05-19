@@ -1534,33 +1534,109 @@
   </div>
 </div>
 
+<!-- ── Auth Boot Overlay ────────────────────────────────────────────────────────
+     Shown during BOOTING state while session is being restored from localStorage.
+     Hides with a fade-out when auth completes (AUTHENTICATED).
+     If unauthenticated, the page redirects before this overlay matters.
+     z-index 100000 ensures it sits above the sidebar, modals and welcome overlay. -->
+<div id="authBootOverlay"
+     role="status" aria-live="polite" aria-label="Checking session"
+     style="position:fixed;inset:0;z-index:100000;background:#0D0F1A;
+            display:flex;flex-direction:column;align-items:center;justify-content:center;
+            gap:1.5rem;font-family:'Plus Jakarta Sans',system-ui,sans-serif">
+  <!-- Marga logo -->
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 29.3 25"
+       style="width:52px;height:52px;animation:_bootPulse 2s ease-in-out infinite">
+    <path fill="#3ac1cc" d="M14.6,24.4h0c-.3,0-.5-.2-.6-.4-2.2-4.1-8.9-4.9-8.9-4.9-.2,0-.4-.1-.5-.3s-.2-.4-.1-.6l2.1-10.5c0-.3.4-.6.7-.6,5.8,0,8.5,3.7,8.6,3.8.2.3.2.8-.2,1-.3.2-.8.2-1-.2,0-.1-2.2-3-6.8-3.2l-1.8,9.2c1.8.3,6.3,1.4,8.7,4.6,1.2-1.5,4.2-4.4,8.7-4.7l-.7-4.4c0-.4.2-.8.6-.8.4,0,.8.2.8.6l.9,5.2c0,.2,0,.4-.1.6s-.3.3-.6.3c-5.7,0-8.9,4.9-9,5-.1.2-.4.3-.6.3h0z"/>
+    <path fill="#3ac1cc" d="M14.6,24.4c-.1,0-.2,0-.3,0-6-3.3-12.7-1.8-12.7-1.8-.2,0-.5,0-.7-.2-.2-.2-.2-.4-.2-.6l2.4-12.4c0-.4.4-.6.8-.6.4,0,.6.4.6.8l-2.2,11.4c2.2-.3,7.6-.7,12.7,2.1.3.2.5.6.3,1-.1.2-.4.4-.6.4h0z"/>
+    <path fill="#3ac1cc" d="M14.6,24.4c-.3,0-.5-.1-.6-.4-.2-.3,0-.8.3-1,5.1-2.8,10.4-2.4,12.7-2.1l-1.9-9.9c0-.4.2-.8.6-.8.4,0,.8.2.8.6l2.1,10.9c0,.2,0,.5-.2.6-.2.2-.4.2-.7.2,0,0-6.7-1.5-12.7,1.8-.1,0-.2,0-.3,0h0z"/>
+  </svg>
+  <div style="text-align:center">
+    <div style="color:#EEF0FF;font-size:1.05rem;font-weight:700;letter-spacing:-.02em">Marga</div>
+    <div id="authBootMsg" style="color:#8892B8;font-size:.875rem;margin-top:.35rem">Checking your session…</div>
+  </div>
+  <!-- Three-dot loading indicator -->
+  <div style="display:flex;gap:7px">
+    <div style="width:8px;height:8px;border-radius:50%;background:#6C63FF;animation:_bootDot 1.2s ease-in-out infinite"></div>
+    <div style="width:8px;height:8px;border-radius:50%;background:#6C63FF;animation:_bootDot 1.2s ease-in-out .2s infinite"></div>
+    <div style="width:8px;height:8px;border-radius:50%;background:#6C63FF;animation:_bootDot 1.2s ease-in-out .4s infinite"></div>
+  </div>
+  <style>
+    @keyframes _bootDot  { 0%,80%,100%{opacity:.2;transform:scale(.75)} 40%{opacity:1;transform:scale(1)} }
+    @keyframes _bootPulse{ 0%,100%{opacity:.6} 50%{opacity:1} }
+  </style>
+</div>
+
 <!-- Supabase must load synchronously (no defer/async) so the auth init
      script below can safely reference `supabase` on DOMContentLoaded. -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 // ── Auth Initialization ───────────────────────────────────────────────────
-// IMPORTANT: The Supabase CDN script above loads synchronously (no defer)
-// so `supabase` is guaranteed to be available here at DOMContentLoaded.
 //
-// Race condition that was fixed:
-//   - Using `defer` on the CDN script caused it to load at the same time
-//     as DOMContentLoaded. If the CDN script hadn't finished yet, `supabase`
-//     was undefined, the init function silently crashed, getSession() was
-//     never called, and the page immediately redirected to /?auth=required.
+// Auth state machine:
+//   BOOTING          → boot overlay visible, session check in progress
+//   AUTHENTICATED    → valid session, overlay hidden, app is usable
+//   UNAUTHENTICATED  → no session found, redirecting to login modal
+//   REDIRECTING      → redirect in progress (prevents double redirects)
 //
-// onAuthStateChange fix:
-//   - INITIAL_SESSION fires once on every page load even when the user IS
-//     authenticated. The old code did not guard against this causing a
-//     redirect loop on /app refresh. Now INITIAL_SESSION is routed through
-//     the same boot path as getSession(), not treated as a sign-out.
+// Key design decisions:
+//   - Supabase CDN loads synchronously (no defer) so the SDK is
+//     available at DOMContentLoaded without a race condition.
+//   - getSession() reads localStorage — no network round-trip needed.
+//   - Unauthenticated users are sent to /?open=login&next=/app which
+//     makes index.html auto-open the login modal. This replaces the old
+//     /?auth=required redirect that produced a confusing homepage bounce.
+//   - The boot overlay fades out after the app is ready, not before.
 window.addEventListener('DOMContentLoaded', async () => {
-  // Guard: if Supabase failed to load (network error), bail gracefully
+  // ── Auth State Enum ───────────────────────────────────────
+  const AUTH_STATE = {
+    BOOTING:         'BOOTING',
+    AUTHENTICATED:   'AUTHENTICATED',
+    UNAUTHENTICATED: 'UNAUTHENTICATED',
+    REDIRECTING:     'REDIRECTING'
+  };
+  let authState = AUTH_STATE.BOOTING;
+
+  // ── Boot Overlay Helpers ──────────────────────────────────
+  const bootOverlay = document.getElementById('authBootOverlay');
+  const bootMsg     = document.getElementById('authBootMsg');
+
+  function setBootMsg(msg) {
+    if (bootMsg) bootMsg.textContent = msg;
+  }
+
+  function hideBootOverlay() {
+    if (!bootOverlay) return;
+    // Fade out smoothly, then remove from DOM
+    bootOverlay.style.transition = 'opacity 0.35s ease';
+    bootOverlay.style.opacity = '0';
+    setTimeout(() => bootOverlay.remove(), 380);
+  }
+
+  // ── Redirect Helper ────────────────────────────────────────
+  // Replaces all direct /?auth=required calls.
+  // Sends the user to the homepage with URL params that tell index.html
+  // to auto-open the login modal AND remember /app as the destination.
+  let redirected = false;
+
+  function redirectToLogin(msgType) {
+    if (redirected) return;
+    redirected = true;
+    authState = AUTH_STATE.REDIRECTING;
+    const params = new URLSearchParams({ open: 'login', next: '/app' });
+    if (msgType) params.set('msg', msgType); // 'expired' shows different message
+    window.location.replace('/?' + params.toString());
+  }
+
+  // ── SDK Guard ──────────────────────────────────────────────
   if (typeof supabase === 'undefined') {
     console.error('[Marga] Supabase SDK not loaded. Retrying in 1s...');
+    setBootMsg('Loading…');
     setTimeout(() => window.location.reload(), 1000);
     return;
   }
 
+  // ── Client Init ─────────────────────────────────────────────
   const { createClient } = supabase;
   // Supabase anon key is safe to expose client-side.
   // Security is enforced via Row Level Security (RLS)
@@ -1582,91 +1658,80 @@ window.addEventListener('DOMContentLoaded', async () => {
   );
   window._supabase = _sb;
 
-  // Track boot state — prevent double-init from onAuthStateChange
   let booted = false;
-  // Track if we have already performed the auth-required redirect this
-  // page load, to prevent double redirect if both getSession and
-  // onAuthStateChange fire a not-authenticated result.
-  let redirected = false;
 
-  // Boot the app UI once we have a confirmed valid session.
+  // ── Boot: activate the app after confirming a valid session ─────────
   async function bootWithSession(session) {
     if (!session?.user || booted) return;
     booted = true;
-    // Re-validate the session server-side (catches expired/revoked tokens)
+    authState = AUTH_STATE.BOOTING; // still verifying server-side
+    setBootMsg('Restoring your session…');
+
+    // Re-validate server-side (catches expired / revoked tokens)
     const { data: { user: freshUser }, error } = await _sb.auth.getUser();
     if (error || !freshUser) {
-      if (!redirected) {
-        redirected = true;
-        await _sb.auth.signOut();
-        window.location.replace('/?auth=expired');
-      }
+      redirectToLogin('expired');
       return;
     }
+
+    // Session is valid — boot the app
     window._userSession = { ...session, user: freshUser };
     window._userId = freshUser.id;
+    authState = AUTH_STATE.AUTHENTICATED;
+    hideBootOverlay();                              // ← smooth fade-out
     window.dispatchEvent(new Event('marga-session-ready'));
   }
 
-  // ── Step 1: Restore session from localStorage synchronously ──────────
-  // getSession() reads the persisted session without a network round-trip.
-  // This is the primary check — if this returns a session, the user is
-  // authenticated and the app boots normally.
+  // ── Step 1: Restore session from localStorage (no network needed) ──
   const { data: { session }, error: sessionError } = await _sb.auth.getSession();
 
   if (sessionError || !session) {
-    // No stored session found — user must log in.
-    if (!redirected) {
-      redirected = true;
-      window.location.replace('/?auth=required');
-    }
+    authState = AUTH_STATE.UNAUTHENTICATED;
+    // Send user to homepage with modal auto-open — not a confusing bounce
+    redirectToLogin();
     return;
   }
 
-  // Valid session found — boot the app
+  // Valid persisted session found
   await bootWithSession(session);
 
-  // ── Step 2: Subscribe to auth state changes ───────────────────────
-  // Handles: token refresh, sign-out from another tab, OAuth callbacks.
-  //
-  // Events we care about:
-  //   SIGNED_IN       — OAuth redirect or email confirm landed here
-  //   TOKEN_REFRESHED — Access token was silently refreshed
-  //   USER_UPDATED    — Profile data changed
-  //   SIGNED_OUT      — User signed out (or session expired server-side)
-  //   INITIAL_SESSION — Fires once on load with the persisted session
-  //                     (already handled above via getSession, safe to
-  //                     route through bootWithSession, NOT a sign-out).
+  // ── Step 2: Subscribe to auth state changes ─────────────────────
+  // Events:
+  //   INITIAL_SESSION — fires on load with persisted session (handled above)
+  //   SIGNED_IN       — OAuth callback or email confirm landed on /app
+  //   TOKEN_REFRESHED — silent token refresh succeeded
+  //   USER_UPDATED    — profile/email changed
+  //   SIGNED_OUT      — user clicked Log Out OR server revoked session
   _sb.auth.onAuthStateChange(async (event, newSession) => {
     if (event === 'SIGNED_OUT') {
-      // Real sign-out: user clicked logout or session was revoked.
+      // Deliberate sign-out: go home without opening the modal
       if (!redirected) {
         redirected = true;
-        window.location.replace('/?auth=signed-out');
+        authState = AUTH_STATE.REDIRECTING;
+        window.location.replace('/');
       }
       return;
     }
 
     if (!newSession) {
-      // No session in an event that should have one — treat as expired.
-      // Guard: don't redirect if we already booted successfully (avoids
-      // spurious redirects during token refresh edge cases).
-      if (!booted && !redirected) {
-        redirected = true;
-        window.location.replace('/?auth=required');
-      }
+      // Unexpected missing session after a non-SIGNED_OUT event
+      // Only redirect if we haven't booted yet (avoids spurious redirects
+      // during token refresh edge cases)
+      if (!booted && !redirected) redirectToLogin();
       return;
     }
 
-    // Update cached session data
+    // Update cached session
     window._userSession = { ...newSession, user: newSession.user };
     window._userId = newSession.user?.id;
 
     if (event === 'TOKEN_REFRESHED' || event === 'USER_UPDATED') {
-      window.dispatchEvent(new CustomEvent('marga-auth-updated', { detail: { event, session: newSession } }));
+      window.dispatchEvent(new CustomEvent('marga-auth-updated', {
+        detail: { event, session: newSession }
+      }));
     }
 
-    // Boot if not yet booted (handles OAuth redirect landing on /app)
+    // Boot if not yet booted (handles OAuth landing on /app)
     if (!booted) await bootWithSession(newSession);
   });
 });
