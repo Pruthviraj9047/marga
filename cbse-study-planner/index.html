@@ -21,43 +21,84 @@
   <link rel="apple-touch-icon" sizes="192x192" href="/icon-192.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap">
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/seo-page.css">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/seo-page.css">
+  <link rel="stylesheet" href="/faq.css" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="/faq.css"></noscript>
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@graph": [
       {
-        "@context": "https://schema.org",
         "@type": "FAQPage",
+        "@id": "https://mymarga.in/cbse-study-planner#faq",
         "mainEntity": [
-          {
-            "@type": "Question",
-            "name": "Is Marga useful for CBSE students?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Yes. CBSE students can use Marga to track NCERT chapters, syllabus completion and revision progress."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "Can I use Marga for board exam revision?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Yes. Marga helps students see pending chapters, weak areas and chapters that need revision before exams."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "Does Marga support mobile study planning?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Yes. Marga is responsive and can be installed as a lightweight PWA."
-            }
-          }
+                {
+                        "@type": "Question",
+                        "name": "Can I track NCERT chapters with Marga?",
+                        "acceptedAnswer": {
+                                "@type": "Answer",
+                                "text": "Track NCERT chapters subject by subject—mark what you have studied, what is in progress and what is left. Marga keeps board syllabus coverage visible so daily study matches what will actually be tested."
+                        }
+                },
+                {
+                        "@type": "Question",
+                        "name": "Is Marga useful for CBSE board exams?",
+                        "acceptedAnswer": {
+                                "@type": "Answer",
+                                "text": "Marga supports CBSE board preparation for Class 11 and 12: monitor chapter completion, plan revision before pre-boards and spot weak units early. You get clarity on readiness instead of relying on memory alone."
+                        }
+                },
+                {
+                        "@type": "Question",
+                        "name": "Can I manage multiple CBSE subjects?",
+                        "acceptedAnswer": {
+                                "@type": "Answer",
+                                "text": "All CBSE subjects can live in one tracker with separate chapter lists and progress roll-ups. Balance time across Sciences, Mathematics, Languages and optional subjects without losing track of any one stream."
+                        }
+                },
+                {
+                        "@type": "Question",
+                        "name": "Does Marga work on mobile for CBSE students?",
+                        "acceptedAnswer": {
+                                "@type": "Answer",
+                                "text": "Yes. Update chapters on your phone after school, review pending work between periods and keep your study plan current without opening a laptop for every small check-in."
+                        }
+                },
+                {
+                        "@type": "Question",
+                        "name": "How does Marga help with CBSE revision?",
+                        "acceptedAnswer": {
+                                "@type": "Answer",
+                                "text": "Record revision rounds and confidence labels to prioritise chapters that need another pass before exams. Marga helps you run steady revision rather than rediscovering gaps a week before boards."
+                        }
+                },
+                {
+                        "@type": "Question",
+                        "name": "How does chapter completion tracking work?",
+                        "acceptedAnswer": {
+                                "@type": "Answer",
+                                "text": "Mark chapters complete as you finish NCERT and classroom coverage, and see subject-wise completion at a glance. That makes it obvious where to focus next week’s study hours."
+                        }
+                },
+                {
+                        "@type": "Question",
+                        "name": "How can I see my CBSE syllabus progress?",
+                        "acceptedAnswer": {
+                                "@type": "Answer",
+                                "text": "View syllabus progress by subject and chapter status together—useful for weekly planning and honest self-assessment before school tests or board exams."
+                        }
+                },
+                {
+                        "@type": "Question",
+                        "name": "Is the CBSE study planner free?",
+                        "acceptedAnswer": {
+                                "@type": "Answer",
+                                "text": "Yes. Marga’s CBSE chapter tracker and revision tools are free. Start organizing your syllabus in minutes."
+                        }
+                }
         ]
-      },
+},
       {
         "@type": "BreadcrumbList",
         "@id": "https://mymarga.in/cbse-study-planner#breadcrumb",
@@ -147,14 +188,110 @@
       </div>
     </section>
 
-    <section>
+    <section id="faq" class="faq-section" aria-labelledby="faq-heading">
       <div class="container">
-        <div class="section-head center"><h2>CBSE FAQ</h2></div>
-        <div class="faq">
-          <details><summary>Is Marga useful for CBSE students?</summary><p>Yes. CBSE students can track NCERT chapters, syllabus completion and revision progress.</p></details>
-          <details><summary>Can I use Marga for board exam revision?</summary><p>Yes. Marga helps students see pending chapters, weak areas and chapters that need revision before exams.</p></details>
-          <details><summary>Does Marga support mobile study planning?</summary><p>Yes. Marga is responsive and can be installed as a lightweight PWA.</p></details>
+        <div class="section-head center">
+          <h2 id="faq-heading">CBSE FAQ</h2>
+          <p>Answers about NCERT chapter tracking, board prep and syllabus progress.</p>
         </div>
+        <div class="faq-accordion" data-faq-accordion>
+        <article class="faq-item" id="faq-cbse-ncert">
+          <h3 class="faq-question">
+            <button type="button" class="faq-trigger" id="faq-cbse-ncert-trigger" aria-expanded="false" aria-controls="faq-cbse-ncert-panel">
+              <span class="faq-question-text">Can I track NCERT chapters with Marga?</span>
+              <span class="faq-icon" aria-hidden="true"></span>
+            </button>
+          </h3>
+          <div id="faq-cbse-ncert-panel" class="faq-panel" role="region" aria-labelledby="faq-cbse-ncert-trigger" hidden>
+            <div class="faq-panel-inner"><div class="faq-answer"><p>Track NCERT chapters subject by subject—mark what you have studied, what is in progress and what is left. Marga keeps board syllabus coverage visible so daily study matches what will actually be tested.</p></div></div>
+          </div>
+        </article>
+        <article class="faq-item" id="faq-cbse-boards">
+          <h3 class="faq-question">
+            <button type="button" class="faq-trigger" id="faq-cbse-boards-trigger" aria-expanded="false" aria-controls="faq-cbse-boards-panel">
+              <span class="faq-question-text">Is Marga useful for CBSE board exams?</span>
+              <span class="faq-icon" aria-hidden="true"></span>
+            </button>
+          </h3>
+          <div id="faq-cbse-boards-panel" class="faq-panel" role="region" aria-labelledby="faq-cbse-boards-trigger" hidden>
+            <div class="faq-panel-inner"><div class="faq-answer"><p>Marga supports CBSE board preparation for Class 11 and 12: monitor chapter completion, plan revision before pre-boards and spot weak units early. You get clarity on readiness instead of relying on memory alone.</p></div></div>
+          </div>
+        </article>
+        <article class="faq-item" id="faq-cbse-subjects">
+          <h3 class="faq-question">
+            <button type="button" class="faq-trigger" id="faq-cbse-subjects-trigger" aria-expanded="false" aria-controls="faq-cbse-subjects-panel">
+              <span class="faq-question-text">Can I manage multiple CBSE subjects?</span>
+              <span class="faq-icon" aria-hidden="true"></span>
+            </button>
+          </h3>
+          <div id="faq-cbse-subjects-panel" class="faq-panel" role="region" aria-labelledby="faq-cbse-subjects-trigger" hidden>
+            <div class="faq-panel-inner"><div class="faq-answer"><p>All CBSE subjects can live in one tracker with separate chapter lists and progress roll-ups. Balance time across Sciences, Mathematics, Languages and optional subjects without losing track of any one stream.</p></div></div>
+          </div>
+        </article>
+        <article class="faq-item" id="faq-cbse-mobile">
+          <h3 class="faq-question">
+            <button type="button" class="faq-trigger" id="faq-cbse-mobile-trigger" aria-expanded="false" aria-controls="faq-cbse-mobile-panel">
+              <span class="faq-question-text">Does Marga work on mobile for CBSE students?</span>
+              <span class="faq-icon" aria-hidden="true"></span>
+            </button>
+          </h3>
+          <div id="faq-cbse-mobile-panel" class="faq-panel" role="region" aria-labelledby="faq-cbse-mobile-trigger" hidden>
+            <div class="faq-panel-inner"><div class="faq-answer"><p>Yes. Update chapters on your phone after school, review pending work between periods and keep your study plan current without opening a laptop for every small check-in.</p></div></div>
+          </div>
+        </article>
+        <article class="faq-item" id="faq-cbse-revision">
+          <h3 class="faq-question">
+            <button type="button" class="faq-trigger" id="faq-cbse-revision-trigger" aria-expanded="false" aria-controls="faq-cbse-revision-panel">
+              <span class="faq-question-text">How does Marga help with CBSE revision?</span>
+              <span class="faq-icon" aria-hidden="true"></span>
+            </button>
+          </h3>
+          <div id="faq-cbse-revision-panel" class="faq-panel" role="region" aria-labelledby="faq-cbse-revision-trigger" hidden>
+            <div class="faq-panel-inner"><div class="faq-answer"><p>Record revision rounds and confidence labels to prioritise chapters that need another pass before exams. Marga helps you run steady revision rather than rediscovering gaps a week before boards.</p></div></div>
+          </div>
+        </article>
+        <article class="faq-item" id="faq-cbse-completion">
+          <h3 class="faq-question">
+            <button type="button" class="faq-trigger" id="faq-cbse-completion-trigger" aria-expanded="false" aria-controls="faq-cbse-completion-panel">
+              <span class="faq-question-text">How does chapter completion tracking work?</span>
+              <span class="faq-icon" aria-hidden="true"></span>
+            </button>
+          </h3>
+          <div id="faq-cbse-completion-panel" class="faq-panel" role="region" aria-labelledby="faq-cbse-completion-trigger" hidden>
+            <div class="faq-panel-inner"><div class="faq-answer"><p>Mark chapters complete as you finish NCERT and classroom coverage, and see subject-wise completion at a glance. That makes it obvious where to focus next week’s study hours.</p></div></div>
+          </div>
+        </article>
+        <article class="faq-item" id="faq-cbse-progress">
+          <h3 class="faq-question">
+            <button type="button" class="faq-trigger" id="faq-cbse-progress-trigger" aria-expanded="false" aria-controls="faq-cbse-progress-panel">
+              <span class="faq-question-text">How can I see my CBSE syllabus progress?</span>
+              <span class="faq-icon" aria-hidden="true"></span>
+            </button>
+          </h3>
+          <div id="faq-cbse-progress-panel" class="faq-panel" role="region" aria-labelledby="faq-cbse-progress-trigger" hidden>
+            <div class="faq-panel-inner"><div class="faq-answer"><p>View syllabus progress by subject and chapter status together—useful for weekly planning and honest self-assessment before school tests or board exams.</p></div></div>
+          </div>
+        </article>
+        <article class="faq-item" id="faq-cbse-free">
+          <h3 class="faq-question">
+            <button type="button" class="faq-trigger" id="faq-cbse-free-trigger" aria-expanded="false" aria-controls="faq-cbse-free-panel">
+              <span class="faq-question-text">Is the CBSE study planner free?</span>
+              <span class="faq-icon" aria-hidden="true"></span>
+            </button>
+          </h3>
+          <div id="faq-cbse-free-panel" class="faq-panel" role="region" aria-labelledby="faq-cbse-free-trigger" hidden>
+            <div class="faq-panel-inner"><div class="faq-answer"><p>Yes. Marga’s CBSE chapter tracker and revision tools are free. Start organizing your syllabus in minutes.</p></div></div>
+          </div>
+        </article>
+        </div>
+        <aside class="faq-cta" aria-label="Get started with Marga">
+          <h3>Ready to organize your studies?</h3>
+          <p>Track NCERT chapters, revision and board readiness without scattered notes.</p>
+          <div class="faq-cta-actions">
+            <a class="btn-faq-primary" href="/app">Open Marga</a>
+            <a class="btn-faq-secondary" href="/#features">See Features</a>
+          </div>
+        </aside>
       </div>
     </section>
   </main>
@@ -165,5 +302,6 @@
       <div class="link-row"><a class="chip" href="/">Home</a><a class="chip" href="/app">Open App</a><a class="chip" href="/isc-study-organizer/">ISC</a></div>
     </div>
   </footer>
+  <script src="/defer-faq.js" defer></script>
 </body>
 </html>

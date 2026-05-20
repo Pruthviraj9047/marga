@@ -1,20 +1,4 @@
 <!DOCTYPE html>
-
-<!--
-  ╔═══════════════════════════════════════════════════╗
-  ║                                                   ║
-  ║   MARGA — Study Chapter Tracker                   ║
-  ║   Built by Pruthviraj Arun                        ║
-  ║   © 2026 All rights reserved                      ║
-  ║                                                   ║
-  ║   This project was designed and developed         ║
-  ║   entirely by Pruthviraj Arun.                    ║
-  ║   Unauthorised copying or redistribution          ║
-  ║   is prohibited.                                  ║
-  ║                                                   ║
-  ╚═══════════════════════════════════════════════════╝
--->
-
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -48,8 +32,9 @@
   <link rel="shortcut icon" href="/favicon.ico">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap">
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/faq.css" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="/faq.css"></noscript>
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -121,56 +106,72 @@
         "@type": "FAQPage",
         "@id": "https://mymarga.in/#faq",
         "mainEntity": [
-          {
-            "@type": "Question",
-            "name": "Is Marga free?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Yes. Marga is free for students who want to track chapters, syllabus progress and revision."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "Can I use Marga offline?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Yes. Marga is built as a lightweight PWA with offline support for saved app assets."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "Is Marga useful for JEE preparation?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Yes. JEE aspirants can track Physics, Chemistry and Mathematics chapters, confidence levels, revision dates and syllabus completion."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "Does Marga work on mobile devices?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Yes. Marga is responsive and works on phones, tablets and desktops."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "Can ISC students use Marga?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Yes. ISC students can organize Class 11 and Class 12 chapters, monitor backlog and plan revision before boards."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "How does Marga help with revision planning?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Marga lets students record revision dates and confidence levels so weak or untouched chapters are easier to identify before exams."
-            }
-          }
+                {
+                        "@type": "Question",
+                        "name": "What is Marga?",
+                        "acceptedAnswer": {
+                                "@type": "Answer",
+                                "text": "Marga is a free study tracker built for Indian students preparing for JEE, NEET, ISC and CBSE. It turns your syllabus into chapters you can mark, revise and review on one screen—so you always know what is done, what is pending and what needs another pass before exams."
+                        }
+                },
+                {
+                        "@type": "Question",
+                        "name": "Is Marga free?",
+                        "acceptedAnswer": {
+                                "@type": "Answer",
+                                "text": "Yes. Marga is completely free for students. You can track chapters, monitor syllabus completion, plan revisions and view progress without paying for a subscription. Open the app, pick your exam path and start organizing your preparation in minutes."
+                        }
+                },
+                {
+                        "@type": "Question",
+                        "name": "Does Marga work offline?",
+                        "acceptedAnswer": {
+                                "@type": "Answer",
+                                "text": "Yes. Marga runs as a lightweight progressive web app. Once loaded, core study data stays available even when your connection drops—useful during travel, coaching or spotty Wi‑Fi. Install it on your home screen for quick access like a native app."
+                        }
+                },
+                {
+                        "@type": "Question",
+                        "name": "Does Marga work on mobile?",
+                        "acceptedAnswer": {
+                                "@type": "Answer",
+                                "text": "Yes. Marga is designed mobile-first. The interface works smoothly on phones and tablets, so you can update chapter status, check backlog and plan revision between classes or on the go—without needing a laptop every time."
+                        }
+                },
+                {
+                        "@type": "Question",
+                        "name": "How does chapter tracking work?",
+                        "acceptedAnswer": {
+                                "@type": "Answer",
+                                "text": "Add subjects and chapters from your syllabus, then mark each chapter as studied, in progress or not started. Marga surfaces completion percentages and pending work at a glance, so daily study decisions are clear instead of buried in notebooks or chat groups."
+                        }
+                },
+                {
+                        "@type": "Question",
+                        "name": "Which exams does Marga support?",
+                        "acceptedAnswer": {
+                                "@type": "Answer",
+                                "text": "Marga supports JEE (Main and Advanced), NEET, ISC (Class 11 and 12) and CBSE board preparation. Each path is organized by subject and chapter, so you can focus on the syllabus structure that matches your exam—not a generic to-do list."
+                        }
+                },
+                {
+                        "@type": "Question",
+                        "name": "Can I track revisions in Marga?",
+                        "acceptedAnswer": {
+                                "@type": "Answer",
+                                "text": "Yes. Record when you last revised a chapter and set confidence levels to flag weak or untouched topics. Marga makes gaps visible early, so revision cycles stay planned instead of rushed in the final weeks before mocks or boards."
+                        }
+                },
+                {
+                        "@type": "Question",
+                        "name": "Do I need to sign in to use Marga?",
+                        "acceptedAnswer": {
+                                "@type": "Answer",
+                                "text": "You can explore Marga without an account, but signing in syncs your progress securely across devices. That way your chapter tracker, revision notes and syllabus view stay intact when you switch from phone to desktop or return after a break."
+                        }
+                }
         ]
-      }
+}
     ]
   }
   </script>
@@ -195,8 +196,9 @@
 
     *{box-sizing:border-box;margin:0;padding:0}
     *:focus-visible{outline:3px solid rgba(56,232,197,0.85);outline-offset:3px}
-    html{scroll-behavior:smooth}
-    body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg-body);color:var(--text-main);min-height:100vh}
+    html{scroll-behavior:smooth;overflow-x:hidden}
+    body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg-body);color:var(--text-main);min-height:100vh;overflow-x:hidden}
+    main{width:100%;box-sizing:border-box}
     .skip-link{position:fixed;top:0;left:1rem;z-index:100000;transform:translateY(-120%);background:#6C63FF;color:#fff;padding:.75rem 1rem;border-radius:0 0 10px 10px;font-weight:800}
     .skip-link:focus{transform:translateY(0)}
     .marga-logo-img{display:inline-block;vertical-align:middle;flex-shrink:0}
@@ -209,12 +211,20 @@
     ::-webkit-scrollbar-thumb{background:#252A45;border-radius:99px}
     ::-webkit-scrollbar-thumb:hover{background:#374060}
 
-    .container{max-width:1100px;margin:0 auto;width:100%}
-    section{padding:5rem 2rem}
+    .container,
+    .nav-inner,
+    .foot-inner{
+      width:100%;
+      max-width:1200px;
+      margin-inline:auto;
+      padding-inline:clamp(16px,4vw,32px);
+      box-sizing:border-box;
+    }
+    section{padding-block:5rem;padding-inline:0}
 
     .navbar{position:fixed;top:0;left:0;right:0;z-index:40;background:rgba(13,15,26,0.88);backdrop-filter:blur(20px);border-bottom:1px solid transparent;transition:border-color .2s ease,box-shadow .2s ease}
     .navbar.scrolled{border-color:rgba(108,99,255,0.3);box-shadow:0 6px 24px rgba(0,0,0,0.25)}
-    .nav-inner{max-width:1100px;margin:0 auto;padding:0.9rem 2rem;display:flex;justify-content:space-between;align-items:center;gap:1rem}
+    .nav-inner{padding-block:0.9rem;display:flex;justify-content:space-between;align-items:center;gap:1rem}
     .brand{display:flex;align-items:center;gap:.65rem;font-weight:800;font-size:1.2rem;color:#EEF0FF}
     .book-logo{width:36px;height:36px;flex-shrink:0}
 
@@ -228,7 +238,7 @@
     .btn-primary:hover{transform:translateY(-1px)}
 
     .hero{min-height:100vh;display:flex;align-items:center;background:radial-gradient(ellipse at 30% 50%,rgba(108,99,255,0.18) 0%,transparent 60%),radial-gradient(ellipse at 75% 30%,rgba(93,222,203,0.1) 0%,transparent 50%),#0D0F1A;position:relative;overflow:hidden;padding-top:6rem}
-    .hero .container{padding:0 2rem;position:relative;z-index:2}
+    .hero .container{position:relative;z-index:2}
     .hero-content{text-align:center;max-width:850px;margin:0 auto}
     .hero h1{font-size:4rem;line-height:1.08;letter-spacing:-.03em}
     .hero h1 span:first-child{color:#EEF0FF}
@@ -289,10 +299,6 @@
     .benefit{background:#101321;border:1px solid #252A45;border-radius:16px;padding:1.25rem}
     .benefit h3{font-size:1rem;margin-bottom:.45rem;color:#EEF0FF}
     .benefit p{color:#8892B8;line-height:1.65;font-size:.92rem}
-    .faq-list{display:grid;gap:.8rem;max-width:850px;margin:0 auto}
-    .faq-list details{background:#141727;border:1px solid #252A45;border-radius:14px;padding:1rem 1.1rem}
-    .faq-list summary{cursor:pointer;font-weight:800;color:#EEF0FF}
-    .faq-list p{color:#8892B8;line-height:1.65;margin-top:.7rem}
     .resource-links{display:flex;flex-wrap:wrap;justify-content:center;gap:.7rem;margin-top:1.3rem}
     .resource-links a{border:1px solid #252A45;border-radius:999px;padding:8px 14px;color:#8892B8;background:#141727;font-weight:700;font-size:.88rem}
     .resource-links a:hover{border-color:#38E8C5;color:#EEF0FF}
@@ -304,14 +310,14 @@
     .step-no{width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:rgba(108,99,255,0.15);color:#6C63FF;font-size:1.5rem;font-weight:800;margin-bottom:.8rem;box-shadow:0 4px 20px rgba(108,99,255,0.35)}
     .step h3{margin-bottom:.35rem}.step p{color:#8892B8;font-size:.92rem;line-height:1.55}
 
-    .cta-banner{padding:0 2rem 5rem}
-    .cta-inner{max-width:1100px;margin:0 auto;background:linear-gradient(135deg, #2D2575 0%, #0D0F1A 40%, #0D0F1A 100%);border:1px solid rgba(108,99,255,0.2);border-radius:24px;padding:4rem 2rem;text-align:center;box-shadow:inset 0 1px 0 rgba(108,99,255,0.2),0 0 80px rgba(108,99,255,0.08)}
+    .cta-banner{padding-block:0 5rem;padding-inline:clamp(16px,4vw,32px);box-sizing:border-box}
+    .cta-inner{width:100%;max-width:1200px;margin-inline:auto;background:linear-gradient(135deg, #2D2575 0%, #0D0F1A 40%, #0D0F1A 100%);border:1px solid rgba(108,99,255,0.2);border-radius:24px;padding:4rem clamp(20px,4vw,32px);text-align:center;box-shadow:inset 0 1px 0 rgba(108,99,255,0.2),0 0 80px rgba(108,99,255,0.08);box-sizing:border-box}
     .cta-inner h2{font-size:2rem;background:linear-gradient(135deg,#EEF0FF,#9B8FFF);-webkit-background-clip:text;background-clip:text;color:transparent}
     .cta-inner p{margin:.5rem 0 1.4rem;color:#8892B8}
     .btn-white{background:linear-gradient(135deg,#6C63FF,#38E8C5);color:#0D0F1A;font-weight:800}
 
-    footer{background:#0D0F1A;border-top:1px solid #252A45;padding:1.5rem 2rem;color:#8892B8;font-size:.85rem}
-    .foot-inner{max-width:1100px;margin:0 auto;display:flex;justify-content:space-between;gap:1rem;align-items:center}
+    footer{background:#0D0F1A;border-top:1px solid #252A45;padding-block:1.5rem;padding-inline:0;color:#8892B8;font-size:.85rem}
+    .foot-inner{display:flex;justify-content:space-between;gap:1rem;align-items:center}
     .foot-brand{display:flex;align-items:center;gap:.5rem}
     .heart-gold{color:#F0C040}
 
@@ -354,7 +360,17 @@
     @media (max-width:1000px){.exam-grid{grid-template-columns:repeat(2,1fr)}}
     @media (max-width:900px){.feature-grid,.steps,.benefit-grid{grid-template-columns:1fr}.steps::before{display:none}.nav-links{display:none}}
     @media(max-width:768px){.hero-mockup{display:none}}
-    @media (max-width:768px){section{padding:3rem 1.25rem}.hero .container,.nav-inner{padding:0 1.25rem}.hero h1{font-size:2.4rem}.nav-actions .btn{padding:9px 12px;font-size:.82rem}.exam-grid{grid-template-columns:1fr}.cta-banner{padding:0 1.25rem 3rem}footer{padding:1.25rem}.foot-inner{flex-direction:column;align-items:flex-start}}
+    @media (max-width:768px){
+      section{padding-block:3rem}
+      .container,.nav-inner,.foot-inner,.cta-banner{padding-inline:16px}
+      .cta-inner{padding-inline:20px}
+      .hero h1{font-size:2.4rem}
+      .nav-actions .btn{padding:9px 12px;font-size:.82rem}
+      .exam-grid{grid-template-columns:1fr}
+      .cta-banner{padding-block:0 3rem}
+      footer{padding-block:1.25rem}
+      .foot-inner{flex-direction:column;align-items:flex-start}
+    }
     @media (prefers-reduced-motion: reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
 
     /* "Open App" smart button — matches .nav-links <a> styling */
@@ -700,44 +716,116 @@
     </div>
   </section>
 
-  <section id="faq">
+  <section id="faq" class="faq-section" aria-labelledby="faq-heading">
     <div class="container">
       <div class="section-head">
-        <h2>Frequently asked questions</h2>
-        <p>Quick answers for students comparing study trackers, revision planners and exam preparation tools.</p>
+        <h2 id="faq-heading">Frequently asked questions</h2>
+        <p>Clear answers about Marga’s chapter tracker, revision planning and exam support—so you can decide with confidence.</p>
       </div>
-      <div class="faq-list">
-        <details>
-          <summary>Is Marga free?</summary>
-          <p>Yes. Marga is free for students who want to track chapters, syllabus progress and revision.</p>
-        </details>
-        <details>
-          <summary>Can I use Marga offline?</summary>
-          <p>Yes. Marga is built as a lightweight PWA with offline support for saved app assets.</p>
-        </details>
-        <details>
-          <summary>Is Marga useful for JEE preparation?</summary>
-          <p>Yes. JEE aspirants can track Physics, Chemistry and Mathematics chapters, confidence levels, revision dates and syllabus completion.</p>
-        </details>
-        <details>
-          <summary>Does Marga work on mobile devices?</summary>
-          <p>Yes. Marga is responsive and works on phones, tablets and desktops.</p>
-        </details>
-        <details>
-          <summary>Can ISC students use Marga?</summary>
-          <p>Yes. ISC students can organize Class 11 and Class 12 chapters, monitor backlog and plan revision before boards.</p>
-        </details>
-        <details>
-          <summary>How does Marga help with revision planning?</summary>
-          <p>Marga lets students record revision dates and confidence levels so weak or untouched chapters are easier to identify before exams.</p>
-        </details>
+      <div class="faq-accordion" data-faq-accordion>
+        <article class="faq-item" id="faq-what-is-marga">
+          <h3 class="faq-question">
+            <button type="button" class="faq-trigger" id="faq-what-is-marga-trigger" aria-expanded="false" aria-controls="faq-what-is-marga-panel">
+              <span class="faq-question-text">What is Marga?</span>
+              <span class="faq-icon" aria-hidden="true"></span>
+            </button>
+          </h3>
+          <div id="faq-what-is-marga-panel" class="faq-panel" role="region" aria-labelledby="faq-what-is-marga-trigger" hidden>
+            <div class="faq-panel-inner"><div class="faq-answer"><p>Marga is a free study tracker built for Indian students preparing for JEE, NEET, ISC and CBSE. It turns your syllabus into chapters you can mark, revise and review on one screen—so you always know what is done, what is pending and what needs another pass before exams.</p></div></div>
+          </div>
+        </article>
+        <article class="faq-item" id="faq-is-marga-free">
+          <h3 class="faq-question">
+            <button type="button" class="faq-trigger" id="faq-is-marga-free-trigger" aria-expanded="false" aria-controls="faq-is-marga-free-panel">
+              <span class="faq-question-text">Is Marga free?</span>
+              <span class="faq-icon" aria-hidden="true"></span>
+            </button>
+          </h3>
+          <div id="faq-is-marga-free-panel" class="faq-panel" role="region" aria-labelledby="faq-is-marga-free-trigger" hidden>
+            <div class="faq-panel-inner"><div class="faq-answer"><p>Yes. Marga is completely free for students. You can track chapters, monitor syllabus completion, plan revisions and view progress without paying for a subscription. Open the app, pick your exam path and start organizing your preparation in minutes.</p></div></div>
+          </div>
+        </article>
+        <article class="faq-item" id="faq-offline">
+          <h3 class="faq-question">
+            <button type="button" class="faq-trigger" id="faq-offline-trigger" aria-expanded="false" aria-controls="faq-offline-panel">
+              <span class="faq-question-text">Does Marga work offline?</span>
+              <span class="faq-icon" aria-hidden="true"></span>
+            </button>
+          </h3>
+          <div id="faq-offline-panel" class="faq-panel" role="region" aria-labelledby="faq-offline-trigger" hidden>
+            <div class="faq-panel-inner"><div class="faq-answer"><p>Yes. Marga runs as a lightweight progressive web app. Once loaded, core study data stays available even when your connection drops—useful during travel, coaching or spotty Wi‑Fi. Install it on your home screen for quick access like a native app.</p></div></div>
+          </div>
+        </article>
+        <article class="faq-item" id="faq-mobile">
+          <h3 class="faq-question">
+            <button type="button" class="faq-trigger" id="faq-mobile-trigger" aria-expanded="false" aria-controls="faq-mobile-panel">
+              <span class="faq-question-text">Does Marga work on mobile?</span>
+              <span class="faq-icon" aria-hidden="true"></span>
+            </button>
+          </h3>
+          <div id="faq-mobile-panel" class="faq-panel" role="region" aria-labelledby="faq-mobile-trigger" hidden>
+            <div class="faq-panel-inner"><div class="faq-answer"><p>Yes. Marga is designed mobile-first. The interface works smoothly on phones and tablets, so you can update chapter status, check backlog and plan revision between classes or on the go—without needing a laptop every time.</p></div></div>
+          </div>
+        </article>
+        <article class="faq-item" id="faq-chapter-tracking">
+          <h3 class="faq-question">
+            <button type="button" class="faq-trigger" id="faq-chapter-tracking-trigger" aria-expanded="false" aria-controls="faq-chapter-tracking-panel">
+              <span class="faq-question-text">How does chapter tracking work?</span>
+              <span class="faq-icon" aria-hidden="true"></span>
+            </button>
+          </h3>
+          <div id="faq-chapter-tracking-panel" class="faq-panel" role="region" aria-labelledby="faq-chapter-tracking-trigger" hidden>
+            <div class="faq-panel-inner"><div class="faq-answer"><p>Add subjects and chapters from your syllabus, then mark each chapter as studied, in progress or not started. Marga surfaces completion percentages and pending work at a glance, so daily study decisions are clear instead of buried in notebooks or chat groups.</p></div></div>
+          </div>
+        </article>
+        <article class="faq-item" id="faq-exams-supported">
+          <h3 class="faq-question">
+            <button type="button" class="faq-trigger" id="faq-exams-supported-trigger" aria-expanded="false" aria-controls="faq-exams-supported-panel">
+              <span class="faq-question-text">Which exams does Marga support?</span>
+              <span class="faq-icon" aria-hidden="true"></span>
+            </button>
+          </h3>
+          <div id="faq-exams-supported-panel" class="faq-panel" role="region" aria-labelledby="faq-exams-supported-trigger" hidden>
+            <div class="faq-panel-inner"><div class="faq-answer"><p>Marga supports JEE (Main and Advanced), NEET, ISC (Class 11 and 12) and CBSE board preparation. Each path is organized by subject and chapter, so you can focus on the syllabus structure that matches your exam—not a generic to-do list.</p></div></div>
+          </div>
+        </article>
+        <article class="faq-item" id="faq-revisions">
+          <h3 class="faq-question">
+            <button type="button" class="faq-trigger" id="faq-revisions-trigger" aria-expanded="false" aria-controls="faq-revisions-panel">
+              <span class="faq-question-text">Can I track revisions in Marga?</span>
+              <span class="faq-icon" aria-hidden="true"></span>
+            </button>
+          </h3>
+          <div id="faq-revisions-panel" class="faq-panel" role="region" aria-labelledby="faq-revisions-trigger" hidden>
+            <div class="faq-panel-inner"><div class="faq-answer"><p>Yes. Record when you last revised a chapter and set confidence levels to flag weak or untouched topics. Marga makes gaps visible early, so revision cycles stay planned instead of rushed in the final weeks before mocks or boards.</p></div></div>
+          </div>
+        </article>
+        <article class="faq-item" id="faq-sign-in">
+          <h3 class="faq-question">
+            <button type="button" class="faq-trigger" id="faq-sign-in-trigger" aria-expanded="false" aria-controls="faq-sign-in-panel">
+              <span class="faq-question-text">Do I need to sign in to use Marga?</span>
+              <span class="faq-icon" aria-hidden="true"></span>
+            </button>
+          </h3>
+          <div id="faq-sign-in-panel" class="faq-panel" role="region" aria-labelledby="faq-sign-in-trigger" hidden>
+            <div class="faq-panel-inner"><div class="faq-answer"><p>You can explore Marga without an account, but signing in syncs your progress securely across devices. That way your chapter tracker, revision notes and syllabus view stay intact when you switch from phone to desktop or return after a break.</p></div></div>
+          </div>
+        </article>
       </div>
+      <aside class="faq-cta" aria-label="Get started with Marga">
+        <h3>Ready to organize your studies?</h3>
+        <p>Join students using Marga to track chapters, plan revision and stay ahead of JEE, NEET, ISC and CBSE syllabi.</p>
+        <div class="faq-cta-actions">
+          <button type="button" class="btn-faq-primary open-app-btn" data-label="Open Marga">Open Marga</button>
+          <a class="btn-faq-secondary" href="#features">See Features</a>
+        </div>
+      </aside>
       <div class="resource-links">
         <a href="/jee-study-tracker/">JEE study tracker</a>
         <a href="/neet-study-planner/">NEET study planner</a>
         <a href="/isc-study-organizer/">ISC study organizer</a>
         <a href="/cbse-study-planner/">CBSE study planner</a>
-        <button class="open-app-btn" data-label="Open app" style="background:none;border:none;color:#38E8C5;font-weight:800;cursor:pointer;font-family:inherit;font-size:inherit;padding:0">Open app</button>
+        <button type="button" class="open-app-btn" data-label="Open app" style="background:none;border:none;color:#38E8C5;font-weight:800;cursor:pointer;font-family:inherit;font-size:inherit;padding:0">Open app</button>
       </div>
     </div>
   </section>
@@ -930,310 +1018,6 @@
     </div>
   </div>
 
-  <!-- Supabase must load synchronously (no defer) so the auth check below
-       can safely call getSession() on DOMContentLoaded. -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script>
-    window.addEventListener('DOMContentLoaded', () => {
-    console.log(
-    '%c Marga %c Built by Pruthviraj Arun ',
-    'background:#6C63FF;color:white;padding:4px 8px;border-radius:4px 0 0 4px;font-weight:800;font-size:13px',
-    'background:#38E8C5;color:#0D0F1A;padding:4px 8px;border-radius:0 4px 4px 0;font-weight:700;font-size:13px'
-    );
-    console.log('%c© 2026 Pruthviraj Arun. All rights reserved.', 'color:#8892B8;font-size:11px');
-    const { createClient } = supabase;
-    const supabaseClient = createClient(
-      'https://wnzayybdjqlaenrecwtm.supabase.co',
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InduemF5eWJkanFsYWVucmVjd3RtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQwOTIwNzAsImV4cCI6MjA4OTY2ODA3MH0.39YjkW-UGymqPN4f8rTWO68r5skqZ__FbGK3HFuDXeI',
-      {
-        auth: {
-          persistSession: true,
-          autoRefreshToken: true,
-          detectSessionInUrl: true,
-          flowType: 'pkce',
-          storageKey: 'marga-supabase-auth',
-          storage: window.localStorage
-        }
-      }
-    );
-
-    const authOverlay = document.getElementById('authOverlay');
-    const tabLogin = document.getElementById('tabLogin');
-    const tabSignup = document.getElementById('tabSignup');
-    const loginForm = document.getElementById('loginForm');
-    const signupForm = document.getElementById('signupForm');
-    const resetForm = document.getElementById('resetForm');
-    const verifyScreen = document.getElementById('verifyScreen');
-    let pendingVerifyEmail = '';
-
-    const errIds = [
-      'loginEmailErr','loginPasswordErr','signupNameErr','signupEmailErr','signupPasswordErr','signupConfirmErr','resetEmailErr'
-    ];
-
-    function clearErrors(){
-      errIds.forEach(id=>{ const el=document.getElementById(id); if(el){el.textContent='';el.style.display='none';}});
-      const ok = document.getElementById('resetOk'); if (ok) ok.style.display = 'none';
-    }
-    function showErr(id,msg){ const el=document.getElementById(id); if(!el) return; el.textContent=msg; el.style.display='block'; }
-
-    function setLoading(btn,loading,label){
-      if(!btn) return;
-      btn.disabled = loading;
-      btn.innerHTML = loading ? '<span class="spinner"></span>' : label;
-    }
-
-    function openAuth(mode='signup', contextMsg=''){
-      clearErrors();
-      authOverlay.classList.add('open');
-      // Show optional context message (e.g. "Sign in to continue to your study dashboard")
-      const ctxEl = document.getElementById('authContextMsg');
-      if (ctxEl) {
-        ctxEl.textContent = contextMsg || '';
-        ctxEl.style.display = contextMsg ? 'block' : 'none';
-      }
-      if(mode==='login') showLogin(); else showSignup();
-    }
-    function closeAuth(){ authOverlay.classList.remove('open'); }
-
-    function showLogin(){
-      tabLogin.classList.add('active'); tabSignup.classList.remove('active');
-      loginForm.style.display='block'; signupForm.style.display='none'; resetForm.style.display='none'; verifyScreen.style.display='none';
-    }
-    function showSignup(){
-      tabSignup.classList.add('active'); tabLogin.classList.remove('active');
-      signupForm.style.display='block'; loginForm.style.display='none'; resetForm.style.display='none'; verifyScreen.style.display='none';
-    }
-    function showReset(){ clearErrors(); resetForm.style.display='block'; loginForm.style.display='none'; signupForm.style.display='none'; verifyScreen.style.display='none'; tabLogin.classList.remove('active'); tabSignup.classList.remove('active'); }
-
-    function showEmailVerificationScreen(email){
-      pendingVerifyEmail = email;
-      tabLogin.classList.remove('active');
-      tabSignup.classList.remove('active');
-      loginForm.style.display='none';
-      signupForm.style.display='none';
-      resetForm.style.display='none';
-      verifyScreen.style.display='block';
-      document.getElementById('verifyEmailText').textContent = email;
-      document.getElementById('resendSentMsg').classList.remove('show');
-    }
-
-    async function syncSignupProfile(user, displayName){
-      if (!user || !displayName) return;
-      try {
-        await supabaseClient.from('profiles').upsert({
-          id: user.id,
-          email: user.email,
-          display_name: displayName,
-          full_name: displayName,
-          updated_at: new Date().toISOString()
-        }, { onConflict: 'id' });
-      } catch (err) {
-        console.warn('Profile table sync skipped:', err);
-      }
-    }
-
-    function mapAuthError(err,mode){
-      const msg = err?.message || 'Something went wrong';
-      if(mode==='signup'){
-        if(/already registered|already been registered|already in use/i.test(msg)) return { id:'signupEmailErr', text:'Email already in use' };
-        return { id:'signupEmailErr', text:msg };
-      }
-      if(mode==='login'){
-        if(/invalid login credentials|invalid email or password/i.test(msg)) return { id:'loginPasswordErr', text:'Invalid email or password' };
-        return { id:'loginPasswordErr', text:msg };
-      }
-      return { id:'resetEmailErr', text:msg };
-    }
-
-    tabLogin.addEventListener('click', showLogin);
-    tabSignup.addEventListener('click', showSignup);
-    document.getElementById('forgotBtn').addEventListener('click', showReset);
-    document.getElementById('resetBack').addEventListener('click', showLogin);
-
-    document.querySelectorAll('[data-open-auth]').forEach(btn=>{
-      btn.addEventListener('click', ()=>{
-        // data-open-auth buttons (Log In / Sign Up) do not carry a next destination
-        // so they keep whatever authNextDestination is already set (default: '/app')
-        openAuth(btn.getAttribute('data-open-auth'));
-      });
-    });
-    authOverlay.addEventListener('click', (e)=>{ if(e.target===authOverlay) closeAuth(); });
-    document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') closeAuth(); });
-
-    document.querySelectorAll('[data-toggle-pass]').forEach(btn=>{
-      btn.addEventListener('click', ()=>{
-        const input = document.getElementById(btn.getAttribute('data-toggle-pass'));
-        if(!input) return;
-        input.type = input.type === 'password' ? 'text' : 'password';
-      });
-    });
-
-    loginForm.addEventListener('submit', async (e)=>{
-      e.preventDefault(); clearErrors();
-      const email = document.getElementById('loginEmail').value.trim();
-      const password = document.getElementById('loginPassword').value;
-      if(!email || !password){
-        if(!email) showErr('loginEmailErr','Please fill in all fields');
-        if(!password) showErr('loginPasswordErr','Please fill in all fields');
-        return;
-      }
-      const submit = document.getElementById('loginSubmit');
-      setLoading(submit,true,'Log In');
-      const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
-      setLoading(submit,false,'Log In');
-      if(error){ const m = mapAuthError(error,'login'); showErr(m.id,m.text); return; }
-      // Redirect to the stored destination (set by handleOpenApp or URL param)
-      window.location.replace(window._authNextDestination || '/app');
-    });
-
-    signupForm.addEventListener('submit', async (e)=>{
-      e.preventDefault(); clearErrors();
-      const name = document.getElementById('signupName').value.trim();
-      const email = document.getElementById('signupEmail').value.trim();
-      const password = document.getElementById('signupPassword').value;
-      const confirmPassword = document.getElementById('signupConfirm').value;
-      if(!name || !email || !password || !confirmPassword){
-        if(!name) showErr('signupNameErr','Please fill in all fields');
-        if(!email) showErr('signupEmailErr','Please fill in all fields');
-        if(!password) showErr('signupPasswordErr','Please fill in all fields');
-        if(!confirmPassword) showErr('signupConfirmErr','Please fill in all fields');
-        return;
-      }
-      if(password !== confirmPassword){ showErr('signupConfirmErr','Passwords do not match'); return; }
-      const submit = document.getElementById('signupSubmit');
-      setLoading(submit,true,'Create Account');
-      const { data, error } = await supabaseClient.auth.signUp({
-        email,
-        password,
-        options: {
-          data: { full_name: name, name, display_name: name },
-          emailRedirectTo: window.location.origin + '/app'
-        }
-      });
-      setLoading(submit,false,'Create Account');
-      if(error){ const m = mapAuthError(error,'signup'); showErr(m.id,m.text); return; }
-      await syncSignupProfile(data?.user, name);
-      if(data && data.session){
-        // Redirect to the stored destination (set by handleOpenApp or URL param)
-        window.location.replace(window._authNextDestination || '/app');
-        return;
-      }
-      showEmailVerificationScreen(email);
-    });
-
-    resetForm.addEventListener('submit', async (e)=>{
-      e.preventDefault(); clearErrors();
-      const email = document.getElementById('resetEmail').value.trim();
-      if(!email){ showErr('resetEmailErr','Please fill in all fields'); return; }
-      const submit = document.getElementById('resetSubmit');
-      setLoading(submit,true,'Send Reset Link');
-      const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
-        redirectTo: window.location.origin + '/'
-      });
-      setLoading(submit,false,'Send Reset Link');
-      if(error){ const m = mapAuthError(error,'reset'); showErr(m.id,m.text); return; }
-      document.getElementById('resetOk').style.display = 'block';
-    });
-
-    document.querySelectorAll('[data-google]').forEach(btn=>{
-      btn.addEventListener('click', async ()=>{
-        await supabaseClient.auth.signInWithOAuth({
-          provider:'google',
-          options:{ redirectTo: window.location.origin + '/app' }
-        });
-      });
-    });
-
-    document.getElementById('resendVerifyBtn').addEventListener('click', async ()=>{
-      if(!pendingVerifyEmail) return;
-      await supabaseClient.auth.resend({
-        type: 'signup',
-        email: pendingVerifyEmail,
-        options: { emailRedirectTo: window.location.origin + '/app' }
-      });
-      const sent = document.getElementById('resendSentMsg');
-      sent.classList.add('show');
-      setTimeout(() => sent.classList.remove('show'), 3000);
-    });
-
-    window.addEventListener('scroll', ()=>{
-      document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 12);
-    });
-
-    // ── Auth-Aware "Open App" handler ──────────────────────────────────
-    // Checks session before navigating — authenticated → /app, else → modal.
-    window._authNextDestination = '/app'; // Global: where to go after login
-
-    async function handleOpenApp(e) {
-      if (e) e.preventDefault();
-      const btn = e?.currentTarget;
-      const originalLabel = btn?.dataset.label || btn?.textContent || 'Open App';
-      if (btn) { btn.disabled = true; btn.textContent = '…'; }
-      try {
-        const { data: { session } } = await supabaseClient.auth.getSession();
-        if (session) { window.location.href = '/app'; return; }
-      } catch (_) {}
-      if (btn) { btn.disabled = false; btn.textContent = originalLabel; }
-      window._authNextDestination = '/app';
-      openAuth('login', 'Sign in to continue to your study dashboard');
-    }
-
-    // Wire up all "Open App" buttons
-    document.querySelectorAll('.nav-open-app, .open-app-btn').forEach(btn => {
-      btn.addEventListener('click', handleOpenApp);
-    });
-
-    // ── URL Param Handler ─────────────────────────────────────────────
-    // app.html redirects unauthenticated users to /?open=login&next=/app
-    // instead of /?auth=required. This reads those params and auto-opens
-    // the modal so the user sees the login UI, not a broken bounce.
-    (()=>{
-      const params = new URLSearchParams(window.location.search);
-      const openParam = params.get('open');    // 'login' | 'signup'
-      const nextParam = params.get('next');    // e.g. '/app'
-      const msgParam  = params.get('msg');     // 'expired' | 'signin'
-      if (openParam === 'login' || openParam === 'signup') {
-        // Store the destination so after login we go there, not homepage
-        if (nextParam) window._authNextDestination = nextParam;
-        // Clean up the URL so the browser Back button works correctly
-        const cleanUrl = window.location.origin + window.location.pathname;
-        history.replaceState({}, '', cleanUrl);
-        // Pick the appropriate context message
-        let ctxMsg = 'Sign in to continue to your study dashboard';
-        if (msgParam === 'expired') ctxMsg = 'Your session expired. Please sign in again.';
-        // Auto-open the modal
-        openAuth(openParam, ctxMsg);
-      }
-    })();
-
-    // ── Session Check (for authenticated users on homepage) ────────────
-    // If already logged in and visiting the homepage, redirect to /app.
-    // This runs AFTER the URL param handler so the modal isn't shown
-    // to already-authenticated users.
-    (async ()=>{
-      const { data: { session } } = await supabaseClient.auth.getSession();
-      if(session) window.location.replace('/app');
-    })();
-
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/service-worker.js')
-          .then(reg => {
-            if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
-            reg.addEventListener('updatefound', () => {
-              const worker = reg.installing;
-              if (!worker) return;
-              worker.addEventListener('statechange', () => {
-                if (worker.state === 'installed' && navigator.serviceWorker.controller) {
-                  worker.postMessage({ type: 'SKIP_WAITING' });
-                }
-              });
-            });
-          })
-          .catch(err => console.warn('SW failed:', err));
-      });
-    }
-    });
-  </script>
+  <script src="/home.js" defer></script>
 </body>
 </html>

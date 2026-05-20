@@ -21,43 +21,84 @@
   <link rel="apple-touch-icon" sizes="192x192" href="/icon-192.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap">
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/seo-page.css">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/seo-page.css">
+  <link rel="stylesheet" href="/faq.css" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="/faq.css"></noscript>
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@graph": [
       {
-        "@context": "https://schema.org",
         "@type": "FAQPage",
+        "@id": "https://mymarga.in/neet-study-planner#faq",
         "mainEntity": [
-          {
-            "@type": "Question",
-            "name": "Is Marga useful for NEET preparation?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Yes. Marga helps NEET students track Biology, Physics and Chemistry chapters, backlog and revision status."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "Can I use Marga for Biology revision?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Yes. Students can use Marga to mark Biology chapters, track confidence and plan repeated revision."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "Does Marga work on mobile for NEET students?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Yes. Marga is responsive and works on mobile devices, tablets and desktops."
-            }
-          }
+                {
+                        "@type": "Question",
+                        "name": "Does Marga support a Biology-heavy NEET workflow?",
+                        "acceptedAnswer": {
+                                "@type": "Answer",
+                                "text": "NEET preparation is Biology-heavy, so Marga lets you track Biology chapters alongside Physics and Chemistry without losing visibility. See which units are complete, which are pending and where your time actually goes—so Botany and Zoology revision does not slip behind PCM practice."
+                        }
+                },
+                {
+                        "@type": "Question",
+                        "name": "Can I track confidence for NEET chapters?",
+                        "acceptedAnswer": {
+                                "@type": "Answer",
+                                "text": "Mark confidence per chapter after study or mocks to surface weak NEET topics early. Instead of guessing readiness, you get an honest map of what feels solid and what still needs drills—especially high-yield Biology units that carry exam weight."
+                        }
+                },
+                {
+                        "@type": "Question",
+                        "name": "How do revision cycles work for NEET?",
+                        "acceptedAnswer": {
+                                "@type": "Answer",
+                                "text": "Record last-revised dates and plan repeat passes through NCERT-aligned chapters. Marga shows chapters neglected for too long, helping you run structured Biology and PCM revision cycles instead of cramming everything in the final month."
+                        }
+                },
+                {
+                        "@type": "Question",
+                        "name": "Does Marga support NCERT-based NEET prep?",
+                        "acceptedAnswer": {
+                                "@type": "Answer",
+                                "text": "Marga fits NCERT-first NEET prep: organize chapters the way your textbooks and coaching modules do, then track completion and revision against that structure. It keeps syllabus coverage visible whether you are on the first read or the fourth revision pass."
+                        }
+                },
+                {
+                        "@type": "Question",
+                        "name": "Can I use Marga on mobile for NEET?",
+                        "acceptedAnswer": {
+                                "@type": "Answer",
+                                "text": "Yes. Use Marga on your phone between classes or after mock tests to update chapter status, check backlog and plan the next study block—without needing a desktop for everyday NEET tracking."
+                        }
+                },
+                {
+                        "@type": "Question",
+                        "name": "How does Marga help with NEET mock preparation?",
+                        "acceptedAnswer": {
+                                "@type": "Answer",
+                                "text": "Before and after mocks, review low-confidence and untouched chapters Marga flags for you. Tie mock feedback to specific units in your tracker so the next study week targets real gaps—not random re-reading."
+                        }
+                },
+                {
+                        "@type": "Question",
+                        "name": "How does Marga manage NEET subjects?",
+                        "acceptedAnswer": {
+                                "@type": "Answer",
+                                "text": "Biology, Physics and Chemistry live in dedicated subject views with chapter-level progress. Switch subjects quickly, balance time across NEET papers and avoid the common trap of over-studying one subject while others fall behind."
+                        }
+                },
+                {
+                        "@type": "Question",
+                        "name": "Is the NEET study planner free?",
+                        "acceptedAnswer": {
+                                "@type": "Answer",
+                                "text": "Yes. Marga’s NEET planner, chapter tracker and revision tools are free for students. Open the app and start tracking your syllabus without a paid plan."
+                        }
+                }
         ]
-      },
+},
       {
         "@type": "BreadcrumbList",
         "@id": "https://mymarga.in/neet-study-planner#breadcrumb",
@@ -147,14 +188,110 @@
       </div>
     </section>
 
-    <section>
+    <section id="faq" class="faq-section" aria-labelledby="faq-heading">
       <div class="container">
-        <div class="section-head center"><h2>NEET FAQ</h2></div>
-        <div class="faq">
-          <details><summary>Is Marga useful for NEET preparation?</summary><p>Yes. Marga helps NEET students track Biology, Physics and Chemistry chapters, backlog and revision status.</p></details>
-          <details><summary>Can I use Marga for Biology revision?</summary><p>Yes. You can mark Biology chapters, track confidence and plan repeated revision.</p></details>
-          <details><summary>Does Marga work on mobile for NEET students?</summary><p>Yes. Marga is responsive and works on mobile devices, tablets and desktops.</p></details>
+        <div class="section-head center">
+          <h2 id="faq-heading">NEET FAQ</h2>
+          <p>Common questions about NEET chapter tracking, Biology revision and mock preparation.</p>
         </div>
+        <div class="faq-accordion" data-faq-accordion>
+        <article class="faq-item" id="faq-neet-biology">
+          <h3 class="faq-question">
+            <button type="button" class="faq-trigger" id="faq-neet-biology-trigger" aria-expanded="false" aria-controls="faq-neet-biology-panel">
+              <span class="faq-question-text">Does Marga support a Biology-heavy NEET workflow?</span>
+              <span class="faq-icon" aria-hidden="true"></span>
+            </button>
+          </h3>
+          <div id="faq-neet-biology-panel" class="faq-panel" role="region" aria-labelledby="faq-neet-biology-trigger" hidden>
+            <div class="faq-panel-inner"><div class="faq-answer"><p>NEET preparation is Biology-heavy, so Marga lets you track Biology chapters alongside Physics and Chemistry without losing visibility. See which units are complete, which are pending and where your time actually goes—so Botany and Zoology revision does not slip behind PCM practice.</p></div></div>
+          </div>
+        </article>
+        <article class="faq-item" id="faq-neet-confidence">
+          <h3 class="faq-question">
+            <button type="button" class="faq-trigger" id="faq-neet-confidence-trigger" aria-expanded="false" aria-controls="faq-neet-confidence-panel">
+              <span class="faq-question-text">Can I track confidence for NEET chapters?</span>
+              <span class="faq-icon" aria-hidden="true"></span>
+            </button>
+          </h3>
+          <div id="faq-neet-confidence-panel" class="faq-panel" role="region" aria-labelledby="faq-neet-confidence-trigger" hidden>
+            <div class="faq-panel-inner"><div class="faq-answer"><p>Mark confidence per chapter after study or mocks to surface weak NEET topics early. Instead of guessing readiness, you get an honest map of what feels solid and what still needs drills—especially high-yield Biology units that carry exam weight.</p></div></div>
+          </div>
+        </article>
+        <article class="faq-item" id="faq-neet-revision">
+          <h3 class="faq-question">
+            <button type="button" class="faq-trigger" id="faq-neet-revision-trigger" aria-expanded="false" aria-controls="faq-neet-revision-panel">
+              <span class="faq-question-text">How do revision cycles work for NEET?</span>
+              <span class="faq-icon" aria-hidden="true"></span>
+            </button>
+          </h3>
+          <div id="faq-neet-revision-panel" class="faq-panel" role="region" aria-labelledby="faq-neet-revision-trigger" hidden>
+            <div class="faq-panel-inner"><div class="faq-answer"><p>Record last-revised dates and plan repeat passes through NCERT-aligned chapters. Marga shows chapters neglected for too long, helping you run structured Biology and PCM revision cycles instead of cramming everything in the final month.</p></div></div>
+          </div>
+        </article>
+        <article class="faq-item" id="faq-neet-ncert">
+          <h3 class="faq-question">
+            <button type="button" class="faq-trigger" id="faq-neet-ncert-trigger" aria-expanded="false" aria-controls="faq-neet-ncert-panel">
+              <span class="faq-question-text">Does Marga support NCERT-based NEET prep?</span>
+              <span class="faq-icon" aria-hidden="true"></span>
+            </button>
+          </h3>
+          <div id="faq-neet-ncert-panel" class="faq-panel" role="region" aria-labelledby="faq-neet-ncert-trigger" hidden>
+            <div class="faq-panel-inner"><div class="faq-answer"><p>Marga fits NCERT-first NEET prep: organize chapters the way your textbooks and coaching modules do, then track completion and revision against that structure. It keeps syllabus coverage visible whether you are on the first read or the fourth revision pass.</p></div></div>
+          </div>
+        </article>
+        <article class="faq-item" id="faq-neet-mobile">
+          <h3 class="faq-question">
+            <button type="button" class="faq-trigger" id="faq-neet-mobile-trigger" aria-expanded="false" aria-controls="faq-neet-mobile-panel">
+              <span class="faq-question-text">Can I use Marga on mobile for NEET?</span>
+              <span class="faq-icon" aria-hidden="true"></span>
+            </button>
+          </h3>
+          <div id="faq-neet-mobile-panel" class="faq-panel" role="region" aria-labelledby="faq-neet-mobile-trigger" hidden>
+            <div class="faq-panel-inner"><div class="faq-answer"><p>Yes. Use Marga on your phone between classes or after mock tests to update chapter status, check backlog and plan the next study block—without needing a desktop for everyday NEET tracking.</p></div></div>
+          </div>
+        </article>
+        <article class="faq-item" id="faq-neet-mocks">
+          <h3 class="faq-question">
+            <button type="button" class="faq-trigger" id="faq-neet-mocks-trigger" aria-expanded="false" aria-controls="faq-neet-mocks-panel">
+              <span class="faq-question-text">How does Marga help with NEET mock preparation?</span>
+              <span class="faq-icon" aria-hidden="true"></span>
+            </button>
+          </h3>
+          <div id="faq-neet-mocks-panel" class="faq-panel" role="region" aria-labelledby="faq-neet-mocks-trigger" hidden>
+            <div class="faq-panel-inner"><div class="faq-answer"><p>Before and after mocks, review low-confidence and untouched chapters Marga flags for you. Tie mock feedback to specific units in your tracker so the next study week targets real gaps—not random re-reading.</p></div></div>
+          </div>
+        </article>
+        <article class="faq-item" id="faq-neet-subjects">
+          <h3 class="faq-question">
+            <button type="button" class="faq-trigger" id="faq-neet-subjects-trigger" aria-expanded="false" aria-controls="faq-neet-subjects-panel">
+              <span class="faq-question-text">How does Marga manage NEET subjects?</span>
+              <span class="faq-icon" aria-hidden="true"></span>
+            </button>
+          </h3>
+          <div id="faq-neet-subjects-panel" class="faq-panel" role="region" aria-labelledby="faq-neet-subjects-trigger" hidden>
+            <div class="faq-panel-inner"><div class="faq-answer"><p>Biology, Physics and Chemistry live in dedicated subject views with chapter-level progress. Switch subjects quickly, balance time across NEET papers and avoid the common trap of over-studying one subject while others fall behind.</p></div></div>
+          </div>
+        </article>
+        <article class="faq-item" id="faq-neet-free">
+          <h3 class="faq-question">
+            <button type="button" class="faq-trigger" id="faq-neet-free-trigger" aria-expanded="false" aria-controls="faq-neet-free-panel">
+              <span class="faq-question-text">Is the NEET study planner free?</span>
+              <span class="faq-icon" aria-hidden="true"></span>
+            </button>
+          </h3>
+          <div id="faq-neet-free-panel" class="faq-panel" role="region" aria-labelledby="faq-neet-free-trigger" hidden>
+            <div class="faq-panel-inner"><div class="faq-answer"><p>Yes. Marga’s NEET planner, chapter tracker and revision tools are free for students. Open the app and start tracking your syllabus without a paid plan.</p></div></div>
+          </div>
+        </article>
+        </div>
+        <aside class="faq-cta" aria-label="Get started with Marga">
+          <h3>Ready to organize your studies?</h3>
+          <p>Turn your NEET syllabus into visible chapter progress before your next mock cycle.</p>
+          <div class="faq-cta-actions">
+            <a class="btn-faq-primary" href="/app">Open Marga</a>
+            <a class="btn-faq-secondary" href="/#features">See Features</a>
+          </div>
+        </aside>
       </div>
     </section>
   </main>
@@ -165,5 +302,6 @@
       <div class="link-row"><a class="chip" href="/">Home</a><a class="chip" href="/app">Open App</a><a class="chip" href="/jee-study-tracker/">JEE</a></div>
     </div>
   </footer>
+  <script src="/defer-faq.js" defer></script>
 </body>
 </html>

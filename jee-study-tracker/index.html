@@ -21,43 +21,84 @@
   <link rel="apple-touch-icon" sizes="192x192" href="/icon-192.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap">
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/seo-page.css">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/seo-page.css">
+  <link rel="stylesheet" href="/faq.css" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="/faq.css"></noscript>
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@graph": [
       {
-        "@context": "https://schema.org",
         "@type": "FAQPage",
+        "@id": "https://mymarga.in/jee-study-tracker#faq",
         "mainEntity": [
-          {
-            "@type": "Question",
-            "name": "How does Marga help JEE aspirants?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Marga helps JEE aspirants track Physics, Chemistry and Mathematics chapters, monitor backlog, record confidence and plan revision."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "Can I track JEE Main and Advanced chapters?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Yes. Marga is useful for chapter tracking and revision planning for both JEE Main and JEE Advanced preparation."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "Is the JEE study tracker free?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Yes. Marga is free to use for JEE chapter tracking and study planning."
-            }
-          }
+                {
+                        "@type": "Question",
+                        "name": "How does Marga help JEE aspirants?",
+                        "acceptedAnswer": {
+                                "@type": "Answer",
+                                "text": "Marga gives JEE students one place to track PCM chapters, spot backlog by subject and plan revision before mocks. Instead of juggling coaching sheets and notes, you see what is complete, what is weak and what needs attention this week—so preparation stays deliberate, not reactive."
+                        }
+                },
+                {
+                        "@type": "Question",
+                        "name": "Can I track JEE Main and Advanced chapters?",
+                        "acceptedAnswer": {
+                                "@type": "Answer",
+                                "text": "Yes. Organize chapters for both JEE Main and Advanced preparation in the same tracker. Group Physics, Chemistry and Mathematics topics, mark confidence and revision dates, and keep syllabus coverage visible whether you are building fundamentals or pushing for Advanced-level depth."
+                        }
+                },
+                {
+                        "@type": "Question",
+                        "name": "How does Marga help with JEE backlog?",
+                        "acceptedAnswer": {
+                                "@type": "Answer",
+                                "text": "Pending chapters stay grouped by subject with clear status labels, so backlog does not hide inside unrelated homework lists. You can prioritise high-weightage or low-confidence units first and shrink backlog week by week instead of discovering gaps only after a mock test."
+                        }
+                },
+                {
+                        "@type": "Question",
+                        "name": "Can I plan JEE revision with Marga?",
+                        "acceptedAnswer": {
+                                "@type": "Answer",
+                                "text": "Yes. Log revision dates and confidence per chapter to build spaced revision around your coaching schedule. Marga highlights chapters you have not touched recently, making it easier to rotate PCM and protect weak topics before the next test cycle."
+                        }
+                },
+                {
+                        "@type": "Question",
+                        "name": "Can I use Marga on mobile for JEE prep?",
+                        "acceptedAnswer": {
+                                "@type": "Answer",
+                                "text": "Yes. Marga is responsive and installable as a PWA on your phone. Update chapter status after class, check backlog between sessions and review progress without opening a laptop—ideal for long JEE preparation routines that move between coaching, school and self-study."
+                        }
+                },
+                {
+                        "@type": "Question",
+                        "name": "Does Marga work alongside JEE coaching?",
+                        "acceptedAnswer": {
+                                "@type": "Answer",
+                                "text": "Yes. Marga complements coaching—it does not replace it. Track chapters covered in modules, match them to your institute’s pace and keep your own revision layer on top. Many students use it to reconcile coaching homework with personal syllabus completion."
+                        }
+                },
+                {
+                        "@type": "Question",
+                        "name": "How are JEE subjects organized in Marga?",
+                        "acceptedAnswer": {
+                                "@type": "Answer",
+                                "text": "Physics, Chemistry and Mathematics sit in separate subject views with chapter lists aligned to typical JEE syllabi. Progress and completion roll up per subject, so you can balance time across PCM instead of over-focusing on one subject by accident."
+                        }
+                },
+                {
+                        "@type": "Question",
+                        "name": "Is the JEE study tracker free?",
+                        "acceptedAnswer": {
+                                "@type": "Answer",
+                                "text": "Yes. Marga’s JEE chapter tracker, revision planning and progress views are free. Open the app, choose your JEE path and start logging chapters—no subscription required to organize Main or Advanced preparation."
+                        }
+                }
         ]
-      },
+},
       {
         "@type": "BreadcrumbList",
         "@id": "https://mymarga.in/jee-study-tracker#breadcrumb",
@@ -147,14 +188,110 @@
       </div>
     </section>
 
-    <section>
+    <section id="faq" class="faq-section" aria-labelledby="faq-heading">
       <div class="container">
-        <div class="section-head center"><h2>JEE FAQ</h2></div>
-        <div class="faq">
-          <details><summary>How does Marga help JEE aspirants?</summary><p>Marga helps JEE aspirants track PCM chapters, monitor backlog, record confidence and plan revision.</p></details>
-          <details><summary>Can I track JEE Main and Advanced chapters?</summary><p>Yes. Marga is useful for chapter tracking and revision planning for both JEE Main and JEE Advanced preparation.</p></details>
-          <details><summary>Is the JEE study tracker free?</summary><p>Yes. Marga is free to use for JEE chapter tracking and study planning.</p></details>
+        <div class="section-head center">
+          <h2 id="faq-heading">JEE FAQ</h2>
+          <p>Answers for students comparing JEE study trackers and revision planners.</p>
         </div>
+        <div class="faq-accordion" data-faq-accordion>
+        <article class="faq-item" id="faq-jee-help">
+          <h3 class="faq-question">
+            <button type="button" class="faq-trigger" id="faq-jee-help-trigger" aria-expanded="false" aria-controls="faq-jee-help-panel">
+              <span class="faq-question-text">How does Marga help JEE aspirants?</span>
+              <span class="faq-icon" aria-hidden="true"></span>
+            </button>
+          </h3>
+          <div id="faq-jee-help-panel" class="faq-panel" role="region" aria-labelledby="faq-jee-help-trigger" hidden>
+            <div class="faq-panel-inner"><div class="faq-answer"><p>Marga gives JEE students one place to track PCM chapters, spot backlog by subject and plan revision before mocks. Instead of juggling coaching sheets and notes, you see what is complete, what is weak and what needs attention this week—so preparation stays deliberate, not reactive.</p></div></div>
+          </div>
+        </article>
+        <article class="faq-item" id="faq-jee-main-advanced">
+          <h3 class="faq-question">
+            <button type="button" class="faq-trigger" id="faq-jee-main-advanced-trigger" aria-expanded="false" aria-controls="faq-jee-main-advanced-panel">
+              <span class="faq-question-text">Can I track JEE Main and Advanced chapters?</span>
+              <span class="faq-icon" aria-hidden="true"></span>
+            </button>
+          </h3>
+          <div id="faq-jee-main-advanced-panel" class="faq-panel" role="region" aria-labelledby="faq-jee-main-advanced-trigger" hidden>
+            <div class="faq-panel-inner"><div class="faq-answer"><p>Yes. Organize chapters for both JEE Main and Advanced preparation in the same tracker. Group Physics, Chemistry and Mathematics topics, mark confidence and revision dates, and keep syllabus coverage visible whether you are building fundamentals or pushing for Advanced-level depth.</p></div></div>
+          </div>
+        </article>
+        <article class="faq-item" id="faq-jee-backlog">
+          <h3 class="faq-question">
+            <button type="button" class="faq-trigger" id="faq-jee-backlog-trigger" aria-expanded="false" aria-controls="faq-jee-backlog-panel">
+              <span class="faq-question-text">How does Marga help with JEE backlog?</span>
+              <span class="faq-icon" aria-hidden="true"></span>
+            </button>
+          </h3>
+          <div id="faq-jee-backlog-panel" class="faq-panel" role="region" aria-labelledby="faq-jee-backlog-trigger" hidden>
+            <div class="faq-panel-inner"><div class="faq-answer"><p>Pending chapters stay grouped by subject with clear status labels, so backlog does not hide inside unrelated homework lists. You can prioritise high-weightage or low-confidence units first and shrink backlog week by week instead of discovering gaps only after a mock test.</p></div></div>
+          </div>
+        </article>
+        <article class="faq-item" id="faq-jee-revision">
+          <h3 class="faq-question">
+            <button type="button" class="faq-trigger" id="faq-jee-revision-trigger" aria-expanded="false" aria-controls="faq-jee-revision-panel">
+              <span class="faq-question-text">Can I plan JEE revision with Marga?</span>
+              <span class="faq-icon" aria-hidden="true"></span>
+            </button>
+          </h3>
+          <div id="faq-jee-revision-panel" class="faq-panel" role="region" aria-labelledby="faq-jee-revision-trigger" hidden>
+            <div class="faq-panel-inner"><div class="faq-answer"><p>Yes. Log revision dates and confidence per chapter to build spaced revision around your coaching schedule. Marga highlights chapters you have not touched recently, making it easier to rotate PCM and protect weak topics before the next test cycle.</p></div></div>
+          </div>
+        </article>
+        <article class="faq-item" id="faq-jee-mobile">
+          <h3 class="faq-question">
+            <button type="button" class="faq-trigger" id="faq-jee-mobile-trigger" aria-expanded="false" aria-controls="faq-jee-mobile-panel">
+              <span class="faq-question-text">Can I use Marga on mobile for JEE prep?</span>
+              <span class="faq-icon" aria-hidden="true"></span>
+            </button>
+          </h3>
+          <div id="faq-jee-mobile-panel" class="faq-panel" role="region" aria-labelledby="faq-jee-mobile-trigger" hidden>
+            <div class="faq-panel-inner"><div class="faq-answer"><p>Yes. Marga is responsive and installable as a PWA on your phone. Update chapter status after class, check backlog between sessions and review progress without opening a laptop—ideal for long JEE preparation routines that move between coaching, school and self-study.</p></div></div>
+          </div>
+        </article>
+        <article class="faq-item" id="faq-jee-coaching">
+          <h3 class="faq-question">
+            <button type="button" class="faq-trigger" id="faq-jee-coaching-trigger" aria-expanded="false" aria-controls="faq-jee-coaching-panel">
+              <span class="faq-question-text">Does Marga work alongside JEE coaching?</span>
+              <span class="faq-icon" aria-hidden="true"></span>
+            </button>
+          </h3>
+          <div id="faq-jee-coaching-panel" class="faq-panel" role="region" aria-labelledby="faq-jee-coaching-trigger" hidden>
+            <div class="faq-panel-inner"><div class="faq-answer"><p>Yes. Marga complements coaching—it does not replace it. Track chapters covered in modules, match them to your institute’s pace and keep your own revision layer on top. Many students use it to reconcile coaching homework with personal syllabus completion.</p></div></div>
+          </div>
+        </article>
+        <article class="faq-item" id="faq-jee-subjects">
+          <h3 class="faq-question">
+            <button type="button" class="faq-trigger" id="faq-jee-subjects-trigger" aria-expanded="false" aria-controls="faq-jee-subjects-panel">
+              <span class="faq-question-text">How are JEE subjects organized in Marga?</span>
+              <span class="faq-icon" aria-hidden="true"></span>
+            </button>
+          </h3>
+          <div id="faq-jee-subjects-panel" class="faq-panel" role="region" aria-labelledby="faq-jee-subjects-trigger" hidden>
+            <div class="faq-panel-inner"><div class="faq-answer"><p>Physics, Chemistry and Mathematics sit in separate subject views with chapter lists aligned to typical JEE syllabi. Progress and completion roll up per subject, so you can balance time across PCM instead of over-focusing on one subject by accident.</p></div></div>
+          </div>
+        </article>
+        <article class="faq-item" id="faq-jee-free">
+          <h3 class="faq-question">
+            <button type="button" class="faq-trigger" id="faq-jee-free-trigger" aria-expanded="false" aria-controls="faq-jee-free-panel">
+              <span class="faq-question-text">Is the JEE study tracker free?</span>
+              <span class="faq-icon" aria-hidden="true"></span>
+            </button>
+          </h3>
+          <div id="faq-jee-free-panel" class="faq-panel" role="region" aria-labelledby="faq-jee-free-trigger" hidden>
+            <div class="faq-panel-inner"><div class="faq-answer"><p>Yes. Marga’s JEE chapter tracker, revision planning and progress views are free. Open the app, choose your JEE path and start logging chapters—no subscription required to organize Main or Advanced preparation.</p></div></div>
+          </div>
+        </article>
+        </div>
+        <aside class="faq-cta" aria-label="Get started with Marga">
+          <h3>Ready to organize your studies?</h3>
+          <p>Start tracking PCM chapters, backlog and revision in one place—built for long JEE preparation cycles.</p>
+          <div class="faq-cta-actions">
+            <a class="btn-faq-primary" href="/app">Open Marga</a>
+            <a class="btn-faq-secondary" href="/#features">See Features</a>
+          </div>
+        </aside>
       </div>
     </section>
   </main>
@@ -165,5 +302,6 @@
       <div class="link-row"><a class="chip" href="/">Home</a><a class="chip" href="/app">Open App</a><a class="chip" href="/neet-study-planner/">NEET</a></div>
     </div>
   </footer>
+  <script src="/defer-faq.js" defer></script>
 </body>
 </html>

@@ -21,43 +21,84 @@
   <link rel="apple-touch-icon" sizes="192x192" href="/icon-192.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap">
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/seo-page.css">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/seo-page.css">
+  <link rel="stylesheet" href="/faq.css" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="/faq.css"></noscript>
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@graph": [
       {
-        "@context": "https://schema.org",
         "@type": "FAQPage",
+        "@id": "https://mymarga.in/isc-study-organizer#faq",
         "mainEntity": [
-          {
-            "@type": "Question",
-            "name": "Can ISC students use Marga?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Yes. ISC students can use Marga to organize Class 11 and Class 12 chapters, revision dates and syllabus progress."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "Is Marga useful for ISC board revision?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Yes. Marga helps students identify pending chapters, weak topics and chapters that need another revision."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "Can I use Marga for multiple ISC subjects?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Yes. Marga is designed to organize subjects and chapters across different board exam paths."
-            }
-          }
+                {
+                        "@type": "Question",
+                        "name": "Does Marga support ISC Class 11 and 12?",
+                        "acceptedAnswer": {
+                                "@type": "Answer",
+                                "text": "Yes. Marga supports ISC Class 11 and Class 12 syllabi so you can carry chapter progress across both years. Build a single view of what is done, in progress and pending as difficulty ramps from fundamentals to board-focused chapters."
+                        }
+                },
+                {
+                        "@type": "Question",
+                        "name": "Is Marga useful for ISC board preparation?",
+                        "acceptedAnswer": {
+                                "@type": "Answer",
+                                "text": "Use Marga to align daily study with ISC board timelines—track chapter completion, spot weak areas and schedule revision before pre-boards and finals. You always know which units still need a second or third pass."
+                        }
+                },
+                {
+                        "@type": "Question",
+                        "name": "Can I plan ISC revision with Marga?",
+                        "acceptedAnswer": {
+                                "@type": "Answer",
+                                "text": "Log revision dates and confidence so high-mark chapters do not fade. Marga surfaces neglected topics, making it easier to plan weekly revision around school tests, practicals and board preparation."
+                        }
+                },
+                {
+                        "@type": "Question",
+                        "name": "Can I track multiple ISC subjects?",
+                        "acceptedAnswer": {
+                                "@type": "Answer",
+                                "text": "Organize every ISC subject in one app with separate chapter lists and progress. Switch between Sciences, Mathematics, Languages or Electives without juggling multiple notebooks—each subject’s backlog stays visible."
+                        }
+                },
+                {
+                        "@type": "Question",
+                        "name": "How does Marga help with ISC backlog?",
+                        "acceptedAnswer": {
+                                "@type": "Answer",
+                                "text": "See pending chapters by subject instead of a vague “I’m behind” feeling. Prioritise units that matter for upcoming tests or boards and clear backlog systematically rather than in a last-minute rush."
+                        }
+                },
+                {
+                        "@type": "Question",
+                        "name": "Does Marga work on mobile for ISC students?",
+                        "acceptedAnswer": {
+                                "@type": "Answer",
+                                "text": "Yes. Marga works on phones and tablets, so you can update chapter status after school, check what is due tomorrow and plan revision from anywhere—helpful during busy ISC terms."
+                        }
+                },
+                {
+                        "@type": "Question",
+                        "name": "How does Marga track ISC progress?",
+                        "acceptedAnswer": {
+                                "@type": "Answer",
+                                "text": "Completion percentages and chapter status show how far you are through each subject. Use that view for weekly self-review with teachers or parents without rebuilding spreadsheets from scratch."
+                        }
+                },
+                {
+                        "@type": "Question",
+                        "name": "Is the ISC study organizer free?",
+                        "acceptedAnswer": {
+                                "@type": "Answer",
+                                "text": "Yes. ISC chapter tracking, revision planning and progress views in Marga are free for students."
+                        }
+                }
         ]
-      },
+},
       {
         "@type": "BreadcrumbList",
         "@id": "https://mymarga.in/isc-study-organizer#breadcrumb",
@@ -147,14 +188,110 @@
       </div>
     </section>
 
-    <section>
+    <section id="faq" class="faq-section" aria-labelledby="faq-heading">
       <div class="container">
-        <div class="section-head center"><h2>ISC FAQ</h2></div>
-        <div class="faq">
-          <details><summary>Can ISC students use Marga?</summary><p>Yes. ISC students can organize Class 11 and Class 12 chapters, revision dates and syllabus progress.</p></details>
-          <details><summary>Is Marga useful for ISC board revision?</summary><p>Yes. Marga helps students identify pending chapters, weak topics and chapters that need another revision.</p></details>
-          <details><summary>Can I use Marga for multiple ISC subjects?</summary><p>Yes. Marga is designed to organize subjects and chapters across different board exam paths.</p></details>
+        <div class="section-head center">
+          <h2 id="faq-heading">ISC FAQ</h2>
+          <p>What ISC students ask about chapter tracking, boards and revision planning.</p>
         </div>
+        <div class="faq-accordion" data-faq-accordion>
+        <article class="faq-item" id="faq-isc-class">
+          <h3 class="faq-question">
+            <button type="button" class="faq-trigger" id="faq-isc-class-trigger" aria-expanded="false" aria-controls="faq-isc-class-panel">
+              <span class="faq-question-text">Does Marga support ISC Class 11 and 12?</span>
+              <span class="faq-icon" aria-hidden="true"></span>
+            </button>
+          </h3>
+          <div id="faq-isc-class-panel" class="faq-panel" role="region" aria-labelledby="faq-isc-class-trigger" hidden>
+            <div class="faq-panel-inner"><div class="faq-answer"><p>Yes. Marga supports ISC Class 11 and Class 12 syllabi so you can carry chapter progress across both years. Build a single view of what is done, in progress and pending as difficulty ramps from fundamentals to board-focused chapters.</p></div></div>
+          </div>
+        </article>
+        <article class="faq-item" id="faq-isc-boards">
+          <h3 class="faq-question">
+            <button type="button" class="faq-trigger" id="faq-isc-boards-trigger" aria-expanded="false" aria-controls="faq-isc-boards-panel">
+              <span class="faq-question-text">Is Marga useful for ISC board preparation?</span>
+              <span class="faq-icon" aria-hidden="true"></span>
+            </button>
+          </h3>
+          <div id="faq-isc-boards-panel" class="faq-panel" role="region" aria-labelledby="faq-isc-boards-trigger" hidden>
+            <div class="faq-panel-inner"><div class="faq-answer"><p>Use Marga to align daily study with ISC board timelines—track chapter completion, spot weak areas and schedule revision before pre-boards and finals. You always know which units still need a second or third pass.</p></div></div>
+          </div>
+        </article>
+        <article class="faq-item" id="faq-isc-revision">
+          <h3 class="faq-question">
+            <button type="button" class="faq-trigger" id="faq-isc-revision-trigger" aria-expanded="false" aria-controls="faq-isc-revision-panel">
+              <span class="faq-question-text">Can I plan ISC revision with Marga?</span>
+              <span class="faq-icon" aria-hidden="true"></span>
+            </button>
+          </h3>
+          <div id="faq-isc-revision-panel" class="faq-panel" role="region" aria-labelledby="faq-isc-revision-trigger" hidden>
+            <div class="faq-panel-inner"><div class="faq-answer"><p>Log revision dates and confidence so high-mark chapters do not fade. Marga surfaces neglected topics, making it easier to plan weekly revision around school tests, practicals and board preparation.</p></div></div>
+          </div>
+        </article>
+        <article class="faq-item" id="faq-isc-subjects">
+          <h3 class="faq-question">
+            <button type="button" class="faq-trigger" id="faq-isc-subjects-trigger" aria-expanded="false" aria-controls="faq-isc-subjects-panel">
+              <span class="faq-question-text">Can I track multiple ISC subjects?</span>
+              <span class="faq-icon" aria-hidden="true"></span>
+            </button>
+          </h3>
+          <div id="faq-isc-subjects-panel" class="faq-panel" role="region" aria-labelledby="faq-isc-subjects-trigger" hidden>
+            <div class="faq-panel-inner"><div class="faq-answer"><p>Organize every ISC subject in one app with separate chapter lists and progress. Switch between Sciences, Mathematics, Languages or Electives without juggling multiple notebooks—each subject’s backlog stays visible.</p></div></div>
+          </div>
+        </article>
+        <article class="faq-item" id="faq-isc-backlog">
+          <h3 class="faq-question">
+            <button type="button" class="faq-trigger" id="faq-isc-backlog-trigger" aria-expanded="false" aria-controls="faq-isc-backlog-panel">
+              <span class="faq-question-text">How does Marga help with ISC backlog?</span>
+              <span class="faq-icon" aria-hidden="true"></span>
+            </button>
+          </h3>
+          <div id="faq-isc-backlog-panel" class="faq-panel" role="region" aria-labelledby="faq-isc-backlog-trigger" hidden>
+            <div class="faq-panel-inner"><div class="faq-answer"><p>See pending chapters by subject instead of a vague “I’m behind” feeling. Prioritise units that matter for upcoming tests or boards and clear backlog systematically rather than in a last-minute rush.</p></div></div>
+          </div>
+        </article>
+        <article class="faq-item" id="faq-isc-mobile">
+          <h3 class="faq-question">
+            <button type="button" class="faq-trigger" id="faq-isc-mobile-trigger" aria-expanded="false" aria-controls="faq-isc-mobile-panel">
+              <span class="faq-question-text">Does Marga work on mobile for ISC students?</span>
+              <span class="faq-icon" aria-hidden="true"></span>
+            </button>
+          </h3>
+          <div id="faq-isc-mobile-panel" class="faq-panel" role="region" aria-labelledby="faq-isc-mobile-trigger" hidden>
+            <div class="faq-panel-inner"><div class="faq-answer"><p>Yes. Marga works on phones and tablets, so you can update chapter status after school, check what is due tomorrow and plan revision from anywhere—helpful during busy ISC terms.</p></div></div>
+          </div>
+        </article>
+        <article class="faq-item" id="faq-isc-progress">
+          <h3 class="faq-question">
+            <button type="button" class="faq-trigger" id="faq-isc-progress-trigger" aria-expanded="false" aria-controls="faq-isc-progress-panel">
+              <span class="faq-question-text">How does Marga track ISC progress?</span>
+              <span class="faq-icon" aria-hidden="true"></span>
+            </button>
+          </h3>
+          <div id="faq-isc-progress-panel" class="faq-panel" role="region" aria-labelledby="faq-isc-progress-trigger" hidden>
+            <div class="faq-panel-inner"><div class="faq-answer"><p>Completion percentages and chapter status show how far you are through each subject. Use that view for weekly self-review with teachers or parents without rebuilding spreadsheets from scratch.</p></div></div>
+          </div>
+        </article>
+        <article class="faq-item" id="faq-isc-free">
+          <h3 class="faq-question">
+            <button type="button" class="faq-trigger" id="faq-isc-free-trigger" aria-expanded="false" aria-controls="faq-isc-free-panel">
+              <span class="faq-question-text">Is the ISC study organizer free?</span>
+              <span class="faq-icon" aria-hidden="true"></span>
+            </button>
+          </h3>
+          <div id="faq-isc-free-panel" class="faq-panel" role="region" aria-labelledby="faq-isc-free-trigger" hidden>
+            <div class="faq-panel-inner"><div class="faq-answer"><p>Yes. ISC chapter tracking, revision planning and progress views in Marga are free for students.</p></div></div>
+          </div>
+        </article>
+        </div>
+        <aside class="faq-cta" aria-label="Get started with Marga">
+          <h3>Ready to organize your studies?</h3>
+          <p>Organize Class 11 and 12 chapters, backlog and board revision in one calm tracker.</p>
+          <div class="faq-cta-actions">
+            <a class="btn-faq-primary" href="/app">Open Marga</a>
+            <a class="btn-faq-secondary" href="/#features">See Features</a>
+          </div>
+        </aside>
       </div>
     </section>
   </main>
@@ -165,5 +302,6 @@
       <div class="link-row"><a class="chip" href="/">Home</a><a class="chip" href="/app">Open App</a><a class="chip" href="/cbse-study-planner/">CBSE</a></div>
     </div>
   </footer>
+  <script src="/defer-faq.js" defer></script>
 </body>
 </html>
