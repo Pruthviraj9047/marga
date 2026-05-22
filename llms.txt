@@ -1,0 +1,29 @@
+# Marga
+
+Marga is a study tracker and revision planner for Indian students.
+
+Supported exams:
+- JEE (Main & Advanced)
+- NEET
+- ISC
+- CBSE
+- KCET
+- MHTCET
+- custom exams
+
+Primary pages:
+https://mymarga.in/
+https://mymarga.in/jee-study-tracker
+https://mymarga.in/neet-study-planner
+https://mymarga.in/isc-study-organizer
+https://mymarga.in/cbse-study-planner
+
+Application:
+https://mymarga.in/app
+
+Notes:
+- /app requires login
+- public pages describe the product
+
+Offline Support:
+Core study tracking supports offline usage and syncs changes when connectivity returns.

@@ -49,7 +49,7 @@
         "applicationSubCategory": "Study planner and chapter tracker",
         "operatingSystem": "Any",
         "browserRequirements": "Requires JavaScript. Works as a Progressive Web App with offline support.",
-        "description": "Marga is a free JEE, NEET, ISC and CBSE study tracker for chapter tracking, syllabus completion, revision planning and progress analytics.",
+        "description": "Marga is a free study tracker for Indian students preparing for JEE, NEET, KCET, MHT-CET, ISC, CBSE and custom exams, offering chapter tracking, syllabus completion, revision planning and progress analytics.",
         "audience": {
           "@type": "EducationalAudience",
           "educationalRole": "student",
@@ -63,7 +63,7 @@
           "Revision planning",
           "Progress analytics",
           "Offline support",
-          "JEE, NEET, ISC and CBSE syllabus organization"
+          "JEE, NEET, KCET, MHT-CET, ISC, CBSE and custom syllabus organization"
         ],
         "offers": {
           "@type": "Offer",
@@ -175,6 +175,23 @@
     ]
   }
   </script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "@id": "https://mymarga.in/#software",
+  "name": "Marga",
+  "applicationCategory": "EducationalApplication",
+  "operatingSystem": "Web",
+  "url": "https://mymarga.in/",
+  "description": "Free study tracker for Indian students preparing for JEE, NEET, KCET, MHT-CET, ISC, CBSE and custom exams.",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "INR"
+  }
+}
+</script>
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -183,11 +200,6 @@
     "url": "https://mymarga.in/",
     "name": "Marga",
     "description": "Free study tracker for Indian students preparing for JEE, NEET, ISC and CBSE.",
-    "potentialAction": {
-      "@type": "SearchAction",
-      "target": "https://mymarga.in/search?q={search_term_string}",
-      "query-input": "required name=search_term_string"
-    }
   }
   </script>
   <style>
@@ -548,10 +560,10 @@
     <div class="container">
       <div class="hero-content">
         <h1>
-          <span>Track Your JEE, NEET, ISC & CBSE Preparation</span>
-          <span class="grad">One Chapter at a Time.</span>
-        </h1>
-        <p>Marga is a focused study tracker for Indian students who want clearer chapter tracking, revision planning, syllabus completion and exam preparation progress.</p>
+  <span>Track Your JEE, NEET, KCET, MHT-CET, ISC, CBSE</span>
+  <span class="grad">or create your own exam.</span>
+</h1>
+        <p>Marga is a flexible study tracker for Indian students, supporting JEE, NEET, KCET, MHT-CET, ISC, CBSE and custom exams, with chapter tracking, revision planning and syllabus completion.</p>
         <div class="hero-cta">
           <button class="btn btn-primary" data-open-auth="signup">Start Tracking Free</button>
           <a class="btn btn-ghost" href="#features">Explore Features</a>
@@ -633,6 +645,12 @@
           <span class="watermark">⚡</span>
           <p>Install Marga as a lightweight PWA and keep the core study tracker available even when your connection is unreliable.</p>
         </article>
+<article class="feature-card">
+  <div class="feat-icon-wrap">🛠️</div>
+  <h3>Custom Exams</h3>
+  <span class="watermark">🛠️</span>
+  <p>Create your own exam, subjects and chapters for any syllabus.</p>
+</article>
       </div>
     </div>
   </section>
@@ -826,7 +844,20 @@
             <div class="faq-panel-inner"><div class="faq-answer"><p>You can explore Marga without an account, but signing in syncs your progress securely across devices. That way your chapter tracker, revision notes and syllabus view stay intact when you switch from phone to desktop or return after a break.</p></div></div>
           </div>
         </article>
-      </div>
+      <article class="faq-item" id="faq-custom-exams">
+  <h3 class="faq-question">
+    <button type="button" class="faq-trigger" id="faq-custom-exams-trigger" aria-expanded="false" aria-controls="faq-custom-exams-panel">
+      <span class="faq-question-text">Can I use Marga for exams other than JEE, NEET, ISC or CBSE?</span>
+      <span class="faq-icon" aria-hidden="true"></span>
+    </button>
+  </h3>
+  <div id="faq-custom-exams-panel" class="faq-panel" role="region" aria-labelledby="faq-custom-exams-trigger" hidden>
+    <div class="faq-panel-inner">
+      <div class="faq-answer"><p>Yes. Marga supports custom exams, allowing you to create subjects and chapters for any syllabus, so students can organize preparation for any exam they choose.</p></div>
+    </div>
+  </div>
+</article>
+</div>
       <aside class="faq-cta" aria-label="Get started with Marga">
         <h3>Ready to organize your studies?</h3>
         <p>Join students using Marga to track chapters, plan revision and stay ahead of JEE, NEET, ISC and CBSE syllabi.</p>
