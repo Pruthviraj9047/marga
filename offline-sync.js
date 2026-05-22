@@ -174,12 +174,12 @@ async function syncPendingChanges() {
 function getOrCreateIndicator() {
   let indicator = document.getElementById('margaSyncIndicator');
   if (!indicator) {
-    const headerTitle = document.querySelector('.header-title');
-    if (headerTitle) {
+    const appHeader = document.querySelector('.app-header');
+    if (appHeader) {
       indicator = document.createElement('div');
       indicator.id = 'margaSyncIndicator';
       indicator.className = 'sync-indicator';
-      headerTitle.appendChild(indicator);
+      appHeader.appendChild(indicator);
     }
   }
   return indicator;
@@ -222,6 +222,10 @@ function updateSyncIndicator(forceStatus) {
   const style = document.createElement('style');
   style.textContent = `
     .sync-indicator {
+      position: absolute;
+      top: 2rem;
+      right: 2.5rem;
+      z-index: 10;
       display: inline-flex;
       align-items: center;
       gap: 0.35rem;
@@ -230,9 +234,13 @@ function updateSyncIndicator(forceStatus) {
       font-size: 0.75rem;
       font-weight: 600;
       transition: all 0.3s ease;
-      margin-left: 0.75rem;
-      vertical-align: middle;
       user-select: none;
+    }
+    @media (max-width: 768px) {
+      .sync-indicator {
+        top: 1.5rem;
+        right: 1.25rem;
+      }
     }
     .sync-indicator.synced {
       background: rgba(16, 185, 129, 0.1);
