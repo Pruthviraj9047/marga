@@ -2195,6 +2195,7 @@ window.addEventListener('DOMContentLoaded', async () => {
   <div class="grid" id="subjectsGrid"></div>
 </div></main>
 
+<script src="/offline-sync.js"></script>
 <script>
   console.log(
   '%c Marga %c Built by Pruthviraj Arun ',
@@ -3454,6 +3455,9 @@ window.addEventListener('marga-session-ready', async () => {
   renderSidebarUser();
   showWelcomeScreen();
   init();
+  if (typeof syncPendingChanges === 'function') {
+    syncPendingChanges();
+  }
 });
 
 window.addEventListener('marga-auth-updated', async () => {
@@ -6928,38 +6932,107 @@ function applyCloudAccountMeta(meta, cloudUpdatedAt, localBlob) {
 }
 
 async function saveAccountMetaToCloud() {
-  try {
-    const _sb = window._supabase;
-    if (!_sb) return;
-    const { data: { user } } = await _sb.auth.getUser();
-    if (!user) return;
-    const savedAt = localStorage.getItem(META_SAVED_AT_KEY) || new Date().toISOString();
-    await _sb.from('user_data').upsert({
-      user_id: user.id,
-      exam_key: CLOUD_META_KEY,
-      data: buildAccountMetaPayload(savedAt),
-      updated_at: savedAt
-    }, { onConflict: 'user_id,exam_key' });
-  } catch(e) { console.warn('Cloud metadata save failed:', e); }
+  const savedAt = localStorage.getItem(META_SAVED_AT_KEY) || new Date().toISOString();
+  const payload = buildAccountMetaPayload(savedAt);
+
+  if (typeof enqueueSync === 'function') {
+    if (navigator.onLine) {
+      const queue = getSyncQueue();
+      if (queue.length > 0) {
+        enqueueSync({ type: 'meta', data: payload });
+        syncPendingChanges();
+      } else {
+        try {
+          const _sb = window._supabase;
+          if (!_sb) return;
+          const { data: { user } } = await _sb.auth.getUser();
+          if (!user) return;
+          const { error } = await _sb.from('user_data').upsert({
+            user_id: user.id,
+            exam_key: CLOUD_META_KEY,
+            data: payload,
+            updated_at: savedAt
+          }, { onConflict: 'user_id,exam_key' });
+          if (error) throw error;
+          updateSyncIndicator('synced');
+        } catch(e) {
+          console.warn('Cloud metadata save failed, enqueuing...', e);
+          enqueueSync({ type: 'meta', data: payload });
+        }
+      }
+    } else {
+      enqueueSync({ type: 'meta', data: payload });
+    }
+  } else {
+    // Fallback if offline-sync.js not loaded
+    try {
+      const _sb = window._supabase;
+      if (!_sb) return;
+      const { data: { user } } = await _sb.auth.getUser();
+      if (!user) return;
+      await _sb.from('user_data').upsert({
+        user_id: user.id,
+        exam_key: CLOUD_META_KEY,
+        data: payload,
+        updated_at: savedAt
+      }, { onConflict: 'user_id,exam_key' });
+    } catch(e) { console.warn('Cloud metadata save failed:', e); }
+  }
 }
 
 async function saveToCloud(examKey, dataObj) {
-  try {
-    const _sb = window._supabase;
-    if (!_sb) return;
-    const { data: { user } } = await _sb.auth.getUser();
-    if (!user) return;
-    if (deletedExamTombstones[examKey]) {
-      await deleteExamFromCloud(examKey);
-      return;
+  if (typeof enqueueSync === 'function') {
+    const isDelete = !!deletedExamTombstones[examKey];
+    if (navigator.onLine) {
+      const queue = getSyncQueue();
+      if (queue.length > 0) {
+        enqueueSync({ type: 'exam', key: examKey, data: dataObj, isDelete });
+        syncPendingChanges();
+      } else {
+        try {
+          const _sb = window._supabase;
+          if (!_sb) return;
+          const { data: { user } } = await _sb.auth.getUser();
+          if (!user) return;
+          if (isDelete) {
+            await deleteExamFromCloud(examKey);
+            return;
+          }
+          const { error } = await _sb.from('user_data').upsert({
+            user_id: user.id,
+            exam_key: examKey,
+            data: dataObj,
+            updated_at: new Date().toISOString()
+          }, { onConflict: 'user_id,exam_key' });
+          if (error) throw error;
+          updateSyncIndicator('synced');
+        } catch(e) {
+          console.warn('Cloud save failed, enqueuing...', e);
+          enqueueSync({ type: 'exam', key: examKey, data: dataObj, isDelete });
+        }
+      }
+    } else {
+      enqueueSync({ type: 'exam', key: examKey, data: dataObj, isDelete });
     }
-    await _sb.from('user_data').upsert({
-      user_id: user.id,
-      exam_key: examKey,
-      data: dataObj,
-      updated_at: new Date().toISOString()
-    }, { onConflict: 'user_id,exam_key' });
-  } catch(e) { console.warn('Cloud save failed:', e); }
+  } else {
+    // Fallback if offline-sync.js not loaded
+    try {
+      const _sb = window._supabase;
+      if (!_sb) return;
+      const { data: { user } } = await _sb.auth.getUser();
+      if (!user) return;
+      if (deletedExamTombstones[examKey]) {
+        await deleteExamFromCloud(examKey);
+        return;
+      }
+      await _sb.from('user_data').upsert({
+        user_id: user.id,
+        exam_key: examKey,
+        data: dataObj,
+        updated_at: new Date().toISOString()
+      }, { onConflict: 'user_id,exam_key' });
+    } catch(e) { console.warn('Cloud save failed:', e); }
+  }
 }
 
 async function deleteExamFromCloud(examKey) {

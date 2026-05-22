@@ -7,7 +7,7 @@
 //   - SEO/system files still bypass SW entirely
 // ============================================================
 
-const VERSION      = 'marga-v10';
+const VERSION      = 'marga-v11';
 const STATIC_CACHE = `${VERSION}-static`;
 const HTML_CACHE   = `${VERSION}-html`;
 
@@ -17,6 +17,7 @@ const STATIC_ASSETS = [
   '/faq.js',
   '/defer-faq.js',
   '/home.js',
+  '/offline-sync.js',
   '/favicon.ico',
   '/icon-192.png',
   '/icon-512.png',

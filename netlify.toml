@@ -102,6 +102,16 @@
   status = 200
 
 # -----------------------------------------------------------------------------
+# Redirect Netlify subdomain → canonical domain
+# -----------------------------------------------------------------------------
+
+[[redirects]]
+  from = "https://marga-study.netlify.app/*"
+  to = "https://mymarga.in/:splat"
+  status = 301
+  force = true
+
+# -----------------------------------------------------------------------------
 # 3. DOMAIN CONSOLIDATION  (no force=true — Netlify serves static files first)
 #    Note: netlify.app → custom domain and www → non-www are best configured
 #    in the Netlify dashboard under "Domain management → Primary domain".
