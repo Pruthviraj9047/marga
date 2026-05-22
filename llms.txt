@@ -8,7 +8,7 @@ Supported exams:
 - ISC
 - CBSE
 - KCET
-- MHTCET
+- MHT-CET
 - custom exams
 
 Primary pages:
