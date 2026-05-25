@@ -794,11 +794,37 @@
     }
     .sidebar-exam-new-label{font-size:0.9rem;font-weight:600}
     .sidebar-footer{
-      margin-top:0.75rem;padding:0.75rem 8px 0.9rem;border-top:1px solid var(--border);
+      margin-top:0.5rem;padding:0.5rem 8px 24px;border-top:none;
       display:flex;flex-direction:column;gap:4px;
     }
     .sidebar-settings-row,
     .sidebar-theme-row{width:100%}
+    .sidebar-settings-row{
+      height:54px;
+      padding:0 18px;
+      border-radius:14px;
+      background:transparent;
+      border:1px solid var(--border);
+      gap:12px;
+      justify-content:flex-start;
+      text-align:left;
+      color:var(--text-main);
+      font-size:0.9rem;
+      font-weight:600;
+      font-family:inherit;
+      appearance:none;
+      -webkit-appearance:none;
+      transition:background 0.16s ease,border-color 0.16s ease,box-shadow 0.16s ease,transform 0.16s ease,color 0.16s ease;
+    }
+    .sidebar-settings-row:active{
+      background:rgba(var(--primary-rgb),0.12);
+      border-color:rgba(var(--primary-rgb),0.4);
+      box-shadow:inset 0 1px 0 rgba(255,255,255,0.35);
+    }
+    .sidebar-settings-row .sidebar-settings-icon{
+      width:24px;height:24px;font-size:1.15rem;line-height:1;
+    }
+    .sidebar-settings-label{font-size:0.9rem;font-weight:600}
     .sidebar-help-row{
       position:relative;
       display:flex;
@@ -823,10 +849,8 @@
     .sidebar-user-row{
       display:flex;align-items:center;gap:10px;
       padding:10px 12px;border-radius:10px;margin:0;
-      cursor:pointer;
       transition:background 0.15s;
     }
-    .sidebar-user-row:hover{background:rgba(255,255,255,0.04)}
     .sidebar-user-avatar{
       width:36px;height:36px;border-radius:50%;
       display:flex;align-items:center;justify-content:center;
@@ -835,7 +859,17 @@
     }
     .sidebar-user-meta{display:flex;flex-direction:column;gap:2px;min-width:0}
     .sidebar-user-name{font-size:0.85rem;font-weight:600;color:var(--text-main)}
-    .sidebar-user-email{font-size:0.75rem;color:var(--text-sub)}
+    .sidebar-settings-row{text-decoration:none;color:var(--text-main)}
+    .sidebar-settings-arrow{
+      margin-left:auto;font-size:0.85rem;opacity:0;
+      transform:translateX(-2px);
+      transition:opacity 0.16s ease,transform 0.16s ease;
+    }
+    .sidebar-settings-row:hover .sidebar-settings-arrow{
+      opacity:1;transform:translateX(0);
+    }
+    .sidebar.expanded .sidebar-settings-arrow{display:inline}
+    .sidebar:not(.expanded) .sidebar-settings-arrow{display:none}
     .logout-btn{
       margin:0;
       background:none;
@@ -871,7 +905,7 @@
     .sidebar.expanded .sidebar-help-row,
     .sidebar.expanded .sidebar-settings-row,
     .sidebar.expanded .sidebar-theme-row,
-    .sidebar.expanded .logout-btn{justify-content:flex-start;gap:10px}
+    .sidebar.expanded .logout-btn{justify-content:flex-start;gap:12px}
     .sidebar.expanded .sidebar-brand-text,
     .sidebar.expanded .sidebar-exam-name,
     .sidebar.expanded .sidebar-exam-new-label,
@@ -890,6 +924,7 @@
     .sidebar:not(.expanded) .sidebar-settings-row,
     .sidebar:not(.expanded) .sidebar-theme-row,
     .sidebar:not(.expanded) .logout-btn{padding:10px 0;width:100%;justify-content:center}
+    .sidebar:not(.expanded) .sidebar-settings-row{height:54px;padding:0;justify-content:center;gap:0}
     .sidebar:not(.expanded) .sidebar-exam-new{margin:0 0 0.6rem 0;padding:10px 0;width:100%;justify-content:center}
     .sidebar:not(.expanded) .sidebar-exam-list{padding:0.6rem 0}
     .sidebar:not(.expanded) .sidebar-user-row{padding:10px 0;width:100%;justify-content:center}
@@ -907,6 +942,13 @@
     [data-theme="dark"] .sidebar-help-row:hover,
     [data-theme="dark"] .sidebar-settings-row:hover,
     [data-theme="dark"] .sidebar-theme-row:hover{background:rgba(255,255,255,0.06)}
+
+    .sidebar-settings-row:hover{
+      background:var(--primary-light);
+      border-color:rgba(var(--primary-rgb),0.35);
+      box-shadow:0 10px 24px rgba(var(--primary-rgb),0.18);
+      transform:translateX(2px);
+    }
 
     .sidebar-overlay{
       position:fixed;inset:0;background:rgba(0,0,0,0.5);
@@ -949,14 +991,14 @@
       }
       .sidebar.expanded{width:min(280px,100vw)}
       body.sidebar-mobile-open .sidebar{transform:translateX(0)}
-      body.sidebar-mobile-open .sidebar .sidebar-brand,
-      body.sidebar-mobile-open .sidebar .sidebar-row,
-      body.sidebar-mobile-open .sidebar .sidebar-exam-row,
-      body.sidebar-mobile-open .sidebar .sidebar-exam-new,
-      body.sidebar-mobile-open .sidebar .sidebar-help-row,
-      body.sidebar-mobile-open .sidebar .sidebar-settings-row,
-      body.sidebar-mobile-open .sidebar .sidebar-theme-row,
-      body.sidebar-mobile-open .sidebar .logout-btn{justify-content:flex-start;gap:10px}
+    body.sidebar-mobile-open .sidebar .sidebar-brand,
+    body.sidebar-mobile-open .sidebar .sidebar-row,
+    body.sidebar-mobile-open .sidebar .sidebar-exam-row,
+    body.sidebar-mobile-open .sidebar .sidebar-exam-new,
+    body.sidebar-mobile-open .sidebar .sidebar-help-row,
+    body.sidebar-mobile-open .sidebar .sidebar-settings-row,
+    body.sidebar-mobile-open .sidebar .sidebar-theme-row,
+    body.sidebar-mobile-open .sidebar .logout-btn{justify-content:flex-start;gap:12px}
       body.sidebar-mobile-open .sidebar .sidebar-brand-text,
       body.sidebar-mobile-open .sidebar .sidebar-exam-name,
       body.sidebar-mobile-open .sidebar .sidebar-exam-new-label,
@@ -976,6 +1018,132 @@
     /* ── Feature Settings Modal ─────────────────────────────── */
     .feature-settings-modal{max-width:760px;padding:1.25rem}
     .profile-modal{max-width:460px;padding:1.25rem}
+
+    /* ── Settings Modal ──────────────────────────────────────── */
+    #settingsOverlay{
+      position:fixed;inset:0;z-index:10001;
+      background:rgba(0,0,0,0.6);
+      backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+      display:none;align-items:center;justify-content:center;padding:1rem;
+    }
+    #settingsOverlay.sm-open{display:flex}
+    #settingsModal{
+      width:min(820px,100%);max-height:88vh;
+      background:var(--bg-card);border:1px solid var(--border);
+      border-radius:20px;box-shadow:0 40px 80px rgba(0,0,0,0.55);
+      display:flex;flex-direction:column;overflow:hidden;
+      transform:scale(0.96);opacity:0;
+      transition:transform 0.18s cubic-bezier(.16,1,.3,1),opacity 0.18s ease;
+      font-family:'Plus Jakarta Sans',sans-serif;
+    }
+    #settingsOverlay.sm-open #settingsModal{transform:scale(1);opacity:1}
+    .sm-header{
+      display:flex;align-items:center;justify-content:space-between;
+      padding:1.1rem 1.5rem;border-bottom:1px solid var(--border);flex-shrink:0;
+    }
+    .sm-header h2{font-size:1.1rem;font-weight:700;color:var(--text-main);margin:0}
+    .sm-close{
+      width:30px;height:30px;border:1px solid var(--border);
+      background:var(--bg-body);color:var(--text-main);border-radius:8px;
+      cursor:pointer;display:flex;align-items:center;justify-content:center;
+      font-size:1.1rem;line-height:1;flex-shrink:0;
+    }
+    .sm-body{display:flex;flex:1;overflow:hidden}
+    .sm-nav{
+      width:180px;flex-shrink:0;border-right:1px solid var(--border);
+      display:flex;flex-direction:column;padding:0.75rem 0.5rem;
+      gap:2px;overflow-y:auto;
+    }
+    .sm-nav-btn{
+      display:flex;align-items:center;gap:10px;
+      padding:10px 12px;border-radius:10px;border:none;
+      background:none;cursor:pointer;width:100%;text-align:left;
+      font-family:'Plus Jakarta Sans',sans-serif;
+      font-size:0.88rem;font-weight:600;color:var(--text-sub);
+      transition:background 0.15s,color 0.15s;
+    }
+    .sm-nav-btn:hover{background:var(--bg-body);color:var(--text-main)}
+    .sm-nav-btn.active{background:var(--primary-light);color:var(--primary)}
+    .sm-nav-icon{font-size:1.1rem;width:20px;text-align:center;flex-shrink:0}
+    .sm-panel-wrap{flex:1;overflow-y:auto;padding:1.5rem}
+    .sm-panel{display:none}
+    .sm-panel.active{display:block}
+    .sm-section-title{
+      font-size:1rem;font-weight:700;color:var(--text-main);
+      margin:0 0 0.25rem;
+    }
+    .sm-section-sub{
+      font-size:0.82rem;color:var(--text-sub);
+      margin:0 0 1.25rem;display:block;
+      text-align:left;
+    }
+    /* Profile panel */
+    .sm-profile-card{
+      display:flex;flex-direction:column;align-items:center;
+      gap:0.5rem;padding:1.5rem;background:var(--bg-body);
+      border:1px solid var(--border);border-radius:14px;
+      margin-bottom:1.25rem;
+    }
+    .sm-avatar{
+      width:64px;height:64px;border-radius:50%;
+      background:linear-gradient(135deg,#6C63FF,#38E8C5);
+      color:#0D0F1A;font-weight:800;font-size:1.4rem;
+      display:flex;align-items:center;justify-content:center;flex-shrink:0;
+    }
+    .sm-profile-name{font-size:1rem;font-weight:700;color:var(--text-main)}
+    .sm-profile-email{font-size:0.83rem;color:var(--text-sub)}
+    .sm-edit-btn{
+      margin-top:0.5rem;padding:8px 22px;border-radius:999px;
+      background:var(--primary);color:#fff;border:none;
+      font-family:'Plus Jakarta Sans',sans-serif;
+      font-size:0.85rem;font-weight:600;cursor:pointer;
+      transition:opacity 0.15s;
+    }
+    .sm-edit-btn:hover{opacity:0.85}
+    /* Item rows */
+    .sm-item{
+      display:flex;flex-direction:column;align-items:flex-start;
+      padding:1rem 0;border-bottom:1px solid var(--border);
+    }
+    .sm-item:last-child{border-bottom:none}
+    .sm-item-title{
+      font-size:0.92rem;font-weight:600;color:var(--text-main);margin:0;
+    }
+    .sm-item-sub{
+      font-size:0.8rem;color:var(--text-sub);margin:0.2rem 0 0.65rem;
+      text-align:left;
+    }
+    .sm-item-btn{
+      padding:8px 20px;border-radius:999px;
+      background:var(--bg-body);border:1px solid var(--border);
+      color:var(--text-main);font-family:'Plus Jakarta Sans',sans-serif;
+      font-size:0.85rem;font-weight:600;cursor:pointer;
+      transition:border-color 0.15s,background 0.15s;
+    }
+    .sm-item-btn:hover{border-color:var(--primary);background:var(--primary-light);color:var(--primary)}
+    /* Theme toggle row */
+    .sm-theme-row{
+      display:flex;align-items:center;justify-content:space-between;
+      padding:1rem 0;border-bottom:1px solid var(--border);
+    }
+    .sm-theme-row:last-child{border-bottom:none}
+    .sm-theme-left{display:flex;flex-direction:column;align-items:flex-start;gap:3px}
+    /* Logout */
+    .sm-logout-btn{
+      padding:9px 22px;border-radius:999px;
+      background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.25);
+      color:#EF4444;font-family:'Plus Jakarta Sans',sans-serif;
+      font-size:0.88rem;font-weight:600;cursor:pointer;
+      transition:background 0.15s;
+    }
+    .sm-logout-btn:hover{background:rgba(239,68,68,0.2)}
+    @media(max-width:640px){
+      #settingsModal{max-height:95vh;border-radius:16px}
+      .sm-nav{width:56px;padding:0.5rem 4px}
+      .sm-nav-btn{padding:10px;justify-content:center}
+      .sm-nav-btn span:last-child{display:none}
+      .sm-panel-wrap{padding:1rem}
+    }
     .profile-modal-head{
       display:flex;align-items:center;justify-content:space-between;
       gap:1rem;padding-bottom:0.9rem;border-bottom:1px solid var(--border);margin-bottom:0.9rem;
@@ -1788,39 +1956,11 @@ window.addEventListener('DOMContentLoaded', async () => {
   </div>
   <div class="sidebar-divider"></div>
   <div class="sidebar-footer">
-    <div class="sidebar-user-row" id="sidebarUserRow" onclick="openProfileModal()">
-      <span class="sidebar-user-avatar" id="sidebarUserAvatar">U</span>
-      <div class="sidebar-user-meta">
-        <span class="sidebar-user-name" id="sidebarUserName">User</span>
-        <span class="sidebar-user-email" id="sidebarUserEmail"></span>
-      </div>
-    </div>
-    <button class="logout-btn" onclick="handleLogout()">
-      <svg width="20" height="20" viewBox="0 0 24 24"
-        fill="none" stroke="currentColor" stroke-width="2"
-        stroke-linecap="round" stroke-linejoin="round"
-        style="flex-shrink:0;width:36px;height:36px;
-        padding:8px;box-sizing:border-box;">
-        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
-        <polyline points="16 17 21 12 16 7"/>
-        <line x1="21" y1="12" x2="9" y2="12"/>
-      </svg>
-      <span class="logout-label">Log Out</span>
-    </button>
-    <div class="sidebar-settings-row" id="sidebarHelpRow"
-      onclick="openTutorial()" role="button" tabindex="0"
-      title="Help &amp; Tutorial" aria-label="Help and tutorial">
-      <span class="sidebar-settings-icon">?</span>
-      <span class="sidebar-settings-label">Help &amp; Tutorial</span>
-    </div>
-    <div class="sidebar-settings-row" id="sidebarSettingsRow" role="button" tabindex="0" title="Customise tracker" aria-label="Customise tracker">
+    <button class="sidebar-settings-row" id="sidebarSettingsBtn" title="Settings" aria-label="Settings">
       <span class="sidebar-settings-icon">⚙️</span>
-      <span class="sidebar-settings-label">Customise Tracker</span>
-    </div>
-    <div class="sidebar-theme-row" id="sidebarThemeRow" role="button" tabindex="0" title="Toggle dark/light mode" aria-label="Toggle dark/light mode">
-      <span class="sidebar-theme-icon" id="sidebarThemeIcon">🌙</span>
-      <span class="sidebar-theme-label" id="sidebarThemeLabel">Dark Mode</span>
-    </div>
+      <span class="sidebar-settings-label">Settings</span>
+      <span class="sidebar-settings-arrow" aria-hidden="true">→</span>
+    </button>
   </div>
 </div>
 <div class="sidebar-overlay" onclick="closeSidebarMobile()"></div>
@@ -1869,6 +2009,91 @@ window.addEventListener('DOMContentLoaded', async () => {
           border:none;border-radius:999px;color:white;
           font-family:inherit;font-size:0.88rem;
           font-weight:700;cursor:pointer">Next →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     SETTINGS MODAL
+══════════════════════════════════════════════════════════════ -->
+<div id="settingsOverlay" role="dialog" aria-modal="true" aria-label="Settings">
+  <div id="settingsModal">
+    <div class="sm-header">
+      <h2>⚙️ Settings</h2>
+      <button class="sm-close" onclick="closeSettingsModal()" aria-label="Close settings">×</button>
+    </div>
+    <div class="sm-body">
+      <!-- Left nav -->
+      <nav class="sm-nav" aria-label="Settings sections">
+        <button class="sm-nav-btn active" data-panel="profile" onclick="switchSettingsPanel('profile')">
+          <span class="sm-nav-icon">👤</span><span>Profile</span>
+        </button>
+        <button class="sm-nav-btn" data-panel="appearance" onclick="switchSettingsPanel('appearance')">
+          <span class="sm-nav-icon">🎨</span><span>Appearance</span>
+        </button>
+        <button class="sm-nav-btn" data-panel="study" onclick="switchSettingsPanel('study')">
+          <span class="sm-nav-icon">📚</span><span>Study</span>
+        </button>
+        <button class="sm-nav-btn" data-panel="support" onclick="switchSettingsPanel('support')">
+          <span class="sm-nav-icon">💬</span><span>Support</span>
+        </button>
+        <button class="sm-nav-btn" data-panel="account" onclick="switchSettingsPanel('account')">
+          <span class="sm-nav-icon">🔐</span><span>Account</span>
+        </button>
+      </nav>
+      <!-- Right panels -->
+      <div class="sm-panel-wrap">
+        <!-- Profile -->
+        <div class="sm-panel active" id="smPanel-profile">
+          <div class="sm-profile-card">
+            <div class="sm-avatar" id="smProfileAvatar">U</div>
+            <span class="sm-profile-name" id="smProfileName">User</span>
+            <span class="sm-profile-email" id="smProfileEmail"></span>
+            <button class="sm-edit-btn" onclick="closeSettingsModal();openProfileModal()">Edit Profile →</button>
+          </div>
+        </div>
+        <!-- Appearance -->
+        <div class="sm-panel" id="smPanel-appearance">
+          <p class="sm-section-title">Appearance</p>
+          <div class="sm-theme-row">
+            <div class="sm-theme-left">
+              <span class="sm-item-title">Dark Mode</span>
+              <span class="sm-item-sub">Toggle between light and dark themes</span>
+            </div>
+            <label class="feature-switch" aria-label="Toggle dark mode">
+              <input type="checkbox" id="smDarkModeToggle" onchange="smToggleTheme(this)">
+              <span class="feature-switch-track"></span>
+            </label>
+          </div>
+        </div>
+        <!-- Study -->
+        <div class="sm-panel" id="smPanel-study">
+          <p class="sm-section-title">Study Preferences</p>
+          <div class="sm-item">
+            <span class="sm-item-title">Customise Tracker</span>
+            <span class="sm-item-sub">Toggle features like scenes, confidence levels and more</span>
+            <button class="sm-item-btn" onclick="closeSettingsModal();openFeatureSettings()">Open Customiser →</button>
+          </div>
+        </div>
+        <!-- Support -->
+        <div class="sm-panel" id="smPanel-support">
+          <p class="sm-section-title">Support</p>
+          <div class="sm-item">
+            <span class="sm-item-title">Help &amp; Tutorial</span>
+            <span class="sm-item-sub">Take a guided tour of all Marga features</span>
+            <button class="sm-item-btn" onclick="closeSettingsModal();openTutorial()">Open Tutorial →</button>
+          </div>
+        </div>
+        <!-- Account -->
+        <div class="sm-panel" id="smPanel-account">
+          <p class="sm-section-title">Account</p>
+          <div class="sm-item">
+            <span class="sm-item-title">Log Out</span>
+            <span class="sm-item-sub">Sign out of your Marga account on this device</span>
+            <button class="sm-logout-btn" onclick="logoutUser()">Log Out</button>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -3428,14 +3653,15 @@ function getInitials(text) {
 
 function renderSidebarUser() {
   const meta = getUserDisplayName();
-  const avatar = document.getElementById('sidebarUserAvatar');
-  const nameEl = document.getElementById('sidebarUserName');
-  const emailEl = document.getElementById('sidebarUserEmail');
   const avatarLg = document.getElementById('profileAvatarLarge');
-  if (avatar) avatar.textContent = getInitials(meta.name || meta.email);
-  if (nameEl) nameEl.textContent = meta.name || 'User';
-  if (emailEl) emailEl.textContent = meta.email || '';
   if (avatarLg) avatarLg.textContent = getInitials(meta.name || meta.email);
+  // Keep settings modal profile in sync
+  const smAvatar = document.getElementById('smProfileAvatar');
+  const smName = document.getElementById('smProfileName');
+  const smEmail = document.getElementById('smProfileEmail');
+  if (smAvatar) smAvatar.textContent = getInitials(meta.name || meta.email);
+  if (smName) smName.textContent = meta.name || 'User';
+  if (smEmail) smEmail.textContent = meta.email || '';
 }
 
 async function logoutUser() {
@@ -3458,6 +3684,8 @@ window.addEventListener('marga-session-ready', async () => {
   if (typeof syncPendingChanges === 'function') {
     syncPendingChanges();
   }
+
+  // (Settings are now an in-app modal — no redirect routing needed)
 });
 
 window.addEventListener('marga-auth-updated', async () => {
@@ -4658,13 +4886,17 @@ function initSidebar() {
       closeSidebarMobile();
     });
   }
-  const settingsRow = document.getElementById('sidebarSettingsRow');
-  if (settingsRow) {
-    settingsRow.addEventListener('click', openFeatureSettings);
-    settingsRow.addEventListener('keydown', (e) => {
+  const settingsBtn = document.getElementById('sidebarSettingsBtn');
+  if (settingsBtn) {
+    settingsBtn.addEventListener('click', () => {
+      closeSidebarMobile();
+      openSettingsModal();
+    });
+    settingsBtn.addEventListener('keydown', (e) => {
       if (e.key === 'Enter' || e.key === ' ') {
         e.preventDefault();
-        openFeatureSettings();
+        closeSidebarMobile();
+        openSettingsModal();
       }
     });
   }
@@ -6815,6 +7047,58 @@ document.addEventListener('keydown', function(e) {
   if (e.key === 'ArrowRight') tutNext();
   if (e.key === 'ArrowLeft') tutPrev();
   if (e.key === 'Escape') closeTutorial();
+});
+
+// ── Settings Modal ────────────────────────────────────────────
+function openSettingsModal() {
+  const ov = document.getElementById('settingsOverlay');
+  if (!ov) return;
+  // Sync profile data
+  renderSidebarUser();
+  // Sync dark mode toggle
+  const dmToggle = document.getElementById('smDarkModeToggle');
+  if (dmToggle) {
+    dmToggle.checked = (document.documentElement.getAttribute('data-theme') === 'dark');
+  }
+  ov.classList.add('sm-open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeSettingsModal() {
+  const ov = document.getElementById('settingsOverlay');
+  if (ov) ov.classList.remove('sm-open');
+  document.body.style.overflow = '';
+}
+
+function switchSettingsPanel(panel) {
+  document.querySelectorAll('.sm-nav-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.panel === panel);
+  });
+  document.querySelectorAll('.sm-panel').forEach(p => {
+    p.classList.toggle('active', p.id === 'smPanel-' + panel);
+  });
+}
+
+function smToggleTheme(checkbox) {
+  const next = checkbox.checked ? 'dark' : 'light';
+  document.documentElement.setAttribute('data-theme', next);
+  try { localStorage.setItem('studyTracker_theme', next); } catch(e) {}
+}
+
+// Close settings modal on backdrop click
+document.addEventListener('click', function(e) {
+  const ov = document.getElementById('settingsOverlay');
+  if (ov && ov.classList.contains('sm-open') && e.target === ov) {
+    closeSettingsModal();
+  }
+});
+
+// Close settings modal on Escape
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') {
+    const ov = document.getElementById('settingsOverlay');
+    if (ov && ov.classList.contains('sm-open')) closeSettingsModal();
+  }
 });
 
 function touchAccountMetaSavedAt(iso = new Date().toISOString()) {
