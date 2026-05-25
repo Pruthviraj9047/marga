@@ -236,6 +236,9 @@ function updateSyncIndicator(forceStatus) {
       transition: all 0.3s ease;
       user-select: none;
     }
+    .insights-active .sync-indicator {
+      display: none;
+    }
     @media (max-width: 768px) {
       .sync-indicator {
         top: 1.5rem;

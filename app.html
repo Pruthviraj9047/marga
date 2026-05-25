@@ -713,6 +713,7 @@
     .sidebar-exam-name,
     .sidebar-exam-new-label,
     .sidebar-settings-label,
+    .sidebar-insights-label,
     .sidebar-theme-label,
     .sidebar-user-name,
     .sidebar-user-email,
@@ -731,9 +732,11 @@
     .sidebar-exam-list::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
     .sidebar-row,
     .sidebar-exam-row,
+    .sidebar-nav-row,
     .sidebar-exam-new,
     .sidebar-help-row,
     .sidebar-settings-row,
+    .sidebar-insights-row,
     .sidebar-theme-row,
     .logout-btn{
       position:relative;display:flex;align-items:center;gap:0;
@@ -742,10 +745,13 @@
       transition:background 0.2s ease,color 0.2s ease,border-color 0.2s ease;
       box-sizing:border-box;width:100%;
     }
-    .sidebar-exam-row{border-left:3px solid transparent;padding-left:9px}
+    .sidebar-exam-row,
+    .sidebar-nav-row{border-left:3px solid transparent;padding-left:9px}
     .sidebar-exam-icon,
+    .sidebar-nav-icon,
     .sidebar-exam-new-icon,
     .sidebar-settings-icon,
+    .sidebar-insights-icon,
     .sidebar-theme-icon{
       display:flex;align-items:center;justify-content:center;
       width:36px;height:36px;line-height:1;text-align:center;flex-shrink:0;font-size:1.3rem;
@@ -754,13 +760,27 @@
       flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
       font-size:0.9rem;font-weight:600;color:var(--text-main);
     }
+    .sidebar-nav-label{
+      flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+      font-size:0.9rem;font-weight:600;color:var(--text-main);
+      opacity:0;max-width:0;transition:opacity 0.2s ease,max-width 0.3s ease;
+    }
     .sidebar-exam-row.active{
+      background:var(--primary-light);
+      border-left:3px solid var(--primary);
+    }
+    .sidebar-nav-row.active,
+    .sidebar-insights-row.active{
       background:var(--primary-light);
       border-left:3px solid var(--primary);
     }
     .sidebar:not(.expanded) .sidebar-exam-row.active{border-radius:0}
     .sidebar-exam-row.active .sidebar-exam-name,
     .sidebar-exam-row.active .sidebar-exam-icon{color:var(--primary)}
+    .sidebar-nav-row.active .sidebar-nav-label,
+    .sidebar-nav-row.active .sidebar-nav-icon,
+    .sidebar-insights-row.active .sidebar-insights-label,
+    .sidebar-insights-row.active .sidebar-insights-icon{color:var(--primary)}
     .sidebar-exam-actions,
     .sidebar-exam-rename-actions{display:flex;align-items:center;gap:4px;flex-shrink:0;margin-left:auto}
     .sidebar-rename-btn,
@@ -784,7 +804,7 @@
       border:1px solid var(--primary);border-radius:6px;
       padding:2px 8px;font-size:0.9rem;font-family:inherit;color:var(--text-main);
     }
-    .sidebar-exam-new{margin:0 8px 0.6rem;color:var(--primary)}
+    .sidebar-exam-new{margin:0 8px 1.5rem;color:var(--primary)}
     .sidebar-exam-new-icon{
       font-size:1.2rem;border:1.5px dashed var(--primary);
       border-radius:50%;height:36px;width:36px;
@@ -794,19 +814,31 @@
     }
     .sidebar-exam-new-label{font-size:0.9rem;font-weight:600}
     .sidebar-footer{
-      margin-top:0.5rem;padding:0.5rem 8px 24px;border-top:none;
+      margin-top:0;padding:0.35rem 8px 0.9rem;border-top:none;
       display:flex;flex-direction:column;gap:4px;
     }
     .sidebar-settings-row,
+    .sidebar-insights-row,
     .sidebar-theme-row{width:100%}
-    .sidebar-settings-row{
-      height:54px;
-      padding:0 18px;
-      border-radius:14px;
+    .sidebar-nav-row,
+    .sidebar-insights-row{
+      background:none;
+      border:none;
+      appearance:none;
+      -webkit-appearance:none;
+      font-family:inherit;
+      color:var(--text-main);
+      text-align:left;
+    }
+    .sidebar-settings-row,
+    .sidebar-insights-row{
+      height:auto;
+      padding:10px 12px;
+      border-radius:10px;
       background:transparent;
-      border:1px solid var(--border);
-      gap:12px;
-      justify-content:flex-start;
+      border:none;
+      gap:0;
+      justify-content:center;
       text-align:left;
       color:var(--text-main);
       font-size:0.9rem;
@@ -814,17 +846,23 @@
       font-family:inherit;
       appearance:none;
       -webkit-appearance:none;
-      transition:background 0.16s ease,border-color 0.16s ease,box-shadow 0.16s ease,transform 0.16s ease,color 0.16s ease;
+      transition:background 0.2s ease,color 0.2s ease,border-color 0.2s ease;
+      border-left:3px solid transparent;
+      padding-left:9px;
     }
-    .sidebar-settings-row:active{
+    .sidebar-settings-row:active,
+    .sidebar-insights-row:active{
       background:rgba(var(--primary-rgb),0.12);
-      border-color:rgba(var(--primary-rgb),0.4);
-      box-shadow:inset 0 1px 0 rgba(255,255,255,0.35);
     }
-    .sidebar-settings-row .sidebar-settings-icon{
-      width:24px;height:24px;font-size:1.15rem;line-height:1;
+    .sidebar-settings-row .sidebar-settings-icon,
+    .sidebar-insights-row .sidebar-insights-icon{
+      width:36px;height:36px;font-size:1.3rem;line-height:1;
     }
-    .sidebar-settings-label{font-size:0.9rem;font-weight:600}
+    .sidebar-settings-label,
+    .sidebar-insights-label{
+      flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+      font-size:0.9rem;font-weight:600;color:var(--text-main);
+    }
     .sidebar-help-row{
       position:relative;
       display:flex;
@@ -859,17 +897,8 @@
     }
     .sidebar-user-meta{display:flex;flex-direction:column;gap:2px;min-width:0}
     .sidebar-user-name{font-size:0.85rem;font-weight:600;color:var(--text-main)}
-    .sidebar-settings-row{text-decoration:none;color:var(--text-main)}
-    .sidebar-settings-arrow{
-      margin-left:auto;font-size:0.85rem;opacity:0;
-      transform:translateX(-2px);
-      transition:opacity 0.16s ease,transform 0.16s ease;
-    }
-    .sidebar-settings-row:hover .sidebar-settings-arrow{
-      opacity:1;transform:translateX(0);
-    }
-    .sidebar.expanded .sidebar-settings-arrow{display:inline}
-    .sidebar:not(.expanded) .sidebar-settings-arrow{display:none}
+    .sidebar-settings-row,
+    .sidebar-insights-row{text-decoration:none;color:var(--text-main)}
     .logout-btn{
       margin:0;
       background:none;
@@ -892,6 +921,7 @@
     }
     .logout-btn:hover{background:rgba(239,68,68,0.1);color:#EF4444}
     .sidebar-settings-label,
+    .sidebar-insights-label,
     .sidebar-theme-label,
     .logout-label{
       flex:1;font-size:0.9rem;font-weight:600;color:var(--text-main);
@@ -901,15 +931,19 @@
     .sidebar.expanded .sidebar-brand,
     .sidebar.expanded .sidebar-row,
     .sidebar.expanded .sidebar-exam-row,
+    .sidebar.expanded .sidebar-nav-row,
     .sidebar.expanded .sidebar-exam-new,
     .sidebar.expanded .sidebar-help-row,
     .sidebar.expanded .sidebar-settings-row,
+    .sidebar.expanded .sidebar-insights-row,
     .sidebar.expanded .sidebar-theme-row,
     .sidebar.expanded .logout-btn{justify-content:flex-start;gap:12px}
     .sidebar.expanded .sidebar-brand-text,
     .sidebar.expanded .sidebar-exam-name,
+    .sidebar.expanded .sidebar-nav-label,
     .sidebar.expanded .sidebar-exam-new-label,
     .sidebar.expanded .sidebar-settings-label,
+    .sidebar.expanded .sidebar-insights-label,
     .sidebar.expanded .sidebar-theme-label,
     .sidebar.expanded .sidebar-user-name,
     .sidebar.expanded .sidebar-user-email,
@@ -920,11 +954,12 @@
     .sidebar-exam-row.renaming .sidebar-exam-rename-cancel{opacity:1;pointer-events:auto}
     .sidebar:not(.expanded) .sidebar-header{padding:1rem 0;justify-content:center}
     .sidebar:not(.expanded) .sidebar-exam-row,
+    .sidebar:not(.expanded) .sidebar-nav-row,
     .sidebar:not(.expanded) .sidebar-help-row,
     .sidebar:not(.expanded) .sidebar-settings-row,
+    .sidebar:not(.expanded) .sidebar-insights-row,
     .sidebar:not(.expanded) .sidebar-theme-row,
     .sidebar:not(.expanded) .logout-btn{padding:10px 0;width:100%;justify-content:center}
-    .sidebar:not(.expanded) .sidebar-settings-row{height:54px;padding:0;justify-content:center;gap:0}
     .sidebar:not(.expanded) .sidebar-exam-new{margin:0 0 0.6rem 0;padding:10px 0;width:100%;justify-content:center}
     .sidebar:not(.expanded) .sidebar-exam-list{padding:0.6rem 0}
     .sidebar:not(.expanded) .sidebar-user-row{padding:10px 0;width:100%;justify-content:center}
@@ -932,23 +967,21 @@
     .sidebar:not(.expanded) .logout-label{display:none}
     .sidebar:not(.expanded) .sidebar-exam-actions{display:none}
 
+    [data-theme="light"] .sidebar-nav-row:hover,
     [data-theme="light"] .sidebar-exam-row:hover,
     [data-theme="light"] .sidebar-exam-new:hover,
     [data-theme="light"] .sidebar-help-row:hover,
     [data-theme="light"] .sidebar-settings-row:hover,
+    [data-theme="light"] .sidebar-insights-row:hover,
     [data-theme="light"] .sidebar-theme-row:hover{background:rgba(0,0,0,0.04)}
+    [data-theme="dark"] .sidebar-nav-row:hover,
     [data-theme="dark"] .sidebar-exam-row:hover,
     [data-theme="dark"] .sidebar-exam-new:hover,
     [data-theme="dark"] .sidebar-help-row:hover,
     [data-theme="dark"] .sidebar-settings-row:hover,
+    [data-theme="dark"] .sidebar-insights-row:hover,
     [data-theme="dark"] .sidebar-theme-row:hover{background:rgba(255,255,255,0.06)}
 
-    .sidebar-settings-row:hover{
-      background:var(--primary-light);
-      border-color:rgba(var(--primary-rgb),0.35);
-      box-shadow:0 10px 24px rgba(var(--primary-rgb),0.18);
-      transform:translateX(2px);
-    }
 
     .sidebar-overlay{
       position:fixed;inset:0;background:rgba(0,0,0,0.5);
@@ -994,15 +1027,19 @@
     body.sidebar-mobile-open .sidebar .sidebar-brand,
     body.sidebar-mobile-open .sidebar .sidebar-row,
     body.sidebar-mobile-open .sidebar .sidebar-exam-row,
+    body.sidebar-mobile-open .sidebar .sidebar-nav-row,
     body.sidebar-mobile-open .sidebar .sidebar-exam-new,
     body.sidebar-mobile-open .sidebar .sidebar-help-row,
     body.sidebar-mobile-open .sidebar .sidebar-settings-row,
+    body.sidebar-mobile-open .sidebar .sidebar-insights-row,
     body.sidebar-mobile-open .sidebar .sidebar-theme-row,
     body.sidebar-mobile-open .sidebar .logout-btn{justify-content:flex-start;gap:12px}
       body.sidebar-mobile-open .sidebar .sidebar-brand-text,
       body.sidebar-mobile-open .sidebar .sidebar-exam-name,
+      body.sidebar-mobile-open .sidebar .sidebar-nav-label,
       body.sidebar-mobile-open .sidebar .sidebar-exam-new-label,
       body.sidebar-mobile-open .sidebar .sidebar-settings-label,
+      body.sidebar-mobile-open .sidebar .sidebar-insights-label,
       body.sidebar-mobile-open .sidebar .sidebar-theme-label,
       body.sidebar-mobile-open .sidebar .sidebar-user-name,
       body.sidebar-mobile-open .sidebar .sidebar-user-email,
@@ -1341,8 +1378,17 @@
       background: rgba(85,72,224,0.08);
       border-left-color: #5548E0;
     }
+    [data-theme="light"] .sidebar-nav-row.active,
+    [data-theme="light"] .sidebar-insights-row.active {
+      background: rgba(85,72,224,0.08);
+      border-left-color: #5548E0;
+    }
     [data-theme="light"] .sidebar-exam-row.active
       .sidebar-exam-name {
+      color: #5548E0;
+    }
+    [data-theme="light"] .sidebar-nav-row.active .sidebar-nav-label,
+    [data-theme="light"] .sidebar-insights-row.active .sidebar-insights-label {
       color: #5548E0;
     }
     [data-theme="light"] .progress-fill {
@@ -1446,6 +1492,10 @@
     [data-theme="dark"] .logout-btn:hover{background:rgba(239,68,68,0.1);color:#EF4444}
     [data-theme="dark"] .sidebar-exam-row.active{background:rgba(108,99,255,0.12);border-left:3px solid #6C63FF}
     [data-theme="dark"] .sidebar-exam-row.active .sidebar-exam-name{color:#9B8FFF}
+    [data-theme="dark"] .sidebar-nav-row.active,
+    [data-theme="dark"] .sidebar-insights-row.active{background:rgba(108,99,255,0.12);border-left:3px solid #6C63FF}
+    [data-theme="dark"] .sidebar-nav-row.active .sidebar-nav-label,
+    [data-theme="dark"] .sidebar-insights-row.active .sidebar-insights-label{color:#9B8FFF}
     [data-theme="dark"] .sidebar-footer,[data-theme="dark"] .sidebar-divider{border-color:#252A45}
     [data-theme="dark"] .sidebar-user-avatar{background:linear-gradient(135deg,#6C63FF,#38E8C5)!important;color:#0D0F1A;font-weight:800;box-shadow:0 4px 12px rgba(108,99,255,0.4),inset 0 1px 0 rgba(255,255,255,0.2)}
 
@@ -1613,6 +1663,154 @@
     }
     @media(prefers-reduced-motion:reduce){
       .welcome-bg-orb,.welcome-card,.welcome-logo,.welcome-greeting,.welcome-quote,.welcome-stats,.welcome-cta,.welcome-tutorial-link,.tutorial-slide,.tutorial-dot,.tutorial-btn-next,.tutorial-books-3d{animation:none!important;transition:none!important}
+    }
+
+    .tracker-view[hidden],
+    .insights-view[hidden]{display:none!important}
+    .insights-view{display:flex;flex-direction:column;gap:1.5rem}
+    .insights-section{
+      background:var(--bg-card);border:1px solid var(--border);
+      border-radius:20px;padding:1.35rem;box-shadow:var(--shadow);
+    }
+    .insights-section-head{
+      display:flex;align-items:flex-end;justify-content:space-between;
+      gap:1rem;margin-bottom:1rem;
+    }
+    .insights-section-head h2{font-size:1.12rem;font-weight:700;letter-spacing:-0.02em}
+    .insights-section-head p,.insights-caption{
+      color:var(--text-sub);font-size:0.86rem;line-height:1.55;
+    }
+    .insights-overview-grid{
+      display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0.9rem;
+    }
+    .insight-stat-card{
+      position:relative;overflow:hidden;border-radius:16px;padding:1rem;
+      background:linear-gradient(135deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01));
+      border:1px solid var(--border);
+    }
+    .insight-stat-card::before{
+      content:'';position:absolute;inset:auto -15% -45% auto;width:90px;height:90px;border-radius:50%;
+      background:radial-gradient(circle,rgba(var(--primary-rgb),0.22),transparent 70%);
+      pointer-events:none;
+    }
+    .insight-stat-label{
+      color:var(--text-sub);font-size:0.78rem;text-transform:uppercase;
+      letter-spacing:0.08em;margin-bottom:0.65rem;
+    }
+    .insight-stat-value{
+      font-size:1.55rem;font-weight:800;letter-spacing:-0.03em;color:var(--text-main);
+    }
+    .insight-stat-note{margin-top:0.35rem;color:var(--text-sub);font-size:0.82rem;line-height:1.45}
+    .heatmap-shell{width:100%}
+    .heatmap-card{
+      border-radius:18px;border:1px solid var(--border);
+      background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent);padding:1rem;
+    }
+    .heatmap-wrapper{overflow:hidden}
+    .heatmap-scroll{
+      overflow-x:auto;overflow-y:hidden;scroll-behavior:smooth;-webkit-overflow-scrolling:touch;
+      padding-bottom:0.35rem;
+    }
+    .heatmap-scroll::-webkit-scrollbar{height:6px}
+    .heatmap-scroll::-webkit-scrollbar-track{background:transparent}
+    .heatmap-scroll::-webkit-scrollbar-thumb{background:rgba(136,146,184,0.35);border-radius:999px}
+    .heatmap-grid{width:max-content;padding:0.2rem 0.2rem}
+    .heatmap-months{
+      display:grid;grid-template-columns:44px repeat(53,12px);gap:4px;
+      margin-bottom:0.55rem;color:var(--text-sub);font-size:0.72rem;width:max-content;
+    }
+    .heatmap-months span{white-space:nowrap}
+    .heatmap-months span:first-child{opacity:0}
+    .heatmap-board{display:grid;grid-template-columns:44px auto;gap:0.65rem;align-items:start;width:max-content}
+    .heatmap-days{
+      display:grid;grid-template-rows:repeat(7,12px);gap:4px;color:var(--text-sub);font-size:0.72rem;padding-top:2px;
+    }
+    .heatmap-days span{display:flex;align-items:center}
+    .heatmap-weeks{
+      display:grid;grid-auto-flow:column;grid-template-rows:repeat(7,12px);
+      grid-auto-columns:12px;gap:4px;
+    }
+    .heatmap-cell{
+      width:12px;height:12px;border-radius:4px;background:rgba(255,255,255,0.05);
+      border:1px solid rgba(255,255,255,0.03);
+    }
+    .heatmap-cell.lvl-0{background:rgba(136,146,184,0.12);border-color:rgba(136,146,184,0.08)}
+    .heatmap-cell.lvl-1{background:rgba(var(--primary-rgb),0.18);border-color:rgba(var(--primary-rgb),0.16)}
+    .heatmap-cell.lvl-2{background:rgba(var(--primary-rgb),0.34);border-color:rgba(var(--primary-rgb),0.24)}
+    .heatmap-cell.lvl-3{background:rgba(56,232,197,0.38);border-color:rgba(56,232,197,0.22)}
+    .heatmap-cell.lvl-4{background:rgba(56,232,197,0.65);border-color:rgba(56,232,197,0.35)}
+    .heatmap-cell.today{box-shadow:0 0 0 1px rgba(240,192,64,0.7)}
+    .heatmap-legend{
+      display:flex;align-items:center;justify-content:space-between;gap:1rem;margin-top:0.95rem;flex-wrap:wrap;
+    }
+    .heatmap-legend-scale{
+      display:flex;align-items:center;gap:0.4rem;color:var(--text-sub);font-size:0.78rem;
+    }
+    .heatmap-legend-squares{display:flex;gap:0.35rem}
+    .exam-insights-list{display:flex;flex-direction:column;gap:0.9rem}
+    .exam-insight-item{
+      border:1px solid var(--border);border-radius:18px;
+      background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent);overflow:hidden;
+    }
+    .exam-insight-item[open]{box-shadow:0 10px 32px rgba(0,0,0,0.12)}
+    .exam-insight-summary{
+      list-style:none;display:flex;align-items:center;justify-content:space-between;
+      gap:1rem;padding:1rem 1.1rem;cursor:pointer;
+    }
+    .exam-insight-summary::-webkit-details-marker{display:none}
+    .exam-insight-title{display:flex;align-items:center;gap:0.75rem;min-width:0}
+    .exam-insight-icon{
+      width:24px;height:24px;border-radius:999px;display:flex;align-items:center;justify-content:center;
+      background:transparent;font-size:1rem;flex-shrink:0;opacity:0.92;
+      filter:drop-shadow(0 2px 8px rgba(var(--primary-rgb),0.14));
+    }
+    .exam-insight-title strong{display:block;font-size:0.98rem}
+    .exam-insight-title span{display:block;color:var(--text-sub);font-size:0.8rem;margin-top:0.15rem}
+    .exam-insight-toggle{
+      color:var(--text-sub);font-size:0.84rem;white-space:nowrap;
+      display:inline-flex;align-items:center;gap:6px;
+    }
+    .exam-insight-toggle::after{
+      content:'▼';
+      font-size:0.75rem;line-height:1;display:inline-block;
+      transform:translateY(1px);
+      transition:transform 0.18s ease;
+    }
+    .exam-insight-item[open] .exam-insight-toggle::after{
+      transform:translateY(1px) rotate(180deg);
+    }
+    .exam-insight-body{padding:0 1.1rem 1.1rem}
+    .exam-analysis{margin-top:0.85rem;display:grid;gap:0.45rem}
+    .exam-analysis-line{
+      padding:0.55rem 0.1rem;border-radius:0;border:none;
+      background:transparent;color:var(--text-sub);font-size:0.88rem;line-height:1.6;
+    }
+    .exam-analysis-line strong{
+      color:var(--text-main);
+      font-weight:700;
+      margin-right:0.35rem;
+    }
+    .insights-empty{
+      display:flex;flex-direction:column;align-items:flex-start;gap:0.8rem;padding:1.1rem;
+      border-radius:16px;border:1px dashed var(--border);background:rgba(255,255,255,0.02);
+    }
+    .insights-empty strong{font-size:1rem}
+    .insights-empty p{color:var(--text-sub);font-size:0.9rem;line-height:1.6}
+    .insights-inline-btn{
+      border:none;background:none;color:var(--primary);font:inherit;
+      font-weight:600;font-size:0.88rem;cursor:pointer;padding:0;opacity:0.92;
+    }
+    .insights-inline-btn:hover{opacity:1;text-decoration:underline;text-underline-offset:3px}
+    @media(max-width:1080px){
+      .insights-overview-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+    }
+    @media(max-width:768px){
+      .insights-overview-grid{grid-template-columns:1fr}
+      .heatmap-card{padding:0.85rem;border-radius:14px}
+      .heatmap-scroll{padding-bottom:0.25rem}
+      .heatmap-grid{padding:0.15rem 0.1rem}
+      .insights-section{padding:1rem}
+      .insights-section-head{flex-direction:column;align-items:flex-start}
     }
 
   </style>
@@ -1951,15 +2149,19 @@ window.addEventListener('DOMContentLoaded', async () => {
     <div class="sidebar-exam-list" id="sidebarExamList"></div>
     <div class="sidebar-exam-new" id="sidebarNewExamRow" title="Add new exam">
       <span class="sidebar-exam-new-icon">＋</span>
-      <span class="sidebar-exam-new-label">New Exam</span>
+      <span class="sidebar-exam-new-label">Add Exam</span>
     </div>
   </div>
   <div class="sidebar-divider"></div>
   <div class="sidebar-footer">
+    <button class="sidebar-settings-row sidebar-insights-row" id="sidebarInsightsRow" title="Insights" aria-label="Insights">
+      <span class="sidebar-insights-icon">📈</span>
+      <span class="sidebar-insights-label">Insights</span>
+    </button>
+    <div class="sidebar-divider"></div>
     <button class="sidebar-settings-row" id="sidebarSettingsBtn" title="Settings" aria-label="Settings">
       <span class="sidebar-settings-icon">⚙️</span>
       <span class="sidebar-settings-label">Settings</span>
-      <span class="sidebar-settings-arrow" aria-hidden="true">→</span>
     </button>
   </div>
 </div>
@@ -2393,31 +2595,37 @@ window.addEventListener('DOMContentLoaded', async () => {
             </g>
           </g>
         </svg>
-        <h1>Marga</h1>
+        <h1 id="appHeaderTitle">Marga</h1>
       </div>
-      <p class="header-subtitle">Track every chapter. Ace every exam.</p>
+      <p class="header-subtitle" id="appHeaderSubtitle">Track every chapter. Ace every exam.</p>
       <span class="header-deco pencil" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg></span>
       <span class="header-deco cap" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3zm-5 8.99v4L12 19l5-3.01v-4l-5 2.75-5-2.75z"/></svg></span>
     </div>
   </div>
-  <div id="modeActions"></div>
+  <section class="tracker-view" id="trackerView">
+    <section id="trackerExamView">
+      <div id="modeActions"></div>
 
-  <div class="big-stats">
-    <div class="stat-text">
-      <h2 id="modeTitle">Progress</h2>
-      <p id="ratioText">Select an exam to begin</p>
-    </div>
-    <div class="progress-track"><div class="progress-fill" id="mainProgress"></div></div>
-    <div class="stat-number" id="percentText">0%</div>
-    <div class="stats-actions">
-      <button class="btn btn-secondary btn-sm" onclick="resetProgress()" title="Reset all checkboxes for this exam">↺ Reset</button>
-      <button class="btn btn-secondary btn-sm" onclick="exportData()" title="Export current exam data as JSON">↓ Export</button>
-      <button class="btn btn-secondary btn-sm" onclick="document.getElementById('importFileInput').click()" title="Import a previously exported JSON">↑ Import</button>
-      <input type="file" id="importFileInput" accept=".json" onchange="importData(event)" style="display:none">
-    </div>
-  </div>
+      <div class="big-stats">
+        <div class="stat-text">
+          <h2 id="modeTitle">Progress</h2>
+          <p id="ratioText">Select an exam to begin</p>
+        </div>
+        <div class="progress-track"><div class="progress-fill" id="mainProgress"></div></div>
+        <div class="stat-number" id="percentText">0%</div>
+        <div class="stats-actions">
+          <button class="btn btn-secondary btn-sm" onclick="resetProgress()" title="Reset all checkboxes for this exam">↺ Reset</button>
+          <button class="btn btn-secondary btn-sm" onclick="exportData()" title="Export current exam data as JSON">↓ Export</button>
+          <button class="btn btn-secondary btn-sm" onclick="document.getElementById('importFileInput').click()" title="Import a previously exported JSON">↑ Import</button>
+          <input type="file" id="importFileInput" accept=".json" onchange="importData(event)" style="display:none">
+        </div>
+      </div>
 
-  <div class="grid" id="subjectsGrid"></div>
+      <div class="grid" id="subjectsGrid"></div>
+    </section>
+  </section>
+
+  <section class="insights-view" id="insightsView" hidden></section>
 </div></main>
 
 <script src="/offline-sync.js"></script>
@@ -3539,6 +3747,7 @@ config.isc12_humanities = {
 // ═══════════════════════════════════════════════════════════
 let appData         = {};
 let currentMode     = null;
+let activeSidebarRoute = null; // 'exam', 'insights', 'settings', or null — separate from currentMode
 let loadedExams     = [];
 let editingId       = null;
 let dragSrc         = null;
@@ -3975,6 +4184,7 @@ let EXAM_NAMES_KEY = 'margaExamNames_v1';
 let SELECTIONS_KEY = 'margaSelections_v1';
 let META_SAVED_AT_KEY = 'margaAccountMetaSavedAt_v1';
 let GLOBAL_SAVED_AT_KEY = 'margaSavedAtGlobal_v1';
+let ACTIVITY_KEY = 'margaActivity_v1';
 const CLOUD_META_KEY = '__marga_account_meta_v1';
 
 function getUserStorageKey(base) {
@@ -3995,6 +4205,7 @@ function applyUserStorageKeys() {
   SELECTIONS_KEY = getUserStorageKey('margaSelections_v1');
   META_SAVED_AT_KEY = getUserStorageKey('margaAccountMetaSavedAt_v1');
   GLOBAL_SAVED_AT_KEY = getUserStorageKey('margaSavedAtGlobal_v1');
+  ACTIVITY_KEY = getUserStorageKey('margaActivity_v1');
 }
 
 const DATA_VERSION = '4';
@@ -4011,6 +4222,24 @@ const DEFAULT_FEATURES = {
 };
 let featurePrefs = { ...DEFAULT_FEATURES };
 let pendingFeatureConfirm = null;
+const VIEW_DASHBOARD = 'tracker';
+const VIEW_INSIGHTS = 'insights';
+let currentView = VIEW_DASHBOARD;
+let studyActivity = { version: 1, days: {} };
+const ACTIVITY_WEIGHTS = {
+  chapter_completion: 4,
+  revision: 2,
+  confidence_update: 2,
+  schedule_completion: 3,
+  import: 5,
+};
+const ACTIVITY_LABELS = {
+  chapter_completion: 'chapter completion',
+  revision: 'revision',
+  confidence_update: 'confidence update',
+  schedule_completion: 'schedule completion',
+  import: 'import',
+};
 
 const FEATURE_DEFS = [
   { key:'revisedDate', label:'📅 Last Revised Date', plainLabel:'Last Revised Date', desc:'Show the revision date picker on each chapter' },
@@ -4062,6 +4291,499 @@ function syncIdCounter() {
     }
   }
   _idCounter = maxId + 1;
+}
+
+function getTodayIsoDate() {
+  return new Date().toISOString().slice(0, 10);
+}
+
+function clampNumber(value, min, max) {
+  return Math.min(max, Math.max(min, value));
+}
+
+function loadStudyActivity() {
+  try {
+    const raw = localStorage.getItem(ACTIVITY_KEY);
+    const parsed = raw ? JSON.parse(raw) : null;
+    if (!parsed || typeof parsed !== 'object' || typeof parsed.days !== 'object') {
+      studyActivity = { version: 1, days: {} };
+      return;
+    }
+    studyActivity = { version: 1, days: parsed.days || {} };
+  } catch (e) {
+    studyActivity = { version: 1, days: {} };
+  }
+}
+
+function saveStudyActivity() {
+  try { localStorage.setItem(ACTIVITY_KEY, JSON.stringify(studyActivity)); } catch (e) {}
+}
+
+function recordStudyActivity(examId, subject, type, options = {}) {
+  if (!examId || !ACTIVITY_WEIGHTS[type]) return;
+  const dayKey = options.dayKey || getTodayIsoDate();
+  if (!studyActivity || !studyActivity.days) studyActivity = { version: 1, days: {} };
+  if (!studyActivity.days[dayKey]) studyActivity.days[dayKey] = { total: 0, exams: {} };
+  const day = studyActivity.days[dayKey];
+  if (!day.exams[examId]) day.exams[examId] = { total: 0, actions: {}, subjects: {} };
+  const examEntry = day.exams[examId];
+  const amount = clampNumber(Number(options.amount) || 1, 1, 12);
+  const points = ACTIVITY_WEIGHTS[type] * amount;
+  day.total += points;
+  examEntry.total += points;
+  examEntry.actions[type] = (examEntry.actions[type] || 0) + amount;
+  if (subject) examEntry.subjects[subject] = (examEntry.subjects[subject] || 0) + points;
+  saveStudyActivity();
+}
+
+function getViewFromPath(pathname) {
+  return /\/app\/insights\/?$/.test(pathname || '') ? VIEW_INSIGHTS : VIEW_DASHBOARD;
+}
+
+function getViewPath(view) {
+  return view === VIEW_INSIGHTS ? '/app/insights' : '/app';
+}
+
+function switchView(view, options = {}) {
+  const nextView = view === VIEW_INSIGHTS ? VIEW_INSIGHTS : VIEW_DASHBOARD;
+  const nextPath = getViewPath(nextView);
+  currentView = nextView;
+  activeSidebarRoute = (nextView === VIEW_INSIGHTS) ? 'insights' : 'exam';
+  if (window.location.pathname !== nextPath) {
+    history[options.replace ? 'replaceState' : 'pushState']({ view: nextView }, '', nextPath);
+  }
+  renderCurrentView();
+}
+
+function isActivityWindowDay(dayKey, rangeDays) {
+  const today = new Date(getTodayIsoDate() + 'T00:00:00');
+  const day = new Date(dayKey + 'T00:00:00');
+  const diffDays = Math.floor((today - day) / 86400000);
+  return diffDays >= 0 && diffDays < rangeDays;
+}
+
+function getTrackedExamIds() {
+  return loadedExams.filter(examId => appData[examId] && typeof appData[examId] === 'object');
+}
+
+function getExamProgressStats(examId) {
+  let total = 0;
+  let completed = 0;
+  const subjects = appData[examId] || {};
+  Object.keys(subjects).forEach(subjectName => {
+    if (subjectName.startsWith('_')) return;
+    const subjectData = subjects[subjectName];
+    if (Array.isArray(subjectData)) {
+      total += subjectData.length;
+      completed += subjectData.filter(ch => ch.completed).length;
+    } else if (subjectData && subjectData.groups) {
+      const grouped = groupedTotals(subjectData);
+      total += grouped.total;
+      completed += grouped.completed;
+    }
+  });
+  return {
+    total,
+    completed,
+    pct: total ? Math.round((completed / total) * 100) : 0,
+  };
+}
+
+function getExamLastActivity(examId) {
+  const dates = Object.keys((studyActivity && studyActivity.days) || {})
+    .filter(dayKey => studyActivity.days[dayKey] && studyActivity.days[dayKey].exams && studyActivity.days[dayKey].exams[examId])
+    .sort();
+  if (!dates.length) {
+    return {
+      label: 'Your study path begins here.',
+      detail: 'Your study path begins here.'
+    };
+  }
+  const latest = dates[dates.length - 1];
+  const today = new Date(getTodayIsoDate() + 'T00:00:00');
+  const last = new Date(latest + 'T00:00:00');
+  const diffDays = Math.floor((today - last) / 86400000);
+  let relative = 'Today';
+  if (diffDays === 1) relative = 'Yesterday';
+  else if (diffDays > 1 && diffDays < 7) relative = diffDays + ' days ago';
+  else if (diffDays >= 7) relative = last.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  return {
+    label: 'Last activity',
+    detail: relative
+  };
+}
+
+function getActivitySummary(rangeDays = 365) {
+  const tracked = new Set(getTrackedExamIds());
+  const examTotals = {};
+  const examDays = {};
+  const subjectTotals = {};
+  const actionTotals = {};
+  const dayTotals = {};
+
+  Object.entries((studyActivity && studyActivity.days) || {}).forEach(([dayKey, dayEntry]) => {
+    if (!isActivityWindowDay(dayKey, rangeDays)) return;
+    let trackedDayTotal = 0;
+    Object.entries(dayEntry.exams || {}).forEach(([examId, examEntry]) => {
+      if (!tracked.has(examId)) return;
+      trackedDayTotal += examEntry.total || 0;
+      examTotals[examId] = (examTotals[examId] || 0) + (examEntry.total || 0);
+      examDays[examId] = (examDays[examId] || 0) + 1;
+      Object.entries(examEntry.actions || {}).forEach(([type, count]) => {
+        actionTotals[type] = (actionTotals[type] || 0) + count;
+      });
+      Object.entries(examEntry.subjects || {}).forEach(([subject, points]) => {
+        if (!subjectTotals[examId]) subjectTotals[examId] = {};
+        subjectTotals[examId][subject] = (subjectTotals[examId][subject] || 0) + points;
+      });
+    });
+    if (trackedDayTotal > 0) dayTotals[dayKey] = trackedDayTotal;
+  });
+
+  return { examTotals, examDays, subjectTotals, actionTotals, dayTotals };
+}
+
+function getMomentumLabel(dayTotals) {
+  const dates = Object.keys(dayTotals).sort();
+  if (!dates.length) return 'Just getting started';
+  const today = new Date(getTodayIsoDate() + 'T00:00:00');
+  const last = new Date(dates[dates.length - 1] + 'T00:00:00');
+  const inactiveDays = Math.floor((today - last) / 86400000);
+  if (inactiveDays > 0) return 'Inactive for ' + inactiveDays + ' day' + (inactiveDays === 1 ? '' : 's');
+  let streak = 0;
+  const seen = new Set(dates);
+  const cursor = new Date(today);
+  while (seen.has(cursor.toISOString().slice(0, 10))) {
+    streak++;
+    cursor.setDate(cursor.getDate() - 1);
+  }
+  return streak ? streak + '-day active run' : 'Just getting started';
+}
+
+function buildHeatmapSeries(dayTotals) {
+  const today = new Date(getTodayIsoDate() + 'T00:00:00');
+  const start = new Date(today);
+  start.setDate(today.getDate() - 364);
+  const values = [];
+  for (let i = 0; i < 365; i++) {
+    const current = new Date(start);
+    current.setDate(start.getDate() + i);
+    values.push({ date: current.toISOString().slice(0, 10), value: dayTotals[current.toISOString().slice(0, 10)] || 0 });
+  }
+  const nonZero = values.map(item => item.value).filter(Boolean).sort((a, b) => a - b);
+  const q1 = nonZero.length ? nonZero[Math.floor((nonZero.length - 1) * 0.25)] : 0;
+  const q2 = nonZero.length ? nonZero[Math.floor((nonZero.length - 1) * 0.5)] : 0;
+  const q3 = nonZero.length ? nonZero[Math.floor((nonZero.length - 1) * 0.75)] : 0;
+
+  const weeks = [];
+  let cursor = new Date(start);
+  cursor.setDate(start.getDate() - start.getDay());
+  for (let weekIndex = 0; weekIndex < 53; weekIndex++) {
+    const week = [];
+    for (let dayIndex = 0; dayIndex < 7; dayIndex++) {
+      const dayKey = cursor.toISOString().slice(0, 10);
+      const inRange = cursor >= start && cursor <= today;
+      const rawValue = inRange ? (dayTotals[dayKey] || 0) : 0;
+      let level = 0;
+      if (rawValue > 0) {
+        if (rawValue <= q1 || q1 === 0) level = 1;
+        else if (rawValue <= q2 || q2 === 0) level = 2;
+        else if (rawValue <= q3 || q3 === 0) level = 3;
+        else level = 4;
+      }
+      week.push({ date: dayKey, value: rawValue, level, inRange, isToday: dayKey === getTodayIsoDate() });
+      cursor.setDate(cursor.getDate() + 1);
+    }
+    weeks.push(week);
+  }
+  const months = [' ', ...weeks.map(week => {
+    const firstInRange = week.find(day => day.inRange);
+    if (!firstInRange) return '';
+    const d = new Date(firstInRange.date + 'T00:00:00');
+    return d.getDate() <= 7 ? d.toLocaleString('en-US', { month: 'short' }) : '';
+  })];
+  return { weeks, months };
+}
+
+function renderHeatmap(dayTotals, description) {
+  const series = buildHeatmapSeries(dayTotals);
+  return `
+    <div class="heatmap-shell">
+      <div class="heatmap-card">
+        <div class="heatmap-wrapper">
+          <div class="heatmap-scroll">
+            <div class="heatmap-grid">
+              <div class="heatmap-months">${series.months.map(label => `<span>${label}</span>`).join('')}</div>
+              <div class="heatmap-board">
+                <div class="heatmap-days">
+                  <span>Sun</span><span></span><span>Tue</span><span></span><span>Thu</span><span></span><span>Sat</span>
+                </div>
+                <div class="heatmap-weeks">
+                  ${series.weeks.map(week => week.map(day => {
+                    const title = day.inRange ? `${day.date}: ${day.value} activity points` : '';
+                    return `<span class="heatmap-cell lvl-${day.level}${day.isToday ? ' today' : ''}" title="${title}"></span>`;
+                  }).join('')).join('')}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="heatmap-legend">
+          <p class="insights-caption">${description}</p>
+          <div class="heatmap-legend-scale">
+            <span>Less</span>
+            <div class="heatmap-legend-squares">
+              <span class="heatmap-cell lvl-0"></span>
+              <span class="heatmap-cell lvl-1"></span>
+              <span class="heatmap-cell lvl-2"></span>
+              <span class="heatmap-cell lvl-3"></span>
+              <span class="heatmap-cell lvl-4"></span>
+            </div>
+            <span>More</span>
+          </div>
+        </div>
+      </div>
+    </div>`;
+}
+
+function buildExamActivityTotals(examId, rangeDays = 365) {
+  const summary = { dayTotals: {}, actions: {}, subjects: {}, total: 0, activeDays: 0 };
+  Object.entries((studyActivity && studyActivity.days) || {}).forEach(([dayKey, dayEntry]) => {
+    if (!isActivityWindowDay(dayKey, rangeDays)) return;
+    const examEntry = dayEntry.exams && dayEntry.exams[examId];
+    if (!examEntry) return;
+    summary.dayTotals[dayKey] = examEntry.total || 0;
+    summary.total += examEntry.total || 0;
+    summary.activeDays++;
+    Object.entries(examEntry.actions || {}).forEach(([type, count]) => {
+      summary.actions[type] = (summary.actions[type] || 0) + count;
+    });
+    Object.entries(examEntry.subjects || {}).forEach(([subject, points]) => {
+      summary.subjects[subject] = (summary.subjects[subject] || 0) + points;
+    });
+  });
+  return summary;
+}
+
+function getMonthStudyDays(dayTotals) {
+  const today = new Date(getTodayIsoDate() + 'T00:00:00');
+  return Object.keys(dayTotals).filter(dayKey => {
+    const d = new Date(dayKey + 'T00:00:00');
+    return d.getFullYear() === today.getFullYear() && d.getMonth() === today.getMonth();
+  }).length;
+}
+
+function buildExamAnalysis(examId) {
+  const stats = buildExamActivityTotals(examId, 365);
+  if (!stats.total) return [];
+  const candidates = [];
+  const monthDays = getMonthStudyDays(stats.dayTotals);
+  if (monthDays > 0) {
+    candidates.push({
+      category: 'Consistency',
+      text: 'You studied on ' + monthDays + ' day' + (monthDays === 1 ? '' : 's') + ' this month.',
+      strength: monthDays
+    });
+  }
+  const focusEntry = Object.entries(stats.subjects).sort((a, b) => b[1] - a[1])[0];
+  if (focusEntry) {
+    candidates.push({
+      category: 'Focus',
+      text: focusEntry[0] + ' received most attention.',
+      strength: focusEntry[1]
+    });
+  }
+  const weekendDays = Object.keys(stats.dayTotals).filter(dayKey => {
+    const day = new Date(dayKey + 'T00:00:00').getDay();
+    return day === 0 || day === 6;
+  }).length;
+  const totalDays = Object.keys(stats.dayTotals).length;
+  if (totalDays >= 4 && weekendDays / totalDays >= 0.45) {
+    candidates.push({
+      category: 'Pattern',
+      text: 'Activity usually increases on weekends.',
+      strength: weekendDays / totalDays
+    });
+  }
+  const strongestAction = Object.entries(stats.actions).sort((a, b) => b[1] - a[1])[0];
+  if (strongestAction) {
+    if (strongestAction[0] === 'revision') {
+      candidates.push({
+        category: 'Pattern',
+        text: 'Most progress came from revision.',
+        strength: strongestAction[1] + 0.25
+      });
+    } else if (strongestAction[0] === 'schedule_completion') {
+      candidates.push({
+        category: 'Pattern',
+        text: 'Schedule-based completions drove the biggest share of work.',
+        strength: strongestAction[1]
+      });
+    } else if (strongestAction[0] === 'confidence_update') {
+      candidates.push({
+        category: 'Focus',
+        text: 'Confidence updates shaped the strongest signal in this cycle.',
+        strength: strongestAction[1]
+      });
+    } else if (strongestAction[0] === 'import') {
+      candidates.push({
+        category: 'Momentum',
+        text: 'Imports created the biggest jump in this study phase.',
+        strength: strongestAction[1]
+      });
+    } else {
+      candidates.push({
+        category: 'Momentum',
+        text: 'Chapter completion drove the strongest movement.',
+        strength: strongestAction[1]
+      });
+    }
+  }
+  const momentumText = getMomentumLabel(stats.dayTotals);
+  if (momentumText) {
+    let strength = 0;
+    const match = momentumText.match(/(\d+)/);
+    if (match) strength = Number(match[1]);
+    const nextMomentum = {
+      category: 'Momentum',
+      text: momentumText + '.',
+      strength: strength || (momentumText.toLowerCase().includes('inactive') ? 1 : 2)
+    };
+    const existingMomentum = candidates.find(item => item.category === 'Momentum');
+    if (!existingMomentum || nextMomentum.strength > existingMomentum.strength) {
+      if (existingMomentum) Object.assign(existingMomentum, nextMomentum);
+      else candidates.push(nextMomentum);
+    }
+  }
+  const deduped = {};
+  candidates.forEach(item => {
+    const existing = deduped[item.category];
+    if (!existing || item.strength > existing.strength) deduped[item.category] = item;
+  });
+  return ['Consistency', 'Focus', 'Pattern', 'Momentum']
+    .map(category => deduped[category])
+    .filter(Boolean);
+}
+
+function renderInsightsView() {
+  const root = document.getElementById('insightsView');
+  if (!root) return;
+  const trackedExams = getTrackedExamIds();
+  const summary = getActivitySummary(365);
+  const totalActiveDays = Object.keys(summary.dayTotals).length;
+  const mostActiveEntry = Object.entries(summary.examTotals).sort((a, b) => b[1] - a[1])[0];
+  const mostActiveExam = mostActiveEntry ? getExamDisplayName(mostActiveEntry[0]) : 'Your study path begins here.';
+  const mostActiveNote = mostActiveEntry
+    ? (summary.examDays[mostActiveEntry[0]] || 0) + ' active day' + ((summary.examDays[mostActiveEntry[0]] || 0) === 1 ? '' : 's')
+    : 'Your study path begins here.';
+
+  root.innerHTML = `
+    <section class="insights-section">
+      <div class="insights-section-head">
+        <div>
+          <h2>Overview</h2>
+          <p>A grounded look at consistency, focus, and forward movement.</p>
+        </div>
+      </div>
+      <div class="insights-overview-grid">
+        <article class="insight-stat-card">
+          <div class="insight-stat-label">Active exams</div>
+          <div class="insight-stat-value">${trackedExams.length}</div>
+          <div class="insight-stat-note">${trackedExams.length ? 'Only exams you actually track are shown here.' : 'Load an exam to start building insights.'}</div>
+        </article>
+        <article class="insight-stat-card">
+          <div class="insight-stat-label">Active study days</div>
+          <div class="insight-stat-value">${totalActiveDays}</div>
+          <div class="insight-stat-note">Counted across the last 365 days of meaningful tracker updates.</div>
+        </article>
+        <article class="insight-stat-card">
+          <div class="insight-stat-label">Most active exam</div>
+          <div class="insight-stat-value">${mostActiveExam}</div>
+          <div class="insight-stat-note">${mostActiveNote}</div>
+        </article>
+        <article class="insight-stat-card">
+          <div class="insight-stat-label">Current momentum</div>
+          <div class="insight-stat-value">${getMomentumLabel(summary.dayTotals)}</div>
+          <div class="insight-stat-note">Momentum comes from recent study actions, not streak points or gamified scores.</div>
+        </article>
+      </div>
+    </section>
+    <section class="insights-section">
+      <div class="insights-section-head">
+        <div>
+          <h2>All Exams</h2>
+          <p>One combined view across every exam you are currently tracking.</p>
+        </div>
+      </div>
+      ${totalActiveDays
+        ? renderHeatmap(summary.dayTotals, 'Each square represents study progress.')
+        : `<div class="insights-empty">
+            <strong>Your study path begins here.</strong>
+            <p>Meaningful progress appears once you complete chapters, log revisions, update confidence, finish schedule-based items, or import study data.</p>
+            <button class="insights-inline-btn" type="button" onclick="switchView('${VIEW_DASHBOARD}'); openExamModal()">Track your first chapter →</button>
+          </div>`}
+    </section>
+    <section class="insights-section">
+      <div class="insights-section-head">
+        <div>
+          <h2>Exam Insights</h2>
+          <p>Expanded details stay local and are generated from the activity you log inside Marga.</p>
+        </div>
+      </div>
+      <div class="exam-insights-list">
+        ${trackedExams.map(examId => {
+          const examMeta = getExamMeta(examId) || { icon: '📚' };
+          const examStats = buildExamActivityTotals(examId, 365);
+          const activeDays = Object.keys(examStats.dayTotals).length;
+          const analysis = buildExamAnalysis(examId);
+          const subtitle = activeDays ? activeDays + ' active day' + (activeDays === 1 ? '' : 's') + ' tracked' : 'Your study path begins here.';
+          return `<details class="exam-insight-item">
+            <summary class="exam-insight-summary">
+              <div class="exam-insight-title">
+                <span class="exam-insight-icon">${examMeta.icon}</span>
+                <div>
+                  <strong>${getExamDisplayName(examId)}</strong>
+                  <span>${subtitle}</span>
+                </div>
+              </div>
+              <span class="exam-insight-toggle">Open insights</span>
+            </summary>
+            <div class="exam-insight-body">
+              ${activeDays
+                ? `${renderHeatmap(examStats.dayTotals, 'Each square represents study progress.')}
+                   <div class="exam-analysis">${analysis.map(item => `<div class="exam-analysis-line"><strong>${item.category}:</strong>${item.text}</div>`).join('')}</div>`
+                : `<div class="insights-empty">
+                     <strong>Your study path begins here.</strong>
+                     <p>Once you make meaningful progress for ${getExamDisplayName(examId)}, this space will reflect the pace, focus, and pattern of that work.</p>
+                     <button class="insights-inline-btn" type="button" onclick="switchView('${VIEW_DASHBOARD}'); switchMode('${examId.replace(/'/g, "\\'")}')">Track your first chapter →</button>
+                   </div>`}
+            </div>
+          </details>`;
+        }).join('')}
+      </div>
+    </section>`;
+}
+
+function renderCurrentView() {
+  const isInsights = currentView === VIEW_INSIGHTS;
+  const trackerView = document.getElementById('trackerView');
+  const trackerExamView = document.getElementById('trackerExamView');
+  const insightsView = document.getElementById('insightsView');
+  const headerTitle = document.getElementById('appHeaderTitle');
+  const headerSubtitle = document.getElementById('appHeaderSubtitle');
+  const insightsRow = document.getElementById('sidebarInsightsRow');
+  document.body.classList.toggle('insights-active', isInsights);
+  if (trackerView) trackerView.hidden = isInsights;
+  if (trackerExamView) trackerExamView.hidden = isInsights;
+  if (insightsView) insightsView.hidden = !isInsights;
+  if (headerTitle) headerTitle.textContent = isInsights ? 'Insights' : 'Marga';
+  if (headerSubtitle) headerSubtitle.textContent = isInsights
+    ? 'See how your study path evolves.'
+    : 'Track every chapter. Ace every exam.';
+  if (insightsRow) insightsRow.classList.toggle('active', isInsights);
+  renderTabBar();
+  if (isInsights) renderInsightsView();
+  else render();
 }
 
 // A mode is "custom" if its id starts with 'custom_' and is not a copy-exam
@@ -4719,12 +5441,21 @@ function openSidebarMobile() { setSidebarOpen(true); }
 function closeSidebarMobile() { setSidebarOpen(false); }
 
 function switchMode(examId) {
+  const wasInsights = currentView === VIEW_INSIGHTS;
+  if (currentView !== VIEW_DASHBOARD) {
+    currentView = VIEW_DASHBOARD;
+    if (window.location.pathname !== getViewPath(VIEW_DASHBOARD)) {
+      history.pushState({ view: VIEW_DASHBOARD }, '', getViewPath(VIEW_DASHBOARD));
+    }
+  }
+  activeSidebarRoute = 'exam';
   ensureModeData(examId);
   if (!cardOrder[examId]) {
     cardOrder[examId] = Object.keys(appData[examId] || {});
     localStorage.setItem(CARD_ORDER_KEY, JSON.stringify(cardOrder));
   }
   activateExam(examId);
+  if (wasInsights) renderCurrentView();
 }
 
 function closePendingFeatureConfirm(resetToggle = true) {
@@ -4847,6 +5578,8 @@ function renameExam(examId, newDisplayName) {
     const titleEl = document.getElementById('modeTitle');
     if (titleEl) titleEl.textContent = `${(getExamMeta(examId)?.icon || '📚')} ${trimmed}`;
   }
+  if (currentView === VIEW_DASHBOARD) renderCurrentView();
+  if (currentView === VIEW_INSIGHTS) renderInsightsView();
 }
 
 function initSidebar() {
@@ -4883,6 +5616,13 @@ function initSidebar() {
   if (newExamRow) {
     newExamRow.addEventListener('click', () => {
       openExamModal();
+      closeSidebarMobile();
+    });
+  }
+  const insightsRow = document.getElementById('sidebarInsightsRow');
+  if (insightsRow) {
+    insightsRow.addEventListener('click', () => {
+      switchView(VIEW_INSIGHTS);
       closeSidebarMobile();
     });
   }
@@ -4929,73 +5669,75 @@ function initSidebar() {
 
 function renderTabBar() {
   const list = document.getElementById('sidebarExamList');
-  if (!list) return;
-  list.innerHTML = '';
+  if (list) {
+    list.innerHTML = '';
 
-  loadedExams.forEach(examId => {
-    const meta = getExamMeta(examId);
-    if (!meta) return;
-    const displayName = getExamDisplayName(examId);
+    loadedExams.forEach(examId => {
+      const meta = getExamMeta(examId);
+      if (!meta) return;
+      const displayName = getExamDisplayName(examId);
 
-    const row = document.createElement('div');
-    row.className = 'sidebar-exam-row' + (examId === currentMode ? ' active' : '') + (renamingExamId === examId ? ' renaming' : '');
-    row.title = displayName;
-    if (renamingExamId === examId) {
+      const row = document.createElement('div');
+      const isActive = examId === currentMode && activeSidebarRoute === 'exam';
+      row.className = 'sidebar-exam-row' + (isActive ? ' active' : '') + (renamingExamId === examId ? ' renaming' : '');
+      row.title = displayName;
+      if (renamingExamId === examId) {
+        row.innerHTML = `
+          <span class="sidebar-exam-icon">${meta.icon}</span>
+          <input id="renameExamInput" class="sidebar-exam-input" value="${displayName.replace(/"/g,'&quot;')}">
+          <div class="sidebar-exam-rename-actions">
+            <button class="sidebar-exam-rename-ok" title="Confirm">✓</button>
+            <button class="sidebar-exam-rename-cancel" title="Cancel">✕</button>
+          </div>`;
+        row.querySelector('.sidebar-exam-rename-ok').addEventListener('click', e => {
+          e.stopPropagation();
+          const val = row.querySelector('#renameExamInput').value;
+          renameExam(examId, val);
+          renamingExamId = null;
+          renderTabBar();
+        });
+        row.querySelector('.sidebar-exam-rename-cancel').addEventListener('click', e => {
+          e.stopPropagation();
+          renamingExamId = null;
+          renderTabBar();
+        });
+        row.querySelector('#renameExamInput').addEventListener('keydown', e => {
+          if (e.key === 'Enter') {
+            renameExam(examId, e.target.value);
+            renamingExamId = null;
+            renderTabBar();
+          }
+          if (e.key === 'Escape') {
+            renamingExamId = null;
+            renderTabBar();
+          }
+        });
+        list.appendChild(row);
+        return;
+      }
       row.innerHTML = `
         <span class="sidebar-exam-icon">${meta.icon}</span>
-        <input id="renameExamInput" class="sidebar-exam-input" value="${displayName.replace(/"/g,'&quot;')}">
-        <div class="sidebar-exam-rename-actions">
-          <button class="sidebar-exam-rename-ok" title="Confirm">✓</button>
-          <button class="sidebar-exam-rename-cancel" title="Cancel">✕</button>
+        <span class="sidebar-exam-name" data-exam-label="${examId}">${displayName}</span>
+        <div class="sidebar-exam-actions">
+          <button class="sidebar-rename-btn" title="Rename ${displayName}" aria-label="Rename ${displayName}">✏️</button>
+          <button class="sidebar-delete-btn" title="Delete ${displayName}" aria-label="Delete ${displayName}">×</button>
         </div>`;
-      row.querySelector('.sidebar-exam-rename-ok').addEventListener('click', e => {
-        e.stopPropagation();
-        const val = row.querySelector('#renameExamInput').value;
-        renameExam(examId, val);
-        renamingExamId = null;
-        renderTabBar();
-      });
-      row.querySelector('.sidebar-exam-rename-cancel').addEventListener('click', e => {
-        e.stopPropagation();
-        renamingExamId = null;
-        renderTabBar();
-      });
-      row.querySelector('#renameExamInput').addEventListener('keydown', e => {
-        if (e.key === 'Enter') {
-          renameExam(examId, e.target.value);
-          renamingExamId = null;
+      row.addEventListener('click', e => {
+        if (e.target.classList.contains('sidebar-delete-btn')) {
+          e.stopPropagation();
+          confirmDeleteExam(examId, displayName);
+        } else if (e.target.classList.contains('sidebar-rename-btn')) {
+          e.stopPropagation();
+          renamingExamId = examId;
           renderTabBar();
-        }
-        if (e.key === 'Escape') {
-          renamingExamId = null;
-          renderTabBar();
+        } else {
+          switchMode(examId);
+          closeSidebarMobile();
         }
       });
       list.appendChild(row);
-      return;
-    }
-    row.innerHTML = `
-      <span class="sidebar-exam-icon">${meta.icon}</span>
-      <span class="sidebar-exam-name" data-exam-label="${examId}">${displayName}</span>
-      <div class="sidebar-exam-actions">
-        <button class="sidebar-rename-btn" title="Rename ${displayName}" aria-label="Rename ${displayName}">✏️</button>
-        <button class="sidebar-delete-btn" title="Delete ${displayName}" aria-label="Delete ${displayName}">×</button>
-      </div>`;
-    row.addEventListener('click', e => {
-      if (e.target.classList.contains('sidebar-delete-btn')) {
-        e.stopPropagation();
-        confirmDeleteExam(examId, displayName);
-      } else if (e.target.classList.contains('sidebar-rename-btn')) {
-        e.stopPropagation();
-        renamingExamId = examId;
-        renderTabBar();
-      } else {
-        switchMode(examId);
-        closeSidebarMobile();
-      }
     });
-    list.appendChild(row);
-  });
+  }
 
   const ma = document.getElementById('modeActions');
   if (ma) ma.innerHTML = currentMode
@@ -5037,6 +5779,8 @@ async function deleteExam(examId) {
     openExamModal();
   } else if (wasActive) {
     activateExam(loadedExams[0]);
+  } else if (currentView === VIEW_INSIGHTS) {
+    renderInsightsView();
   }
 }
 
@@ -5052,7 +5796,8 @@ function activateExam(examId) {
   document.getElementById('modeTitle').textContent = `${meta.icon} ${getExamDisplayName(examId)}`;
   saveData();
   renderTabBar();
-  render();
+  if (currentView === VIEW_DASHBOARD) render();
+  else renderInsightsView();
 }
 
 function openExamModal() {
@@ -5881,6 +6626,7 @@ function toggleComplete(subject, id) {
   const listScrollTop = card ? card.querySelector('.chapter-list').scrollTop : 0;
 
   ch.completed = !ch.completed;
+  if (ch.completed) recordStudyActivity(currentMode, subject, 'chapter_completion');
   saveData();
 
   // Targeted patch — no full render
@@ -5944,7 +6690,12 @@ function updateDate(subject, id, val) {
   id = Number(id);
   const found = findChapterInSubject(appData[currentMode][subject], id);
   const ch = found && found.chapter;
-  if (ch) { ch.revised = val; saveData(); }
+  if (ch) {
+    const previous = ch.revised;
+    ch.revised = val;
+    if (val && val !== previous) recordStudyActivity(currentMode, subject, 'revision');
+    saveData();
+  }
 }
 
 function updatePrep(subject, id, val) {
@@ -5952,7 +6703,9 @@ function updatePrep(subject, id, val) {
   const found = findChapterInSubject(appData[currentMode][subject], id);
   const ch = found && found.chapter;
   if (!ch) return;
+  const previous = ch.prep;
   ch.prep = val;
+  if (val !== previous) recordStudyActivity(currentMode, subject, 'confidence_update');
   saveData();
   // Targeted patch — just swap the badge class
   const sel = document.querySelector(`select.prep-badge[data-ch-id="${id}"]`);
@@ -6049,8 +6802,11 @@ function toggleScene(mode, subject, groupLabel, chapterId, sceneId) {
     console.error('Scene not found:', sceneId, 'in act:', chapterId);
     return;
   }
+  const wasChapterComplete = chapter.completed;
   scene.completed = !scene.completed;
   chapter.completed = chapter.scenes.every(s => s.completed);
+  if (scene.completed) recordStudyActivity(mode, subject, 'schedule_completion');
+  if (!wasChapterComplete && chapter.completed) recordStudyActivity(mode, subject, 'chapter_completion');
   saveData();
   const sceneBox = document.getElementById('scene-' + sceneId);
   if (sceneBox) sceneBox.checked = scene.completed;
@@ -6074,6 +6830,7 @@ function toggleActWithScenes(mode, subject, groupLabel, chapterId) {
     console.error('Act not found:', chapterId, 'in group:', groupLabel);
     return;
   }
+  const wasComplete = chapter.completed;
   chapter.completed = !chapter.completed;
   if (chapter.scenes && Array.isArray(chapter.scenes)) {
     chapter.scenes.forEach(scene => {
@@ -6088,6 +6845,8 @@ function toggleActWithScenes(mode, subject, groupLabel, chapterId) {
   if (actBox) actBox.checked = chapter.completed;
   const actNameEl = document.querySelector(`[data-act-name="${chapterId}"]`);
   if (actNameEl) actNameEl.classList.toggle('completed', chapter.completed);
+  if (chapter.completed) recordStudyActivity(mode, subject, 'schedule_completion', { amount: Math.max(1, chapter.scenes?.length || 1) });
+  if (!wasComplete && chapter.completed) recordStudyActivity(mode, subject, 'chapter_completion');
   saveData();
   refreshGroupCounter(mode, subject, groupLabel);
   refreshCardCounter(mode, subject);
@@ -6640,13 +7399,55 @@ function updateStats() {
 // ═══════════════════════════════════════════════════════════
 // RESET / EXPORT / IMPORT
 // ═══════════════════════════════════════════════════════════
+
+function resetNode(node, seen = new WeakSet()) {
+  if (!node || typeof node !== 'object') return;
+  if (seen.has(node)) return;
+  seen.add(node);
+
+  if (Array.isArray(node)) {
+    node.forEach(child => resetNode(child, seen));
+    return;
+  }
+
+  if ('completed' in node) node.completed = false;
+  if ('prep' in node) node.prep = 'none';
+  if ('revised' in node) node.revised = '';
+  if ('confidence' in node) node.confidence = undefined;
+  if ('streak' in node) {
+    node.streak = typeof node.streak === 'number' ? 0 : false;
+  }
+  if ('activity' in node) {
+    node.activity = typeof node.activity === 'number' ? 0 : false;
+  }
+  if ('progress' in node) {
+    node.progress = typeof node.progress === 'number' ? 0 : false;
+  }
+
+  const containers = ['chapters', 'groups', 'subGroups', 'children', 'nestedGroups', 'scenes'];
+  containers.forEach(key => {
+    if (node[key]) resetNode(node[key], seen);
+  });
+
+  Object.keys(node).forEach(key => {
+    if (containers.includes(key)) return;
+    const value = node[key];
+    if (value && typeof value === 'object') resetNode(value, seen);
+  });
+}
+
 function resetProgress() {
   if (!currentMode) return;
   if (!confirm('Reset all chapter checkboxes for this exam?\nPrep levels and revision dates are kept.')) return;
-  Object.values(appData[currentMode]).forEach(chs => {
-    if (Array.isArray(chs)) chs.forEach(c => { c.completed = false; });
+
+  const examData = appData[currentMode];
+  Object.keys(examData).forEach(subjectName => {
+    if (!subjectName.startsWith('_')) {
+      resetNode(examData[subjectName]);
+    }
   });
-  saveData(); render();
+
+  saveData(); renderCurrentView();
 }
 
 function exportData() {
@@ -6695,6 +7496,7 @@ function importData(e) {
         });
       }
       if (!loadedExams.includes(obj.mode)) loadedExams.push(obj.mode);
+      recordStudyActivity(obj.mode, '', 'import');
       saveData(); activateExam(obj.mode);
     } catch { showToast('Could not parse file — make sure it is a valid JSON export.'); }
   };
@@ -6708,8 +7510,16 @@ function importData(e) {
 function init() {
   // Sync theme icon with whichever theme was already applied by the inline script
   applyTheme(document.documentElement.getAttribute('data-theme') || 'dark');
+  currentView = getViewFromPath(window.location.pathname);
+  activeSidebarRoute = (currentView === VIEW_INSIGHTS) ? 'insights' : 'exam';
+  loadStudyActivity();
   loadFeaturePrefs();
   initSidebar();
+  window.addEventListener('popstate', () => {
+    currentView = getViewFromPath(window.location.pathname);
+    activeSidebarRoute = (currentView === VIEW_INSIGHTS) ? 'insights' : 'exam';
+    renderCurrentView();
+  });
   // Load sort preferences
   try {
     const sp = localStorage.getItem(SORT_KEY);
@@ -6837,6 +7647,7 @@ function init() {
   } else {
     openExamModal();
   }
+  renderCurrentView();
 }
 
 function saveData() {
@@ -6869,6 +7680,7 @@ function saveData() {
   // Also persist active tabs separately as required
   localStorage.setItem(TABS_KEY, JSON.stringify(loadedExams));
   updateStats();
+  if (currentView === VIEW_INSIGHTS) renderInsightsView();
 }
 
 document.getElementById('subjNameInput').addEventListener('keydown', e => {
@@ -6929,9 +7741,16 @@ function _buildTutSlides() {
     {
       tag:'⚙️ Step 6',
       title:'Make it <span style="background:linear-gradient(135deg,#6C63FF,#38E8C5);-webkit-background-clip:text;background-clip:text;color:transparent">yours</span>',
-      desc:'Open Customise Tracker from the sidebar to toggle features on or off. Turn off what you do not need and keep the interface exactly how you like it.',
-      svg:'<svg viewBox="0 0 620 175" style="width:100%;display:block;background:#0D0F1A"><rect x="20" y="10" width="580" height="155" rx="14" fill="#141727" stroke="#252A45" stroke-width="1"/><text x="40" y="34" font-family="sans-serif" font-size="13" font-weight="700" fill="#EEF0FF">⚙️ Customise Tracker</text><line x1="40" y1="44" x2="580" y2="44" stroke="#252A45" stroke-width="1"/><rect x="40" y="52" width="540" height="28" rx="0" fill="none"/><text x="52" y="68" font-family="sans-serif" font-size="11" fill="#EEF0FF" font-weight="600">Revision Date</text><text x="52" y="79" font-family="sans-serif" font-size="8" fill="#8892B8">Show date picker on each chapter row</text><rect x="536" y="57" width="32" height="18" rx="9" fill="#6C63FF"/><circle cx="557" cy="66" r="7" fill="white"/><line x1="40" y1="88" x2="580" y2="88" stroke="#1C2035" stroke-width="1"/><rect x="40" y="93" width="540" height="28" rx="0" fill="none"/><text x="52" y="109" font-family="sans-serif" font-size="11" fill="#EEF0FF" font-weight="600">Drag to Reorder</text><text x="52" y="120" font-family="sans-serif" font-size="8" fill="#8892B8">Show drag handles on chapter rows</text><rect x="536" y="98" width="32" height="18" rx="9" fill="#252A45"/><circle cx="541" cy="107" r="7" fill="white"/><line x1="40" y1="128" x2="580" y2="128" stroke="#1C2035" stroke-width="1"/><rect x="40" y="133" width="540" height="28" rx="0" fill="none"/><text x="52" y="149" font-family="sans-serif" font-size="11" fill="#EEF0FF" font-weight="600">Rename Chapters</text><text x="52" y="160" font-family="sans-serif" font-size="8" fill="#8892B8">Allow inline renaming of chapter names</text><rect x="536" y="138" width="32" height="18" rx="9" fill="#6C63FF"/><circle cx="557" cy="147" r="7" fill="white"/></svg>',
-      feats:[['🔧','Toggle features','Turn revision dates, drag handles, rename and more on or off'],['🎨','Dark and light mode','Switch themes from the sidebar anytime'],['📤','Export and import','Back up your data or move it between devices']]
+      desc:'Open Settings from the sidebar to personalise your study experience. Adjust what you need and keep Marga exactly how you like it.',
+      svg:'<svg viewBox="0 0 620 175" style="width:100%;display:block;background:#0D0F1A"><rect x="20" y="10" width="580" height="155" rx="14" fill="#141727" stroke="#252A45" stroke-width="1"/><text x="40" y="32" font-family="sans-serif" font-size="12" font-weight="700" fill="#EEF0FF">⚙️ Settings</text><rect x="40" y="44" width="128" height="108" rx="10" fill="#0D0F1A" stroke="#252A45" stroke-width="1"/><text x="52" y="64" font-family="sans-serif" font-size="9" fill="#8892B8">Profile</text><rect x="48" y="70" width="112" height="22" rx="7" fill="rgba(108,99,255,0.16)" stroke="#6C63FF" stroke-width="1"/><text x="58" y="85" font-family="sans-serif" font-size="9" fill="#9B8FFF" font-weight="700">Study</text><text x="52" y="108" font-family="sans-serif" font-size="9" fill="#8892B8">Appearance</text><text x="52" y="126" font-family="sans-serif" font-size="9" fill="#8892B8">Support</text><rect x="186" y="44" width="394" height="108" rx="10" fill="#0D0F1A" stroke="#252A45" stroke-width="1"/><text x="204" y="64" font-family="sans-serif" font-size="10" fill="#EEF0FF" font-weight="700">Study preferences</text><rect x="204" y="74" width="360" height="40" rx="10" fill="#141727" stroke="#6C63FF" stroke-width="1"/><text x="220" y="96" font-family="sans-serif" font-size="10" fill="#EEF0FF" font-weight="600">Customise Tracker</text><text x="220" y="108" font-family="sans-serif" font-size="8" fill="#8892B8">Toggle scenes, confidence, and more</text><rect x="520" y="86" width="32" height="16" rx="8" fill="#252A45"/><text x="536" y="97" font-family="sans-serif" font-size="7" fill="#8892B8" text-anchor="middle">Open</text></svg>',
+      feats:[['🧭','Tracker preferences','Customise features the way you study'],['🎨','Appearance','Switch themes and visual comfort'],['👤','Profile','Update your account details'],['💬','Support tools','Help and tutorial access']]
+    },
+    {
+      tag:'📊 Step 7',
+      title:'See your <span style="background:linear-gradient(135deg,#6C63FF,#38E8C5);-webkit-background-clip:text;background-clip:text;color:transparent">study patterns</span>',
+      desc:'Insights turns your activity into heatmaps and analysis across every exam you track.',
+      svg:'<svg viewBox="0 0 620 175" style="width:100%;display:block;background:#0D0F1A"><rect x="20" y="10" width="580" height="155" rx="14" fill="#141727" stroke="#252A45" stroke-width="1"/><text x="40" y="32" font-family="sans-serif" font-size="12" font-weight="700" fill="#EEF0FF">📈 Insights</text><rect x="40" y="44" width="250" height="56" rx="10" fill="#0D0F1A" stroke="#252A45" stroke-width="1"/><text x="52" y="62" font-family="sans-serif" font-size="9" fill="#8892B8">All Exams</text><g fill="#1C2035" stroke="#252A45" stroke-width="0.6"><rect x="52" y="70" width="8" height="8" rx="2"/><rect x="64" y="70" width="8" height="8" rx="2"/><rect x="76" y="70" width="8" height="8" rx="2"/><rect x="88" y="70" width="8" height="8" rx="2"/><rect x="100" y="70" width="8" height="8" rx="2"/><rect x="112" y="70" width="8" height="8" rx="2"/><rect x="124" y="70" width="8" height="8" rx="2"/><rect x="136" y="70" width="8" height="8" rx="2"/><rect x="148" y="70" width="8" height="8" rx="2"/><rect x="160" y="70" width="8" height="8" rx="2"/><rect x="52" y="82" width="8" height="8" rx="2"/><rect x="64" y="82" width="8" height="8" rx="2"/><rect x="76" y="82" width="8" height="8" rx="2"/><rect x="88" y="82" width="8" height="8" rx="2"/><rect x="100" y="82" width="8" height="8" rx="2"/><rect x="112" y="82" width="8" height="8" rx="2"/><rect x="124" y="82" width="8" height="8" rx="2"/><rect x="136" y="82" width="8" height="8" rx="2"/><rect x="148" y="82" width="8" height="8" rx="2"/><rect x="160" y="82" width="8" height="8" rx="2"/></g><rect x="310" y="44" width="290" height="110" rx="10" fill="#0D0F1A" stroke="#252A45" stroke-width="1"/><text x="322" y="62" font-family="sans-serif" font-size="9" fill="#EEF0FF" font-weight="700">JEE — Expanded</text><rect x="322" y="70" width="250" height="36" rx="8" fill="#141727" stroke="#252A45" stroke-width="1"/><g fill="#1C2035" stroke="#252A45" stroke-width="0.6"><rect x="332" y="78" width="8" height="8" rx="2"/><rect x="344" y="78" width="8" height="8" rx="2"/><rect x="356" y="78" width="8" height="8" rx="2"/><rect x="368" y="78" width="8" height="8" rx="2"/><rect x="380" y="78" width="8" height="8" rx="2"/><rect x="392" y="78" width="8" height="8" rx="2"/><rect x="404" y="78" width="8" height="8" rx="2"/><rect x="416" y="78" width="8" height="8" rx="2"/><rect x="428" y="78" width="8" height="8" rx="2"/><rect x="440" y="78" width="8" height="8" rx="2"/><rect x="332" y="90" width="8" height="8" rx="2"/><rect x="344" y="90" width="8" height="8" rx="2"/><rect x="356" y="90" width="8" height="8" rx="2"/><rect x="368" y="90" width="8" height="8" rx="2"/><rect x="380" y="90" width="8" height="8" rx="2"/><rect x="392" y="90" width="8" height="8" rx="2"/><rect x="404" y="90" width="8" height="8" rx="2"/><rect x="416" y="90" width="8" height="8" rx="2"/><rect x="428" y="90" width="8" height="8" rx="2"/><rect x="440" y="90" width="8" height="8" rx="2"/></g><rect x="322" y="114" width="72" height="16" rx="8" fill="rgba(108,99,255,0.16)" stroke="#6C63FF" stroke-width="1"/><text x="358" y="125" font-family="sans-serif" font-size="7" fill="#9B8FFF" text-anchor="middle">Momentum</text><rect x="398" y="114" width="68" height="16" rx="8" fill="rgba(56,232,197,0.14)" stroke="#38E8C5" stroke-width="1"/><text x="432" y="125" font-family="sans-serif" font-size="7" fill="#A7F3D0" text-anchor="middle">Focus</text><rect x="470" y="114" width="86" height="16" rx="8" fill="rgba(240,192,64,0.14)" stroke="#F0C040" stroke-width="1"/><text x="513" y="125" font-family="sans-serif" font-size="7" fill="#FDE68A" text-anchor="middle">Consistency</text></svg>',
+      feats:[['📊','Study consistency','Spot steady streaks over time'],['⚡','Momentum','See recent pace shifts'],['🎯','Subject focus','Learn where energy lands'],['🧩','Combined activity','One view across all exams']]
     },
     {
       tag:'🎉 Done!',

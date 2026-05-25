@@ -73,6 +73,11 @@
   to   = "/app.html"
   status = 200
 
+[[redirects]]
+  from = "/app/*"
+  to   = "/app.html"
+  status = 200
+
 # Canonical redirect: /app.html → /app (301 so browsers land on clean URL)
 [[redirects]]
   from = "/app.html"
