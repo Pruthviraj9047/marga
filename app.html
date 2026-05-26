@@ -1731,15 +1731,48 @@
       grid-auto-columns:12px;gap:4px;
     }
     .heatmap-cell{
-      width:12px;height:12px;border-radius:4px;background:rgba(255,255,255,0.05);
-      border:1px solid rgba(255,255,255,0.03);
+      width:12px;height:12px;border-radius:4px;background:#232943;
+      border:1px solid rgba(255,255,255,0.06);
+      box-shadow:var(--heatmap-outline, none), var(--heatmap-glow, none);
+      transition:transform 120ms ease,filter 120ms ease,box-shadow 150ms ease;
     }
-    .heatmap-cell.lvl-0{background:rgba(136,146,184,0.12);border-color:rgba(136,146,184,0.08)}
-    .heatmap-cell.lvl-1{background:rgba(var(--primary-rgb),0.18);border-color:rgba(var(--primary-rgb),0.16)}
-    .heatmap-cell.lvl-2{background:rgba(var(--primary-rgb),0.34);border-color:rgba(var(--primary-rgb),0.24)}
-    .heatmap-cell.lvl-3{background:rgba(56,232,197,0.38);border-color:rgba(56,232,197,0.22)}
-    .heatmap-cell.lvl-4{background:rgba(56,232,197,0.65);border-color:rgba(56,232,197,0.35)}
-    .heatmap-cell.today{box-shadow:0 0 0 1px rgba(240,192,64,0.7)}
+    .heatmap-cell.lvl-0{background:#232943;border-color:rgba(120,132,190,0.24)}
+    .heatmap-cell.lvl-1{
+      background:#5B5CEB;border-color:rgb(120 123 255 / 0.65);
+      --heatmap-glow:0 0 4px rgb(91 92 235 / 0.32);filter:brightness(1.04);
+    }
+    .heatmap-cell.lvl-2{
+      background:#4A7DFF;border-color:rgb(118 158 255 / 0.65);
+      --heatmap-glow:0 0 4px rgb(74 125 255 / 0.32);filter:brightness(1.04);
+    }
+    .heatmap-cell.lvl-3{
+      background:#36C7D9;border-color:rgb(122 231 243 / 0.6);
+      --heatmap-glow:0 0 4px rgb(54 199 217 / 0.3);filter:brightness(1.04);
+    }
+    .heatmap-cell.lvl-4{
+      background:#35E6B5;border-color:rgb(131 252 219 / 0.6);
+      --heatmap-glow:0 0 4px rgb(53 230 181 / 0.32);filter:brightness(1.04);
+    }
+    .heatmap-cell.lvl-5{
+      background:#35E6B5;border-color:rgb(166 255 231 / 0.7);
+      --heatmap-glow:0 0 6px rgb(53 230 181 / 0.48);filter:brightness(1.08);
+    }
+    .heatmap-cell.today{--heatmap-outline:0 0 0 1px rgba(255,255,255,0.55)}
+    .heatmap-cell:hover{transform:scale(1.08);filter:brightness(1.12)}
+    .heatmap-tooltip{
+      position:fixed;z-index:50;pointer-events:none;display:none;
+      padding:0.55rem 0.7rem;border-radius:12px;max-width:240px;
+      background:rgba(18,22,38,0.92);
+      border:1px solid rgba(255,255,255,0.08);
+      box-shadow:0 12px 28px rgba(0,0,0,0.35);
+      color:var(--text-main);font-size:0.78rem;line-height:1.35;
+      opacity:0;transform:translateY(6px);
+      transition:opacity 120ms ease,transform 120ms ease;
+      backdrop-filter:blur(10px);
+    }
+    .heatmap-tooltip.visible{opacity:1;transform:translateY(0)}
+    .heatmap-tooltip-date{font-weight:600;margin-bottom:0.25rem;color:var(--text-main)}
+    .heatmap-tooltip-lines{display:flex;flex-direction:column;gap:2px;color:var(--text-sub)}
     .heatmap-legend{
       display:flex;align-items:center;justify-content:space-between;gap:1rem;margin-top:0.95rem;flex-wrap:wrap;
     }
@@ -4185,6 +4218,7 @@ let SELECTIONS_KEY = 'margaSelections_v1';
 let META_SAVED_AT_KEY = 'margaAccountMetaSavedAt_v1';
 let GLOBAL_SAVED_AT_KEY = 'margaSavedAtGlobal_v1';
 let ACTIVITY_KEY = 'margaActivity_v1';
+let ACTIVITY_DEDUP_KEY = 'margaActivityDedup_v1';
 const CLOUD_META_KEY = '__marga_account_meta_v1';
 
 function getUserStorageKey(base) {
@@ -4206,6 +4240,7 @@ function applyUserStorageKeys() {
   META_SAVED_AT_KEY = getUserStorageKey('margaAccountMetaSavedAt_v1');
   GLOBAL_SAVED_AT_KEY = getUserStorageKey('margaSavedAtGlobal_v1');
   ACTIVITY_KEY = getUserStorageKey('margaActivity_v1');
+  ACTIVITY_DEDUP_KEY = getUserStorageKey('margaActivityDedup_v1');
 }
 
 const DATA_VERSION = '4';
@@ -4226,20 +4261,44 @@ const VIEW_DASHBOARD = 'tracker';
 const VIEW_INSIGHTS = 'insights';
 let currentView = VIEW_DASHBOARD;
 let studyActivity = { version: 1, days: {} };
+let activityDedup = {};
 const ACTIVITY_WEIGHTS = {
-  chapter_completion: 4,
-  revision: 2,
-  confidence_update: 2,
-  schedule_completion: 3,
-  import: 5,
+  chapter_completion: 8,
+  group_completion: 10,
+  revision: 5,
+  confidence_update: 1,
+  import: 0,
 };
 const ACTIVITY_LABELS = {
   chapter_completion: 'chapter completion',
+  group_completion: 'group progress',
   revision: 'revision',
   confidence_update: 'confidence update',
-  schedule_completion: 'schedule completion',
   import: 'import',
 };
+const ACTIVITY_TOOLTIP_LABELS = {
+  chapter_completion: { singular: 'chapter completed', plural: 'chapters completed' },
+  group_completion: { singular: 'group progress update', plural: 'group progress updates' },
+  revision: { singular: 'revision', plural: 'revisions' },
+  confidence_update: { singular: 'confidence update', plural: 'confidence updates' },
+  import: { singular: 'import', plural: 'imports' },
+};
+const HEATMAP_TOOLTIP_ORDER = [
+  'chapter_completion',
+  'group_completion',
+  'revision',
+  'confidence_update',
+  'import',
+];
+const ACTIVITY_TYPE_ALIASES = {
+  schedule_completion: 'group_completion',
+};
+const DEDUP_ACTIVITY_TYPES = new Set([
+  'chapter_completion',
+  'group_completion',
+  'revision',
+  'confidence_update',
+]);
 
 const FEATURE_DEFS = [
   { key:'revisedDate', label:'📅 Last Revised Date', plainLabel:'Last Revised Date', desc:'Show the revision date picker on each chapter' },
@@ -4301,6 +4360,117 @@ function clampNumber(value, min, max) {
   return Math.min(max, Math.max(min, value));
 }
 
+function escapeAttr(value) {
+  return String(value)
+    .replace(/&/g, '&amp;')
+    .replace(/"/g, '&quot;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+}
+
+function formatHeatmapDate(dayKey) {
+  const date = new Date(dayKey + 'T00:00:00');
+  return date.toLocaleDateString('en-US', {
+    weekday: 'long',
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric'
+  });
+}
+
+function normalizeActionType(type) {
+  return ACTIVITY_TYPE_ALIASES[type] || type;
+}
+
+function normalizeActionCounts(actions) {
+  const normalized = {};
+  Object.entries(actions || {}).forEach(([type, count]) => {
+    const normalizedType = normalizeActionType(type);
+    normalized[normalizedType] = (normalized[normalizedType] || 0) + count;
+  });
+  return normalized;
+}
+
+function getWeightedActionsTotal(actions) {
+  return Object.entries(actions || {}).reduce((sum, [type, count]) => {
+    const normalizedType = normalizeActionType(type);
+    return sum + (ACTIVITY_WEIGHTS[normalizedType] || 0) * count;
+  }, 0);
+}
+
+function mergeActionCounts(target, actions) {
+  Object.entries(actions || {}).forEach(([type, count]) => {
+    const normalizedType = normalizeActionType(type);
+    target[normalizedType] = (target[normalizedType] || 0) + count;
+  });
+}
+
+function buildHeatmapTooltipLines(actions) {
+  const normalized = normalizeActionCounts(actions);
+  const lines = [];
+  HEATMAP_TOOLTIP_ORDER.forEach(type => {
+    const count = normalized[type] || 0;
+    if (!count) return;
+    const labels = ACTIVITY_TOOLTIP_LABELS[type];
+    const label = count === 1 ? labels.singular : labels.plural;
+    lines.push(`${count} ${label}`);
+  });
+  return lines.length ? lines : ['No study activity'];
+}
+
+function getHeatmapLevel(weightedTotal) {
+  if (weightedTotal <= 0) return 0;
+  if (weightedTotal <= 3) return 1;
+  if (weightedTotal <= 8) return 2;
+  if (weightedTotal <= 15) return 3;
+  if (weightedTotal <= 25) return 4;
+  return 5;
+}
+
+function loadActivityDedup() {
+  try {
+    const raw = localStorage.getItem(ACTIVITY_DEDUP_KEY);
+    activityDedup = raw ? JSON.parse(raw) || {} : {};
+  } catch (e) {
+    activityDedup = {};
+  }
+}
+
+function saveActivityDedup() {
+  try { localStorage.setItem(ACTIVITY_DEDUP_KEY, JSON.stringify(activityDedup)); } catch (e) {}
+}
+
+function buildActivityDedupKey(dayKey, examId, subject, entityId, activityType) {
+  return `${dayKey}:${examId}:${subject}:${entityId}:${activityType}`;
+}
+
+function shouldDedupActivity(dayKey, examId, subject, activityType, entityId) {
+  if (!DEDUP_ACTIVITY_TYPES.has(activityType)) return false;
+  const key = buildActivityDedupKey(dayKey, examId, subject, entityId, activityType);
+  return !!(activityDedup[dayKey] && activityDedup[dayKey][key]);
+}
+
+function markActivityDedup(dayKey, examId, subject, activityType, entityId) {
+  if (!DEDUP_ACTIVITY_TYPES.has(activityType)) return;
+  const key = buildActivityDedupKey(dayKey, examId, subject, entityId, activityType);
+  if (!activityDedup[dayKey]) activityDedup[dayKey] = {};
+  activityDedup[dayKey][key] = true;
+  pruneActivityDedup(dayKey);
+  saveActivityDedup();
+}
+
+function pruneActivityDedup(currentDayKey) {
+  const current = new Date(currentDayKey + 'T00:00:00');
+  if (Number.isNaN(current.getTime())) return;
+  const cutoff = new Date(current);
+  cutoff.setDate(current.getDate() - 7);
+  Object.keys(activityDedup || {}).forEach(dayKey => {
+    const dayDate = new Date(dayKey + 'T00:00:00');
+    if (Number.isNaN(dayDate.getTime())) return;
+    if (dayDate < cutoff) delete activityDedup[dayKey];
+  });
+}
+
 function loadStudyActivity() {
   try {
     const raw = localStorage.getItem(ACTIVITY_KEY);
@@ -4320,19 +4490,26 @@ function saveStudyActivity() {
 }
 
 function recordStudyActivity(examId, subject, type, options = {}) {
-  if (!examId || !ACTIVITY_WEIGHTS[type]) return;
+  const normalizedType = normalizeActionType(type);
+  if (!examId || !(normalizedType in ACTIVITY_WEIGHTS)) return;
   const dayKey = options.dayKey || getTodayIsoDate();
+  const subjectKey = options.subjectId || subject || '';
+  const entityId = options.entityId || '';
   if (!studyActivity || !studyActivity.days) studyActivity = { version: 1, days: {} };
   if (!studyActivity.days[dayKey]) studyActivity.days[dayKey] = { total: 0, exams: {} };
   const day = studyActivity.days[dayKey];
+  if (entityId && subjectKey && shouldDedupActivity(dayKey, examId, subjectKey, normalizedType, entityId)) {
+    return;
+  }
   if (!day.exams[examId]) day.exams[examId] = { total: 0, actions: {}, subjects: {} };
   const examEntry = day.exams[examId];
   const amount = clampNumber(Number(options.amount) || 1, 1, 12);
-  const points = ACTIVITY_WEIGHTS[type] * amount;
+  const points = (ACTIVITY_WEIGHTS[normalizedType] || 0) * amount;
   day.total += points;
   examEntry.total += points;
-  examEntry.actions[type] = (examEntry.actions[type] || 0) + amount;
+  examEntry.actions[normalizedType] = (examEntry.actions[normalizedType] || 0) + amount;
   if (subject) examEntry.subjects[subject] = (examEntry.subjects[subject] || 0) + points;
+  if (entityId && subjectKey) markActivityDedup(dayKey, examId, subjectKey, normalizedType, entityId);
   saveStudyActivity();
 }
 
@@ -4420,27 +4597,35 @@ function getActivitySummary(rangeDays = 365) {
   const subjectTotals = {};
   const actionTotals = {};
   const dayTotals = {};
+  const dayActions = {};
 
   Object.entries((studyActivity && studyActivity.days) || {}).forEach(([dayKey, dayEntry]) => {
     if (!isActivityWindowDay(dayKey, rangeDays)) return;
     let trackedDayTotal = 0;
+    const trackedDayActions = {};
     Object.entries(dayEntry.exams || {}).forEach(([examId, examEntry]) => {
       if (!tracked.has(examId)) return;
-      trackedDayTotal += examEntry.total || 0;
-      examTotals[examId] = (examTotals[examId] || 0) + (examEntry.total || 0);
-      examDays[examId] = (examDays[examId] || 0) + 1;
-      Object.entries(examEntry.actions || {}).forEach(([type, count]) => {
-        actionTotals[type] = (actionTotals[type] || 0) + count;
-      });
+      const examActions = examEntry.actions || {};
+      const examWeightedTotal = getWeightedActionsTotal(examActions);
+      if (examWeightedTotal > 0) {
+        trackedDayTotal += examWeightedTotal;
+        examTotals[examId] = (examTotals[examId] || 0) + examWeightedTotal;
+        examDays[examId] = (examDays[examId] || 0) + 1;
+      }
+      mergeActionCounts(trackedDayActions, examActions);
+      mergeActionCounts(actionTotals, examActions);
       Object.entries(examEntry.subjects || {}).forEach(([subject, points]) => {
         if (!subjectTotals[examId]) subjectTotals[examId] = {};
         subjectTotals[examId][subject] = (subjectTotals[examId][subject] || 0) + points;
       });
     });
-    if (trackedDayTotal > 0) dayTotals[dayKey] = trackedDayTotal;
+    if (trackedDayTotal > 0) {
+      dayTotals[dayKey] = trackedDayTotal;
+      dayActions[dayKey] = trackedDayActions;
+    }
   });
 
-  return { examTotals, examDays, subjectTotals, actionTotals, dayTotals };
+  return { examTotals, examDays, subjectTotals, actionTotals, dayTotals, dayActions };
 }
 
 function getMomentumLabel(dayTotals) {
@@ -4460,20 +4645,47 @@ function getMomentumLabel(dayTotals) {
   return streak ? streak + '-day active run' : 'Just getting started';
 }
 
+function getStreakStats(dayTotals) {
+  const dates = Object.keys(dayTotals).sort();
+  if (!dates.length) return { current: 0, longest: 0 };
+  const seen = new Set(dates);
+  const today = new Date(getTodayIsoDate() + 'T00:00:00');
+  let current = 0;
+  const cursor = new Date(today);
+  while (seen.has(cursor.toISOString().slice(0, 10))) {
+    current++;
+    cursor.setDate(cursor.getDate() - 1);
+  }
+  let longest = 0;
+  let run = 0;
+  let prev = null;
+  dates.forEach(dateKey => {
+    if (!prev) {
+      run = 1;
+    } else {
+      const prevDate = new Date(prev + 'T00:00:00');
+      const nextDate = new Date(dateKey + 'T00:00:00');
+      const diff = Math.round((nextDate - prevDate) / 86400000);
+      run = diff === 1 ? run + 1 : 1;
+    }
+    if (run > longest) longest = run;
+    prev = dateKey;
+  });
+  return { current, longest };
+}
+
+function getMostActiveDay(dayTotals) {
+  const entries = Object.entries(dayTotals);
+  if (!entries.length) return null;
+  entries.sort((a, b) => b[1] - a[1]);
+  const [dayKey, value] = entries[0];
+  return { dayKey, value };
+}
+
 function buildHeatmapSeries(dayTotals) {
   const today = new Date(getTodayIsoDate() + 'T00:00:00');
   const start = new Date(today);
   start.setDate(today.getDate() - 364);
-  const values = [];
-  for (let i = 0; i < 365; i++) {
-    const current = new Date(start);
-    current.setDate(start.getDate() + i);
-    values.push({ date: current.toISOString().slice(0, 10), value: dayTotals[current.toISOString().slice(0, 10)] || 0 });
-  }
-  const nonZero = values.map(item => item.value).filter(Boolean).sort((a, b) => a - b);
-  const q1 = nonZero.length ? nonZero[Math.floor((nonZero.length - 1) * 0.25)] : 0;
-  const q2 = nonZero.length ? nonZero[Math.floor((nonZero.length - 1) * 0.5)] : 0;
-  const q3 = nonZero.length ? nonZero[Math.floor((nonZero.length - 1) * 0.75)] : 0;
 
   const weeks = [];
   let cursor = new Date(start);
@@ -4484,13 +4696,7 @@ function buildHeatmapSeries(dayTotals) {
       const dayKey = cursor.toISOString().slice(0, 10);
       const inRange = cursor >= start && cursor <= today;
       const rawValue = inRange ? (dayTotals[dayKey] || 0) : 0;
-      let level = 0;
-      if (rawValue > 0) {
-        if (rawValue <= q1 || q1 === 0) level = 1;
-        else if (rawValue <= q2 || q2 === 0) level = 2;
-        else if (rawValue <= q3 || q3 === 0) level = 3;
-        else level = 4;
-      }
+      const level = getHeatmapLevel(rawValue);
       week.push({ date: dayKey, value: rawValue, level, inRange, isToday: dayKey === getTodayIsoDate() });
       cursor.setDate(cursor.getDate() + 1);
     }
@@ -4505,7 +4711,7 @@ function buildHeatmapSeries(dayTotals) {
   return { weeks, months };
 }
 
-function renderHeatmap(dayTotals, description) {
+function renderHeatmap(dayTotals, description, dayActions = {}) {
   const series = buildHeatmapSeries(dayTotals);
   return `
     <div class="heatmap-shell">
@@ -4520,8 +4726,11 @@ function renderHeatmap(dayTotals, description) {
                 </div>
                 <div class="heatmap-weeks">
                   ${series.weeks.map(week => week.map(day => {
-                    const title = day.inRange ? `${day.date}: ${day.value} activity points` : '';
-                    return `<span class="heatmap-cell lvl-${day.level}${day.isToday ? ' today' : ''}" title="${title}"></span>`;
+                    const tooltipLines = buildHeatmapTooltipLines(dayActions[day.date]);
+                    const dateLabel = formatHeatmapDate(day.date);
+                    const tooltipAttr = escapeAttr(tooltipLines.join('|'));
+                    const ariaLabel = escapeAttr(`${dateLabel}. ${tooltipLines.join(', ')}`);
+                    return `<span class="heatmap-cell lvl-${day.level}${day.isToday ? ' today' : ''}" data-heatmap-cell="true" data-date="${day.date}" data-date-label="${escapeAttr(dateLabel)}" data-lines="${tooltipAttr}" aria-label="${ariaLabel}"></span>`;
                   }).join('')).join('')}
                 </div>
               </div>
@@ -4538,26 +4747,118 @@ function renderHeatmap(dayTotals, description) {
               <span class="heatmap-cell lvl-2"></span>
               <span class="heatmap-cell lvl-3"></span>
               <span class="heatmap-cell lvl-4"></span>
+              <span class="heatmap-cell lvl-5"></span>
             </div>
-            <span>More</span>
+            <span>→ More activity</span>
           </div>
         </div>
       </div>
     </div>`;
 }
 
+let heatmapTooltipEl = null;
+
+function ensureHeatmapTooltip() {
+  if (heatmapTooltipEl) return;
+  heatmapTooltipEl = document.createElement('div');
+  heatmapTooltipEl.className = 'heatmap-tooltip';
+  heatmapTooltipEl.setAttribute('role', 'tooltip');
+  heatmapTooltipEl.setAttribute('aria-hidden', 'true');
+  heatmapTooltipEl.innerHTML = `
+    <div class="heatmap-tooltip-date"></div>
+    <div class="heatmap-tooltip-lines"></div>
+  `;
+  document.body.appendChild(heatmapTooltipEl);
+  document.addEventListener('pointerdown', event => {
+    if (event.pointerType === 'mouse') return;
+    const cell = event.target.closest('.heatmap-cell[data-heatmap-cell]');
+    if (!cell) {
+      hideHeatmapTooltip();
+      return;
+    }
+    showHeatmapTooltip(cell);
+  }, { passive: true });
+  window.addEventListener('resize', hideHeatmapTooltip);
+  document.addEventListener('scroll', hideHeatmapTooltip, true);
+}
+
+function bindHeatmapTooltips(scope) {
+  if (!scope) return;
+  scope.querySelectorAll('.heatmap-cell[data-heatmap-cell]').forEach(cell => {
+    cell.addEventListener('pointerenter', event => {
+      if (event.pointerType !== 'mouse') return;
+      showHeatmapTooltip(cell);
+    });
+    cell.addEventListener('pointerleave', event => {
+      if (event.pointerType !== 'mouse') return;
+      hideHeatmapTooltip();
+    });
+  });
+}
+
+function showHeatmapTooltip(cell) {
+  if (!heatmapTooltipEl || !cell) return;
+  const dateLabel = cell.dataset.dateLabel || cell.dataset.date || '';
+  const lines = (cell.dataset.lines || '').split('|').filter(Boolean);
+  const tooltipLines = lines.length ? lines : ['No study activity'];
+  heatmapTooltipEl.querySelector('.heatmap-tooltip-date').textContent = dateLabel;
+  const linesEl = heatmapTooltipEl.querySelector('.heatmap-tooltip-lines');
+  linesEl.innerHTML = '';
+  tooltipLines.forEach(line => {
+    const div = document.createElement('div');
+    div.className = 'heatmap-tooltip-line';
+    div.textContent = line;
+    linesEl.appendChild(div);
+  });
+  heatmapTooltipEl.style.display = 'block';
+  heatmapTooltipEl.classList.remove('visible');
+  heatmapTooltipEl.setAttribute('aria-hidden', 'false');
+  positionHeatmapTooltip(cell);
+  requestAnimationFrame(() => heatmapTooltipEl && heatmapTooltipEl.classList.add('visible'));
+}
+
+function hideHeatmapTooltip() {
+  if (!heatmapTooltipEl) return;
+  heatmapTooltipEl.classList.remove('visible');
+  heatmapTooltipEl.style.display = 'none';
+  heatmapTooltipEl.setAttribute('aria-hidden', 'true');
+}
+
+function positionHeatmapTooltip(cell) {
+  if (!heatmapTooltipEl || !cell) return;
+  const rect = cell.getBoundingClientRect();
+  const margin = 8;
+  const offset = 10;
+  const tooltipRect = heatmapTooltipEl.getBoundingClientRect();
+  let left = rect.left + rect.width / 2 - tooltipRect.width / 2;
+  let top = rect.top - tooltipRect.height - offset;
+  if (top < margin) top = rect.bottom + offset;
+  if (left < margin) left = margin;
+  if (left + tooltipRect.width > window.innerWidth - margin) {
+    left = window.innerWidth - margin - tooltipRect.width;
+  }
+  if (top + tooltipRect.height > window.innerHeight - margin) {
+    top = window.innerHeight - margin - tooltipRect.height;
+  }
+  heatmapTooltipEl.style.left = `${left}px`;
+  heatmapTooltipEl.style.top = `${top}px`;
+}
+
 function buildExamActivityTotals(examId, rangeDays = 365) {
-  const summary = { dayTotals: {}, actions: {}, subjects: {}, total: 0, activeDays: 0 };
+  const summary = { dayTotals: {}, dayActions: {}, actions: {}, subjects: {}, total: 0, activeDays: 0 };
   Object.entries((studyActivity && studyActivity.days) || {}).forEach(([dayKey, dayEntry]) => {
     if (!isActivityWindowDay(dayKey, rangeDays)) return;
     const examEntry = dayEntry.exams && dayEntry.exams[examId];
     if (!examEntry) return;
-    summary.dayTotals[dayKey] = examEntry.total || 0;
-    summary.total += examEntry.total || 0;
-    summary.activeDays++;
-    Object.entries(examEntry.actions || {}).forEach(([type, count]) => {
-      summary.actions[type] = (summary.actions[type] || 0) + count;
-    });
+    const examActions = examEntry.actions || {};
+    const dayTotal = getWeightedActionsTotal(examActions);
+    if (dayTotal > 0) {
+      summary.dayTotals[dayKey] = dayTotal;
+      summary.dayActions[dayKey] = normalizeActionCounts(examActions);
+      summary.total += dayTotal;
+      summary.activeDays++;
+    }
+    mergeActionCounts(summary.actions, examActions);
     Object.entries(examEntry.subjects || {}).forEach(([subject, points]) => {
       summary.subjects[subject] = (summary.subjects[subject] || 0) + points;
     });
@@ -4613,10 +4914,10 @@ function buildExamAnalysis(examId) {
         text: 'Most progress came from revision.',
         strength: strongestAction[1] + 0.25
       });
-    } else if (strongestAction[0] === 'schedule_completion') {
+    } else if (strongestAction[0] === 'group_completion') {
       candidates.push({
         category: 'Pattern',
-        text: 'Schedule-based completions drove the biggest share of work.',
+        text: 'Grouped progress drove recent activity.',
         strength: strongestAction[1]
       });
     } else if (strongestAction[0] === 'confidence_update') {
@@ -4671,11 +4972,18 @@ function renderInsightsView() {
   const trackedExams = getTrackedExamIds();
   const summary = getActivitySummary(365);
   const totalActiveDays = Object.keys(summary.dayTotals).length;
-  const mostActiveEntry = Object.entries(summary.examTotals).sort((a, b) => b[1] - a[1])[0];
-  const mostActiveExam = mostActiveEntry ? getExamDisplayName(mostActiveEntry[0]) : 'Your study path begins here.';
-  const mostActiveNote = mostActiveEntry
-    ? (summary.examDays[mostActiveEntry[0]] || 0) + ' active day' + ((summary.examDays[mostActiveEntry[0]] || 0) === 1 ? '' : 's')
+  const streakStats = getStreakStats(summary.dayTotals);
+  const mostActiveDayEntry = getMostActiveDay(summary.dayTotals);
+  const mostActiveDayLabel = mostActiveDayEntry ? formatHeatmapDate(mostActiveDayEntry.dayKey) : 'Your study path begins here.';
+  const mostActiveDayNote = mostActiveDayEntry
+    ? 'Highest weighted activity in the last 365 days.'
     : 'Your study path begins here.';
+  const currentStreakLabel = streakStats.current
+    ? `${streakStats.current} day${streakStats.current === 1 ? '' : 's'}`
+    : 'No active streak yet.';
+  const longestStreakNote = streakStats.longest
+    ? `Longest streak: ${streakStats.longest} day${streakStats.longest === 1 ? '' : 's'}.`
+    : 'Longest streak: not yet recorded.';
 
   root.innerHTML = `
     <section class="insights-section">
@@ -4697,14 +5005,14 @@ function renderInsightsView() {
           <div class="insight-stat-note">Counted across the last 365 days of meaningful tracker updates.</div>
         </article>
         <article class="insight-stat-card">
-          <div class="insight-stat-label">Most active exam</div>
-          <div class="insight-stat-value">${mostActiveExam}</div>
-          <div class="insight-stat-note">${mostActiveNote}</div>
+          <div class="insight-stat-label">Most active day</div>
+          <div class="insight-stat-value">${mostActiveDayLabel}</div>
+          <div class="insight-stat-note">${mostActiveDayNote}</div>
         </article>
         <article class="insight-stat-card">
-          <div class="insight-stat-label">Current momentum</div>
-          <div class="insight-stat-value">${getMomentumLabel(summary.dayTotals)}</div>
-          <div class="insight-stat-note">Momentum comes from recent study actions, not streak points or gamified scores.</div>
+          <div class="insight-stat-label">Current streak</div>
+          <div class="insight-stat-value">${currentStreakLabel}</div>
+          <div class="insight-stat-note">${longestStreakNote}</div>
         </article>
       </div>
     </section>
@@ -4716,10 +5024,10 @@ function renderInsightsView() {
         </div>
       </div>
       ${totalActiveDays
-        ? renderHeatmap(summary.dayTotals, 'Each square represents study progress.')
+        ? renderHeatmap(summary.dayTotals, 'Each square represents study progress.', summary.dayActions)
         : `<div class="insights-empty">
             <strong>Your study path begins here.</strong>
-            <p>Meaningful progress appears once you complete chapters, log revisions, update confidence, finish schedule-based items, or import study data.</p>
+            <p>Meaningful progress appears once you complete chapters, finish grouped sections, log revisions, update confidence, or import study data.</p>
             <button class="insights-inline-btn" type="button" onclick="switchView('${VIEW_DASHBOARD}'); openExamModal()">Track your first chapter →</button>
           </div>`}
     </section>
@@ -4750,7 +5058,7 @@ function renderInsightsView() {
             </summary>
             <div class="exam-insight-body">
               ${activeDays
-                ? `${renderHeatmap(examStats.dayTotals, 'Each square represents study progress.')}
+                ? `${renderHeatmap(examStats.dayTotals, 'Each square represents study progress.', examStats.dayActions)}
                    <div class="exam-analysis">${analysis.map(item => `<div class="exam-analysis-line"><strong>${item.category}:</strong>${item.text}</div>`).join('')}</div>`
                 : `<div class="insights-empty">
                      <strong>Your study path begins here.</strong>
@@ -4762,6 +5070,8 @@ function renderInsightsView() {
         }).join('')}
       </div>
     </section>`;
+  ensureHeatmapTooltip();
+  bindHeatmapTooltips(root);
 }
 
 function renderCurrentView() {
@@ -4783,7 +5093,10 @@ function renderCurrentView() {
   if (insightsRow) insightsRow.classList.toggle('active', isInsights);
   renderTabBar();
   if (isInsights) renderInsightsView();
-  else render();
+  else {
+    hideHeatmapTooltip();
+    render();
+  }
 }
 
 // A mode is "custom" if its id starts with 'custom_' and is not a copy-exam
@@ -4916,6 +5229,33 @@ function countGroupEntry(entry) {
     return acc;
   }, { total:0, done:0 });
   return { total: top.total + sub.total, done: top.done + sub.done };
+}
+
+function getGroupCompletionSnapshot(subjectData, groupLabel, subGroupLabel='') {
+  if (!isGroupedSubjectData(subjectData) || !groupLabel || groupLabel === 'Ungrouped') return null;
+  const entry = subjectData.groups && subjectData.groups[groupLabel];
+  if (!entry) return null;
+  const groupCount = countGroupEntry(entry);
+  const groupComplete = groupCount.total > 0 && groupCount.done === groupCount.total;
+  let subGroupComplete = false;
+  if (subGroupLabel) {
+    const list = getChapterListByPath(subjectData, groupLabel, subGroupLabel, false) || [];
+    const subCount = countChapterList(list);
+    subGroupComplete = subCount.total > 0 && subCount.done === subCount.total;
+  }
+  return { groupComplete, subGroupComplete };
+}
+
+function recordGroupCompletionTransitions(mode, subject, groupLabel, subGroupLabel, before, after) {
+  if (!before || !after || !groupLabel) return;
+  if (subGroupLabel && !before.subGroupComplete && after.subGroupComplete) {
+    recordStudyActivity(mode, subject, 'group_completion', {
+      entityId: `subgroup:${groupLabel}::${subGroupLabel}`,
+    });
+  }
+  if (!before.groupComplete && after.groupComplete) {
+    recordStudyActivity(mode, subject, 'group_completion', { entityId: `group:${groupLabel}` });
+  }
 }
 
 function groupedTotals(subjectData) {
@@ -6616,7 +6956,8 @@ function _rerenderIfIncompleteSorted(subject, card=null, listScrollTop=0) {
 // ═══════════════════════════════════════════════════════════
 function toggleComplete(subject, id) {
   id = Number(id);
-  const found = findChapterInSubject(appData[currentMode][subject], id);
+  const subjectData = appData[currentMode][subject];
+  const found = findChapterInSubject(subjectData, id);
   if (!found || !found.chapter) return;
   const ch = found.chapter;
   // Capture scroll positions before any DOM change
@@ -6624,9 +6965,16 @@ function toggleComplete(subject, id) {
   const card = [...document.querySelectorAll('.subject-card')]
     .find(c => c.dataset.subject === subject);
   const listScrollTop = card ? card.querySelector('.chapter-list').scrollTop : 0;
+  const groupSnapshot = found.groupLabel ? getGroupCompletionSnapshot(subjectData, found.groupLabel, found.subGroupLabel || '') : null;
 
   ch.completed = !ch.completed;
-  if (ch.completed) recordStudyActivity(currentMode, subject, 'chapter_completion');
+  if (ch.completed) {
+    recordStudyActivity(currentMode, subject, 'chapter_completion', { entityId: `chapter:${ch.id}` });
+  }
+  if (ch.completed && groupSnapshot) {
+    const groupSnapshotAfter = getGroupCompletionSnapshot(subjectData, found.groupLabel, found.subGroupLabel || '');
+    recordGroupCompletionTransitions(currentMode, subject, found.groupLabel, found.subGroupLabel || '', groupSnapshot, groupSnapshotAfter);
+  }
   saveData();
 
   // Targeted patch — no full render
@@ -6693,7 +7041,9 @@ function updateDate(subject, id, val) {
   if (ch) {
     const previous = ch.revised;
     ch.revised = val;
-    if (val && val !== previous) recordStudyActivity(currentMode, subject, 'revision');
+    if (val && val !== previous) {
+      recordStudyActivity(currentMode, subject, 'revision', { entityId: `chapter:${id}` });
+    }
     saveData();
   }
 }
@@ -6705,7 +7055,9 @@ function updatePrep(subject, id, val) {
   if (!ch) return;
   const previous = ch.prep;
   ch.prep = val;
-  if (val !== previous) recordStudyActivity(currentMode, subject, 'confidence_update');
+  if (val !== previous) {
+    recordStudyActivity(currentMode, subject, 'confidence_update', { entityId: `chapter:${id}` });
+  }
   saveData();
   // Targeted patch — just swap the badge class
   const sel = document.querySelector(`select.prep-badge[data-ch-id="${id}"]`);
@@ -6793,7 +7145,8 @@ function toggleGroupCollapse(subject, groupLabel) {
 }
 
 function toggleScene(mode, subject, groupLabel, chapterId, sceneId) {
-  const group = getGroupChapters(appData[mode][subject].groups[groupLabel]);
+  const subjectData = appData[mode][subject];
+  const group = getGroupChapters(subjectData.groups[groupLabel]);
   if (!group) return;
   const chapter = group.find(c => Number(c.id) === Number(chapterId));
   if (!chapter || !chapter.scenes) return;
@@ -6802,11 +7155,16 @@ function toggleScene(mode, subject, groupLabel, chapterId, sceneId) {
     console.error('Scene not found:', sceneId, 'in act:', chapterId);
     return;
   }
+  const groupSnapshot = getGroupCompletionSnapshot(subjectData, groupLabel, '');
   const wasChapterComplete = chapter.completed;
   scene.completed = !scene.completed;
   chapter.completed = chapter.scenes.every(s => s.completed);
-  if (scene.completed) recordStudyActivity(mode, subject, 'schedule_completion');
-  if (!wasChapterComplete && chapter.completed) recordStudyActivity(mode, subject, 'chapter_completion');
+  if (!wasChapterComplete && chapter.completed) {
+    recordStudyActivity(mode, subject, 'chapter_completion', { entityId: `chapter:${chapter.id}` });
+    recordStudyActivity(mode, subject, 'group_completion', { entityId: `act:${chapter.id}` });
+    const groupSnapshotAfter = getGroupCompletionSnapshot(subjectData, groupLabel, '');
+    recordGroupCompletionTransitions(mode, subject, groupLabel, '', groupSnapshot, groupSnapshotAfter);
+  }
   saveData();
   const sceneBox = document.getElementById('scene-' + sceneId);
   if (sceneBox) sceneBox.checked = scene.completed;
@@ -6823,13 +7181,15 @@ function toggleScene(mode, subject, groupLabel, chapterId, sceneId) {
 }
 
 function toggleActWithScenes(mode, subject, groupLabel, chapterId) {
-  const group = getGroupChapters(appData[mode][subject].groups[groupLabel]);
+  const subjectData = appData[mode][subject];
+  const group = getGroupChapters(subjectData.groups[groupLabel]);
   if (!group) return;
   const chapter = group.find(c => Number(c.id) === Number(chapterId));
   if (!chapter) {
     console.error('Act not found:', chapterId, 'in group:', groupLabel);
     return;
   }
+  const groupSnapshot = getGroupCompletionSnapshot(subjectData, groupLabel, '');
   const wasComplete = chapter.completed;
   chapter.completed = !chapter.completed;
   if (chapter.scenes && Array.isArray(chapter.scenes)) {
@@ -6845,8 +7205,12 @@ function toggleActWithScenes(mode, subject, groupLabel, chapterId) {
   if (actBox) actBox.checked = chapter.completed;
   const actNameEl = document.querySelector(`[data-act-name="${chapterId}"]`);
   if (actNameEl) actNameEl.classList.toggle('completed', chapter.completed);
-  if (chapter.completed) recordStudyActivity(mode, subject, 'schedule_completion', { amount: Math.max(1, chapter.scenes?.length || 1) });
-  if (!wasComplete && chapter.completed) recordStudyActivity(mode, subject, 'chapter_completion');
+  if (!wasComplete && chapter.completed) {
+    recordStudyActivity(mode, subject, 'chapter_completion', { entityId: `chapter:${chapter.id}` });
+    recordStudyActivity(mode, subject, 'group_completion', { entityId: `act:${chapter.id}` });
+    const groupSnapshotAfter = getGroupCompletionSnapshot(subjectData, groupLabel, '');
+    recordGroupCompletionTransitions(mode, subject, groupLabel, '', groupSnapshot, groupSnapshotAfter);
+  }
   saveData();
   refreshGroupCounter(mode, subject, groupLabel);
   refreshCardCounter(mode, subject);
