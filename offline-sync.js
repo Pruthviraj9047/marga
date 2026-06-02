@@ -92,6 +92,15 @@ async function executeSyncItem(item) {
       updated_at: dataObj.savedAt || tsIso
     }, { onConflict: 'user_id,exam_key' });
     if (error) throw error;
+  } else if (payload.type === 'activity') {
+    const dataObj = payload.data;
+    const { error } = await _sb.from('user_data').upsert({
+      user_id: user.id,
+      exam_key: '__marga_activity_v1',
+      data: dataObj,
+      updated_at: dataObj.savedAt || tsIso
+    }, { onConflict: 'user_id,exam_key' });
+    if (error) throw error;
   } else {
     throw new Error(`Unknown payload type: ${payload.type}`);
   }
