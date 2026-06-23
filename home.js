@@ -367,6 +367,84 @@
     window._margaOpenAuth('login', 'Sign in to continue to your study dashboard');
   }
 
+  function initPremiumLanding() {
+    var reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var reveals = document.querySelectorAll('.premium-main .reveal');
+    var counters = document.querySelectorAll('.premium-main [data-count]');
+
+    if ('IntersectionObserver' in window && !reducedMotion) {
+      var revealObserver = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (!entry.isIntersecting) return;
+          entry.target.classList.add('in-view');
+          revealObserver.unobserve(entry.target);
+        });
+      }, { threshold: 0.12 });
+      reveals.forEach(function (el) { revealObserver.observe(el); });
+
+      var countObserver = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (!entry.isIntersecting) return;
+          var el = entry.target;
+          var target = Number(el.getAttribute('data-count')) || 0;
+          var start = performance.now();
+          function tick(now) {
+            var progress = Math.min((now - start) / 900, 1);
+            el.textContent = Math.round(target * (1 - Math.pow(1 - progress, 3)));
+            if (progress < 1) requestAnimationFrame(tick);
+          }
+          requestAnimationFrame(tick);
+          countObserver.unobserve(el);
+        });
+      }, { threshold: 0.7 });
+      counters.forEach(function (el) { countObserver.observe(el); });
+    } else {
+      reveals.forEach(function (el) { el.classList.add('in-view'); });
+      counters.forEach(function (el) { el.textContent = el.getAttribute('data-count'); });
+    }
+
+    var tilt = document.querySelector('[data-tilt] .tracker-ui');
+    var tiltWrap = document.querySelector('[data-tilt]');
+    if (tilt && tiltWrap && !reducedMotion && window.matchMedia('(pointer:fine)').matches) {
+      tiltWrap.addEventListener('pointermove', function (e) {
+        var rect = tiltWrap.getBoundingClientRect();
+        var x = (e.clientX - rect.left) / rect.width - 0.5;
+        var y = (e.clientY - rect.top) / rect.height - 0.5;
+        tilt.style.transform = 'rotateY(' + (-7 + x * 10) + 'deg) rotateX(' + (4 - y * 9) + 'deg) translateY(-4px)';
+      });
+      tiltWrap.addEventListener('pointerleave', function () { tilt.style.transform = ''; });
+    }
+
+    var examData = {
+      'JEE': { title: 'JEE preparation', copy: 'Physics, Chemistry and Mathematics organized for Main and Advanced.', link: '/jee-study-tracker/', label: 'Explore JEE tracker →', subjects: [['Physics','Mechanics','Electrodynamics','Modern Physics'],['Chemistry','Physical Chemistry','Organic Chemistry','Inorganic Chemistry'],['Mathematics','Calculus','Algebra','Coordinate Geometry']] },
+      'NEET': { title: 'NEET preparation', copy: 'Biology-first planning with Physics and Chemistry always visible.', link: '/neet-study-planner', label: 'Explore NEET planner →', subjects: [['Biology','Human Physiology','Genetics','Ecology'],['Physics','Mechanics','Optics','Modern Physics'],['Chemistry','Physical Chemistry','Organic Chemistry','Inorganic Chemistry']] },
+      'ISC': { title: 'ISC boards', copy: 'Class 11 and 12 chapter tracking built around board preparation.', link: '/isc-study-organizer/', label: 'Explore ISC organizer →', subjects: [['Physics','Mechanics','Electricity','Optics'],['Chemistry','Solutions','Electrochemistry','Organic'],['Mathematics','Relations','Calculus','Probability']] },
+      'CBSE': { title: 'CBSE boards', copy: 'Keep NCERT completion, school tests and board revision together.', link: '/cbse-study-planner/', label: 'Explore CBSE planner →', subjects: [['Science','Chemical Reactions','Life Processes','Electricity'],['Mathematics','Real Numbers','Triangles','Statistics'],['Social Science','History','Geography','Economics']] },
+      'KCET': { title: 'KCET preparation', copy: 'A clear PCM or PCB tracker for Karnataka entrance preparation.', link: '/app', label: 'Open KCET tracker →', subjects: [['Physics','Mechanics','Waves','Electronics'],['Chemistry','Atomic Structure','Equilibrium','Polymers'],['Mathematics','Algebra','Calculus','Vectors']] },
+      'MHT-CET': { title: 'MHT-CET preparation', copy: 'Organize state entrance preparation by subject and chapter.', link: '/app', label: 'Open MHT-CET tracker →', subjects: [['Physics','Rotational Motion','Oscillations','Semiconductors'],['Chemistry','Solutions','Kinetics','Biomolecules'],['Mathematics','Trigonometry','Differentiation','Probability']] },
+      'Custom Exam': { title: 'Your custom exam', copy: 'Create any exam, then add exactly the subjects and chapters you need.', link: '/app', label: 'Create a custom tracker →', subjects: [['Subject one','Your first chapter','Your second chapter','Your third chapter'],['Subject two','Organize topics','Set confidence','Plan revision'],['Subject three','Track progress','Review insights','Ace your exam']] }
+    };
+    var title = document.getElementById('examPreviewTitle');
+    var copy = document.getElementById('examPreviewCopy');
+    var link = document.getElementById('examPreviewLink');
+    var subjectWrap = document.getElementById('examPreviewSubjects');
+    document.querySelectorAll('.exam-tab').forEach(function (tab) {
+      tab.addEventListener('click', function () {
+        var data = examData[tab.getAttribute('data-exam')];
+        if (!data || !title || !copy || !link || !subjectWrap) return;
+        document.querySelectorAll('.exam-tab').forEach(function (other) { other.classList.remove('active'); });
+        tab.classList.add('active');
+        title.textContent = data.title;
+        copy.textContent = data.copy;
+        link.href = data.link;
+        link.textContent = data.label;
+        subjectWrap.innerHTML = data.subjects.map(function (subject) {
+          return '<div class="exam-subject"><b>' + subject[0] + '</b><span>' + subject[1] + '</span><span>' + subject[2] + '</span><span>' + subject[3] + '</span></div>';
+        }).join('');
+      });
+    });
+  }
+
   window.addEventListener('DOMContentLoaded', function () {
     console.log(
       '%c Marga %c Built by Pruthviraj Arun ',
@@ -404,6 +482,7 @@
       requestAuth(openParam, ctxMsg);
     }
 
+    initPremiumLanding();
     scheduleFaq();
 
     if ('serviceWorker' in navigator) {
