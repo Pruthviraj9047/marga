@@ -2721,8 +2721,8 @@
     }
 
     #settingsModal {
-      width: min(820px, 100%);
-      max-height: 88vh;
+      width: min(960px, 100%);
+      max-height: 92vh;
       background: var(--bg-card);
       border: 1px solid var(--border);
       border-radius: 20px;
@@ -2908,6 +2908,58 @@
 
     .sm-edit-btn:hover {
       opacity: 0.85
+    }
+
+    .sm-profile-form {
+      max-width: 520px;
+      margin: 0 auto;
+    }
+
+    .sm-settings-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.6rem;
+      margin-top: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .sm-embedded-card {
+      background: var(--bg-body);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 1rem;
+    }
+
+    .sm-tutorial-shell {
+      overflow: hidden;
+    }
+
+    .sm-tutorial-top,
+    .sm-tutorial-bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+    }
+
+    .sm-tutorial-dots {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      min-height: 20px;
+    }
+
+    .sm-tutorial-slides {
+      position: relative;
+      min-height: 390px;
+      margin: 0.85rem -1rem;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      overflow: hidden;
+    }
+
+    .sm-tutorial-bottom {
+      flex-wrap: wrap;
     }
 
     /* Item rows */
@@ -5655,53 +5707,6 @@
     </div>
   </div>
   <div class="sidebar-overlay" onclick="closeSidebarMobile()"></div>
-  <div id="tutorialOverlay" style="position:fixed;inset:0;
-  z-index:10000;background:rgba(0,0,0,0.85);
-  backdrop-filter:blur(12px);display:none;
-  align-items:center;justify-content:center;padding:1rem">
-    <div id="tutorialModal" style="width:min(800px,100%);
-    max-height:90vh;background:#141727;
-    border:1px solid #252A45;border-radius:24px;
-    box-shadow:0 40px 80px rgba(0,0,0,0.6);
-    display:flex;flex-direction:column;overflow:hidden;
-    font-family:'Plus Jakarta Sans',sans-serif">
-      <div style="display:flex;align-items:center;
-      justify-content:space-between;padding:1.25rem 1.5rem 0;
-      flex-shrink:0">
-        <div id="tutDots" style="display:flex;gap:6px;
-        align-items:center"></div>
-        <button onclick="closeTutorial()" style="width:32px;
-        height:32px;background:#252A45;border:none;
-        border-radius:50%;color:#8892B8;font-size:1.2rem;
-        cursor:pointer;display:flex;align-items:center;
-        justify-content:center">×</button>
-      </div>
-      <div id="tutSlides" style="flex:1;overflow:hidden;
-      position:relative;min-height:400px"></div>
-      <div style="display:flex;align-items:center;
-      justify-content:space-between;
-      padding:1rem 1.5rem 1.25rem;
-      border-top:1px solid #1C2035;flex-shrink:0;
-      background:#141727">
-        <button id="tutSkip" onclick="closeTutorial()" style="background:none;border:none;color:#8892B8;
-        font-family:inherit;font-size:0.85rem;cursor:pointer">
-          Skip tour
-        </button>
-        <div style="display:flex;gap:0.6rem">
-          <button id="tutPrev" onclick="tutPrev()" style="padding:9px 20px;background:#1C2035;
-          border:1px solid #252A45;border-radius:999px;
-          color:#8892B8;font-family:inherit;font-size:0.88rem;
-          font-weight:600;cursor:pointer">← Back</button>
-          <button id="tutNext" onclick="tutNext()" style="padding:9px 24px;
-          background:linear-gradient(135deg,#6C63FF,#9B8FFF);
-          border:none;border-radius:999px;color:white;
-          font-family:inherit;font-size:0.88rem;
-          font-weight:700;cursor:pointer">Next →</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
   <!-- ══════════════════════════════════════════════════════════
      SETTINGS MODAL
 ══════════════════════════════════════════════════════════════ -->
@@ -5738,7 +5743,44 @@
               <div class="sm-avatar" id="smProfileAvatar">U</div>
               <span class="sm-profile-name" id="smProfileName">User</span>
               <span class="sm-profile-email" id="smProfileEmail"></span>
-              <button class="sm-edit-btn" onclick="closeSettingsModal();openProfileModal()">Edit Profile →</button>
+            </div>
+            <div class="sm-profile-form">
+              <div class="form-group">
+                <label class="profile-form-label" for="profileNameInput">Display Name</label>
+                <input id="profileNameInput" class="profile-input" type="text" autocomplete="name">
+              </div>
+              <div class="form-group">
+                <label class="profile-form-label" for="profileEmailInput">Email Address</label>
+                <input id="profileEmailInput" class="profile-input" type="email" autocomplete="email">
+                <div class="profile-email-warn">
+                  <span>⚠️</span>
+                  <span>Changing your email will send a verification link to the new address. You will need to verify it before
+                    the change takes effect.</span>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="profile-form-label" for="profilePasswordInput">New Password (optional)</label>
+                <div class="profile-input-wrap">
+                  <input id="profilePasswordInput" class="profile-input" type="password"
+                    placeholder="Leave blank to keep current">
+                  <button class="profile-pass-toggle" type="button" onclick="toggleProfilePassword('profilePasswordInput')"
+                    aria-label="Toggle password visibility">👁</button>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="profile-form-label" for="profileConfirmInput">Confirm New Password</label>
+                <div class="profile-input-wrap">
+                  <input id="profileConfirmInput" class="profile-input" type="password">
+                  <button class="profile-pass-toggle" type="button" onclick="toggleProfilePassword('profileConfirmInput')"
+                    aria-label="Toggle password visibility">👁</button>
+                </div>
+              </div>
+              <div class="profile-msg error" id="profileErrorBox"></div>
+              <div class="profile-msg success" id="profileSuccessBox"></div>
+              <div class="sm-settings-actions">
+                <button class="btn profile-save" id="profileSaveBtn" type="button" onclick="saveProfileChanges()">Save
+                  Changes</button>
+              </div>
             </div>
           </div>
           <!-- Appearance -->
@@ -5758,25 +5800,23 @@
           <!-- Study -->
           <div class="sm-panel" id="smPanel-study">
             <p class="sm-section-title">Study Preferences</p>
-            <div class="sm-item">
-              <span class="sm-item-title">Customise Tracker</span>
-              <span class="sm-item-sub">Toggle features like scenes, confidence levels and more</span>
-              <button class="sm-item-btn" onclick="closeSettingsModal();openFeatureSettings()">Open Customiser
-                →</button>
-            </div>
+            <span class="sm-section-sub">Toggle features like scenes, confidence levels and more.</span>
+            <div class="sm-embedded-card" id="settingsFeatureToggleList"></div>
           </div>
           <!-- Support -->
           <div class="sm-panel" id="smPanel-support">
             <p class="sm-section-title">Support</p>
-            <div class="sm-item">
-              <span class="sm-item-title">Help &amp; Tutorial</span>
-              <span class="sm-item-sub">Take a guided tour of all Marga features</span>
-              <button class="sm-item-btn" onclick="closeSettingsModal();openTutorial()">Open Tutorial →</button>
-            </div>
-            <div class="sm-item">
-              <span class="sm-item-title">Contact</span>
-              <span class="sm-item-sub">Report bugs, request features or ask a question</span>
-              <button class="sm-item-btn" onclick="closeSettingsModal();window.location.href='/contact'">Contact →</button>
+            <span class="sm-section-sub">Take a guided tour of all Marga features without leaving settings.</span>
+            <div class="sm-embedded-card sm-tutorial-shell">
+              <div class="sm-tutorial-top">
+                <div id="tutDots" class="sm-tutorial-dots"></div>
+                <button id="tutSkip" class="sm-item-btn" onclick="closeTutorial()">Skip tour</button>
+              </div>
+              <div id="tutSlides" class="sm-tutorial-slides"></div>
+              <div class="sm-tutorial-bottom">
+                <button id="tutPrev" class="btn btn-secondary" onclick="tutPrev()">← Back</button>
+                <button id="tutNext" class="btn btn-primary" onclick="tutNext()">Next →</button>
+              </div>
             </div>
           </div>
           <!-- Account -->
@@ -6017,63 +6057,6 @@
     </div>
   </div>
 
-  <div id="featureSettingsModal" class="modal-overlay" role="dialog" aria-modal="true" aria-label="Customise tracker">
-    <div class="modal feature-settings-modal">
-      <div class="feature-settings-head">
-        <h3>⚙️ Customise Tracker</h3>
-        <button class="feature-settings-close" type="button" onclick="closeModal('featureSettingsModal')"
-          aria-label="Close settings">×</button>
-      </div>
-      <div id="featureToggleList"></div>
-    </div>
-  </div>
-  <div id="profileModal" class="modal-overlay" role="dialog" aria-modal="true" aria-label="Edit Profile">
-    <div class="modal profile-modal">
-      <div class="profile-modal-head">
-        <h3>👤 Edit Profile</h3>
-        <button class="profile-close" type="button" onclick="closeProfileModal()"
-          aria-label="Close profile modal">×</button>
-      </div>
-      <div class="profile-avatar-lg" id="profileAvatarLarge">U</div>
-      <div class="form-group">
-        <label class="profile-form-label" for="profileNameInput">Display Name</label>
-        <input id="profileNameInput" class="profile-input" type="text" autocomplete="name">
-      </div>
-      <div class="form-group">
-        <label class="profile-form-label" for="profileEmailInput">Email Address</label>
-        <input id="profileEmailInput" class="profile-input" type="email" autocomplete="email">
-        <div class="profile-email-warn">
-          <span>⚠️</span>
-          <span>Changing your email will send a verification link to the new address. You will need to verify it before
-            the change takes effect.</span>
-        </div>
-      </div>
-      <div class="form-group">
-        <label class="profile-form-label" for="profilePasswordInput">New Password (optional)</label>
-        <div class="profile-input-wrap">
-          <input id="profilePasswordInput" class="profile-input" type="password"
-            placeholder="Leave blank to keep current">
-          <button class="profile-pass-toggle" type="button" onclick="toggleProfilePassword('profilePasswordInput')"
-            aria-label="Toggle password visibility">👁</button>
-        </div>
-      </div>
-      <div class="form-group">
-        <label class="profile-form-label" for="profileConfirmInput">Confirm New Password</label>
-        <div class="profile-input-wrap">
-          <input id="profileConfirmInput" class="profile-input" type="password">
-          <button class="profile-pass-toggle" type="button" onclick="toggleProfilePassword('profileConfirmInput')"
-            aria-label="Toggle password visibility">👁</button>
-        </div>
-      </div>
-      <div class="profile-msg error" id="profileErrorBox"></div>
-      <div class="profile-msg success" id="profileSuccessBox"></div>
-      <div class="profile-actions">
-        <button class="btn btn-secondary" type="button" onclick="closeProfileModal()">Cancel</button>
-        <button class="btn profile-save" id="profileSaveBtn" type="button" onclick="saveProfileChanges()">Save
-          Changes</button>
-      </div>
-    </div>
-  </div>
 
   <!-- ══════════════════════════════════════════════════════════
      MAIN APP
@@ -7800,7 +7783,7 @@
       input.type = input.type === 'password' ? 'text' : 'password';
     }
 
-    function openProfileModal() {
+    function syncProfileSettingsForm() {
       const meta = getUserDisplayName();
       const currentName = meta.name || '';
       const currentEmail = meta.email || '';
@@ -7810,11 +7793,16 @@
       document.getElementById('profileConfirmInput').value = '';
       updateSidebarProfile(currentName || 'User', currentEmail);
       clearProfileMessages();
-      openModal('profileModal');
+    }
+
+    function openProfileModal() {
+      openSettingsModal();
+      switchSettingsPanel('profile');
+      syncProfileSettingsForm();
     }
 
     function closeProfileModal() {
-      closeModal('profileModal');
+      clearProfileMessages();
     }
 
     async function saveProfileChanges() {
@@ -7845,7 +7833,7 @@
         updates.password = newPassword;
       }
       if (Object.keys(updates).length === 0) {
-        closeProfileModal();
+        showProfileSuccess('Profile is already up to date.');
         return;
       }
 
@@ -7876,7 +7864,6 @@
         showProfileSuccess('Verification email sent to ' + updates.email + '. Please check your inbox and click the link to confirm your new email address.');
       } else {
         showProfileSuccess('Profile updated successfully!');
-        setTimeout(() => closeProfileModal(), 1500);
       }
     }
 
@@ -9939,7 +9926,9 @@
     // ═══════════════════════════════════════════════════════════
     function openModal(id) { document.getElementById(id).classList.add('open'); }
     function closeModal(id) {
-      document.getElementById(id).classList.remove('open');
+      const modal = document.getElementById(id);
+      if (!modal) return;
+      modal.classList.remove('open');
       if (id === 'examModal') window._stopGlowEffect && _stopGlowEffect();
       if (id === 'featureSettingsModal') closePendingFeatureConfirm(true);
     }
@@ -10097,7 +10086,7 @@
     }
 
     function renderFeatureToggleList() {
-      const list = document.getElementById('featureToggleList');
+      const list = document.getElementById('settingsFeatureToggleList') || document.getElementById('featureToggleList');
       if (!list) return;
       list.innerHTML = '';
       FEATURE_DEFS.forEach(def => {
@@ -10132,8 +10121,9 @@
 
     function openFeatureSettings() {
       closeSidebarMobile();
+      openSettingsModal();
+      switchSettingsPanel('study');
       renderFeatureToggleList();
-      openModal('featureSettingsModal');
     }
 
     function getExamMeta(examId) {
@@ -12402,18 +12392,15 @@
     function openTutorial() {
       _buildTutSlides();
       _tutIdx = 0;
-      var ov = document.getElementById('tutorialOverlay');
-      if (!ov) return;
-      ov.style.display = 'flex';
-      document.body.style.overflow = 'hidden';
+      openSettingsModal();
+      switchSettingsPanel('support');
       _renderTutSlide(0);
     }
 
     function closeTutorial() {
-      var ov = document.getElementById('tutorialOverlay');
-      if (ov) ov.style.display = 'none';
-      document.body.style.overflow = '';
       try { localStorage.setItem('marga_tutorial_seen', 'true'); } catch (e) { }
+      const skipBtn = document.getElementById('tutSkip');
+      if (skipBtn) skipBtn.style.visibility = 'hidden';
     }
 
     function tutNext() {
@@ -12497,8 +12484,9 @@
     }
 
     document.addEventListener('keydown', function (e) {
-      var ov = document.getElementById('tutorialOverlay');
-      if (!ov || ov.style.display === 'none') return;
+      var ov = document.getElementById('settingsOverlay');
+      var supportPanel = document.getElementById('smPanel-support');
+      if (!ov || !ov.classList.contains('sm-open') || !supportPanel || !supportPanel.classList.contains('active')) return;
       if (e.key === 'ArrowRight') tutNext();
       if (e.key === 'ArrowLeft') tutPrev();
       if (e.key === 'Escape') closeTutorial();
@@ -12508,8 +12496,12 @@
     function openSettingsModal() {
       const ov = document.getElementById('settingsOverlay');
       if (!ov) return;
-      // Sync profile data
       renderSidebarUser();
+      syncProfileSettingsForm();
+      renderFeatureToggleList();
+      _buildTutSlides();
+      if (!_tutSlides[_tutIdx]) _tutIdx = 0;
+      _renderTutSlide(_tutIdx);
       // Sync dark mode toggle
       const dmToggle = document.getElementById('smDarkModeToggle');
       if (dmToggle) {
