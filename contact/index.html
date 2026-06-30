@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact Marga | Feedback, Support &amp; Questions</title>
+  <meta name="description" content="Contact Marga for bug reports, feature requests, questions and general feedback. Reach out via email or social links, or send a message directly.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://mymarga.in/contact">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Contact Marga">
+  <meta property="og:description" content="Have a question, found a bug, or want to suggest a feature? Get in touch with the Marga team.">
+  <meta property="og:url" content="https://mymarga.in/contact">
+  <meta property="og:image" content="https://mymarga.in/icon-512.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Contact Marga">
+  <meta name="twitter:description" content="Send feedback, report bugs, or ask questions about Marga.">
+  <meta name="twitter:image" content="https://mymarga.in/icon-512.png">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" href="/favicon.ico" sizes="any">
+  <link rel="apple-touch-icon" sizes="192x192" href="/icon-192.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/seo-page.css">
+  <link rel="stylesheet" href="/contact-page.css">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "ContactPage",
+        "@id": "https://mymarga.in/contact#contactpage",
+        "url": "https://mymarga.in/contact",
+        "name": "Contact Marga",
+        "description": "Contact Marga for bug reports, feature requests, questions and general feedback.",
+        "isPartOf": { "@id": "https://mymarga.in/#website" },
+        "about": { "@id": "https://mymarga.in/#organization" }
+      },
+      {
+        "@type": "Organization",
+        "@id": "https://mymarga.in/#organization",
+        "name": "Marga",
+        "url": "https://mymarga.in/",
+        "logo": "https://mymarga.in/icon-512.png",
+        "email": "hello@mymarga.in",
+        "founder": {
+          "@type": "Person",
+          "name": "Pruthviraj Arun"
+        },
+        "sameAs": [
+          "https://www.linkedin.com/company/133444563/",
+          "https://www.instagram.com/mymarga.in/"
+        ]
+      },
+      {
+        "@type": "BreadcrumbList",
+        "@id": "https://mymarga.in/contact#breadcrumb",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Home",
+            "item": "https://mymarga.in/"
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "Contact",
+            "item": "https://mymarga.in/contact"
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+</head>
+<body>
+  <a class="skip-link" href="#mainContent">Skip to content</a>
+  <header class="navbar">
+    <div class="container nav-inner">
+      <a class="brand" href="/"><img src="/icon-192.png" width="34" height="34" alt="Marga logo" loading="eager">Marga</a>
+      <nav class="nav-links" aria-label="Primary">
+        <a href="/">Home</a>
+        <a href="/#features">Features</a>
+        <a href="/contact" aria-current="page">Contact</a>
+        <a href="/app">Open App</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="mainContent">
+    <section class="contact-hero">
+      <div class="container">
+        <h1>Contact Marga</h1>
+        <p>Have a question, found a bug, want to suggest a feature, or just want to say hello? I'd love to hear from you.</p>
+      </div>
+    </section>
+
+    <section class="contact-section" aria-labelledby="contactHeading">
+      <div class="container">
+        <h2 id="contactHeading" class="visually-hidden">Contact options and feedback form</h2>
+        <div class="contact-grid">
+          <aside class="contact-panel" aria-labelledby="socialHeading">
+            <h2 id="socialHeading">Connect</h2>
+            <p>For a quick note, collaboration, or a look at what Marga is building next.</p>
+            <div class="social-grid" id="socialLinksGrid"></div>
+          </aside>
+
+          <section class="contact-panel" aria-labelledby="feedbackHeading">
+            <h2 id="feedbackHeading">Send Feedback</h2>
+            <p>Share a bug report, feature idea, or anything else on your mind.</p>
+
+            <form id="feedbackForm" class="feedback-form" novalidate>
+              <div class="hp-field" aria-hidden="true">
+                <label for="feedbackCompany">Company</label>
+                <input type="text" id="feedbackCompany" name="company" tabindex="-1" autocomplete="off">
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label" for="feedbackName">Name <span class="optional">(optional)</span></label>
+                  <input class="form-input" type="text" id="feedbackName" name="name" autocomplete="name" maxlength="120">
+                  <span class="field-error" id="nameError" aria-live="polite"></span>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="feedbackEmail">Email <span class="optional">(optional)</span></label>
+                  <input class="form-input" type="email" id="feedbackEmail" name="email" autocomplete="email" maxlength="254" inputmode="email">
+                  <span class="field-error" id="emailError" aria-live="polite"></span>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="feedbackSubject">Subject</label>
+                <input class="form-input" type="text" id="feedbackSubject" name="subject" required autocomplete="off" maxlength="200" aria-required="true">
+                <span class="field-error" id="subjectError" aria-live="polite"></span>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="feedbackMessage">Message</label>
+                <textarea class="form-textarea" id="feedbackMessage" name="message" required maxlength="3000" aria-required="true"></textarea>
+                <div class="form-meta">
+                  <span class="field-error" id="messageError" aria-live="polite"></span>
+                  <span class="char-count" id="messageCharCount" aria-live="polite">0 / 3000</span>
+                </div>
+              </div>
+
+              <button type="submit" class="btn btn-submit" id="feedbackSubmit">Send Feedback</button>
+            </form>
+          </section>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container foot-inner">
+      <span>© 2026 Marga</span>
+      <div class="link-row">
+        <a class="chip" href="/">Home</a>
+        <a class="chip" href="/contact">Contact</a>
+        <a class="chip" href="/app">Open App</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/contact.js" defer></script>
+</body>
+</html>

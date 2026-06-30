@@ -5643,6 +5643,11 @@
         <span class="sidebar-insights-label">Insights</span>
       </button>
       <div class="sidebar-divider"></div>
+      <button class="sidebar-settings-row" id="sidebarContactBtn" title="Contact" aria-label="Contact">
+        <span class="sidebar-settings-icon">✉️</span>
+        <span class="sidebar-settings-label">Contact</span>
+      </button>
+      <div class="sidebar-divider"></div>
       <button class="sidebar-settings-row" id="sidebarSettingsBtn" title="Settings" aria-label="Settings">
         <span class="sidebar-settings-icon">⚙️</span>
         <span class="sidebar-settings-label">Settings</span>
@@ -5767,6 +5772,11 @@
               <span class="sm-item-title">Help &amp; Tutorial</span>
               <span class="sm-item-sub">Take a guided tour of all Marga features</span>
               <button class="sm-item-btn" onclick="closeSettingsModal();openTutorial()">Open Tutorial →</button>
+            </div>
+            <div class="sm-item">
+              <span class="sm-item-title">Contact</span>
+              <span class="sm-item-sub">Report bugs, request features or ask a question</span>
+              <button class="sm-item-btn" onclick="closeSettingsModal();window.location.href='/contact'">Contact →</button>
             </div>
           </div>
           <!-- Account -->
@@ -10209,6 +10219,20 @@
         insightsRow.addEventListener('click', () => {
           switchView(VIEW_INSIGHTS);
           closeSidebarMobile();
+        });
+      }
+      const contactBtn = document.getElementById('sidebarContactBtn');
+      if (contactBtn) {
+        const openContactPage = () => {
+          closeSidebarMobile();
+          window.location.href = '/contact';
+        };
+        contactBtn.addEventListener('click', openContactPage);
+        contactBtn.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            openContactPage();
+          }
         });
       }
       const settingsBtn = document.getElementById('sidebarSettingsBtn');
