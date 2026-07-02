@@ -5943,12 +5943,14 @@
       </div>
       <div id="syllabusPane" class="syllabus-pane">
         <div class="syll-top">
-          <button class="btn btn-secondary btn-sm" type="button" onclick="showExamCardsPane()">← Back</button>
+          <button class="btn btn-secondary btn-sm" type="button" onclick="handleSyllabusBack()">← Back</button>
           <div id="syllabusTitle" style="font-weight:600"></div>
         </div>
         <div class="syll-actions">
           <button class="btn btn-secondary btn-sm" type="button" onclick="setAllSelection(true)">Select All</button>
           <button class="btn btn-secondary btn-sm" type="button" onclick="setAllSelection(false)">Deselect All</button>
+          <input id="syllabusSearchInput" class="form-input" type="search" placeholder="Search chapters or groups"
+            oninput="updateSyllabusSearch(this.value)" style="max-width:240px">
         </div>
         <div class="syll-list" id="syllabusList"></div>
         <div class="syll-sticky">
@@ -5988,16 +5990,15 @@
       </div>
       <div id="copyNamePane" class="conflict-pane">
         <div style="margin-bottom:1rem">
-          <button class="btn btn-secondary btn-sm" type="button"
-            onclick="showConflictDialog(_conflictState.baseExamId)">← Back</button>
+          <button class="btn btn-secondary btn-sm" type="button" onclick="handleDerivedExamNameBack()">← Back</button>
         </div>
-        <p style="font-weight:700;margin-bottom:0.4rem">Name this copy</p>
-        <p style="color:var(--text-sub);margin-bottom:0.8rem">Give this exam a unique name to tell it apart from your
-          existing one.</p>
+        <p id="derivedExamNameTitle" style="font-weight:700;margin-bottom:0.4rem">Name this copy</p>
+        <p id="derivedExamNameDesc" style="color:var(--text-sub);margin-bottom:0.8rem">Give this exam a unique name
+          to tell it apart from your existing one.</p>
         <input id="copyExamNameInput" class="form-input" type="text" placeholder="e.g. JEE — Mock Test 1">
         <div class="modal-actions" style="margin-top:0.8rem">
-          <button class="btn btn-primary" type="button" onclick="confirmCreateExamCopy()">Continue to Chapter Selection
-            →</button>
+          <button id="derivedExamNameContinueBtn" class="btn btn-primary" type="button"
+            onclick="confirmDerivedExamName()">Continue to Chapter Selection →</button>
         </div>
       </div>
       <div id="replaceConfirmPane" class="conflict-pane">
@@ -6154,6 +6155,8 @@
                 Export</button>
               <button class="btn btn-secondary btn-sm" onclick="document.getElementById('importFileInput').click()"
                 title="Import a previously exported JSON">↑ Import</button>
+              <button class="btn btn-secondary btn-sm" onclick="openSubExamFlow()"
+                title="Create a reduced-portion exam from this syllabus">➕ Sub-Exam</button>
               <input type="file" id="importFileInput" accept=".json" onchange="importData(event)" style="display:none">
             </div>
           </div>
@@ -7467,6 +7470,7 @@
     let syllabusSelection = null;
     let renamingExamId = null;
     let _conflictState = { baseExamId: null, targetExamId: null };
+    let _derivedExamFlow = null;
 
     function getAuthDisplayName(user = window._userSession?.user) {
       return user?.user_metadata?.display_name
@@ -7886,6 +7890,7 @@
     let DATA_VERSION_KEY = 'margaDataVer_v1';
     let EXAM_NAMES_KEY = 'margaExamNames_v1';
     let SELECTIONS_KEY = 'margaSelections_v1';
+    let LAST_ACTIVE_EXAM_KEY = 'margaLastActiveExam_v1';
     let META_SAVED_AT_KEY = 'margaAccountMetaSavedAt_v1';
     let GLOBAL_SAVED_AT_KEY = 'margaSavedAtGlobal_v1';
     let ACTIVITY_KEY = 'margaActivity_v1';
@@ -7911,6 +7916,7 @@
       DATA_VERSION_KEY = getUserStorageKey('margaDataVer_v1');
       EXAM_NAMES_KEY = getUserStorageKey('margaExamNames_v1');
       SELECTIONS_KEY = getUserStorageKey('margaSelections_v1');
+      LAST_ACTIVE_EXAM_KEY = getUserStorageKey('margaLastActiveExam_v1');
       META_SAVED_AT_KEY = getUserStorageKey('margaAccountMetaSavedAt_v1');
       GLOBAL_SAVED_AT_KEY = getUserStorageKey('margaSavedAtGlobal_v1');
       ACTIVITY_KEY = getUserStorageKey('margaActivity_v1');
@@ -9938,7 +9944,11 @@
       const modal = document.getElementById(id);
       if (!modal) return;
       modal.classList.remove('open');
-      if (id === 'examModal') window._stopGlowEffect && _stopGlowEffect();
+      if (id === 'examModal') {
+        window._stopGlowEffect && _stopGlowEffect();
+        _derivedExamFlow = null;
+        syllabusSelection = null;
+      }
       if (id === 'featureSettingsModal') closePendingFeatureConfirm(true);
     }
 
@@ -10157,6 +10167,20 @@
     function getExamDisplayName(examId) {
       const meta = getExamMeta(examId);
       return examNames[examId] || (meta ? meta.name : examId);
+    }
+
+    function getAvailableTrackedExamIds() {
+      return loadedExams.filter(examId => appData[examId] && typeof appData[examId] === 'object' && !deletedExamTombstones[examId]);
+    }
+
+    function getPreferredStartupExamId() {
+      const available = getAvailableTrackedExamIds();
+      if (!available.length) return null;
+      const storedLast = localStorage.getItem(LAST_ACTIVE_EXAM_KEY);
+      if (storedLast && available.includes(storedLast)) return storedLast;
+      const lastMode = appData._currentMode;
+      if (lastMode && available.includes(lastMode)) return lastMode;
+      return available[0];
     }
 
     function renameExam(examId, newDisplayName) {
@@ -10394,6 +10418,7 @@
 
     function activateExam(examId) {
       currentMode = examId;
+      try { localStorage.setItem(LAST_ACTIVE_EXAM_KEY, examId); } catch (e) { }
       initialLoadDone = false; // allow stagger animation for newly activated exam
       ensureModeData(examId);
       if (!cardOrder[examId]) {
@@ -10654,6 +10679,179 @@
       if (grid) grid.style.display = '';
     }
 
+    function deepClone(value) {
+      return JSON.parse(JSON.stringify(value));
+    }
+
+    function sanitizeDerivedSlug(label) {
+      return String(label || '')
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '_')
+        .replace(/^_+|_+$/g, '')
+        .slice(0, 40);
+    }
+
+    function generateDerivedExamId(baseExamId, kind, label) {
+      const kindPrefix = kind === 'sub_exam' ? 'subexam' : 'copy';
+      const slug = sanitizeDerivedSlug(label) || kindPrefix;
+      let n = 1;
+      let candidate = `${baseExamId}_${kindPrefix}_${slug}`;
+      while (loadedExams.includes(candidate) || appData[candidate]) {
+        n++;
+        candidate = `${baseExamId}_${kindPrefix}_${slug}_${n}`;
+      }
+      return candidate;
+    }
+
+    function buildChapterTemplate(chapterDef) {
+      if (typeof chapterDef === 'string') return { name: chapterDef };
+      if (!chapterDef || typeof chapterDef !== 'object') return null;
+      return {
+        name: chapterDef.name,
+        scenes: Array.isArray(chapterDef.scenes) ? [...chapterDef.scenes] : null,
+      };
+    }
+
+    function buildSubjectTemplateFromConfig(cfg = {}) {
+      const meta = { hue: cfg.hue, icon: cfg.icon };
+      if (cfg.groups) {
+        const groups = {};
+        Object.entries(cfg.groups).forEach(([groupLabel, groupCfg]) => {
+          groups[groupLabel] = {
+            chapters: (groupCfg.chapters || []).map(buildChapterTemplate).filter(Boolean),
+            subGroups: {},
+          };
+        });
+        return { ...meta, grouped: true, groups };
+      }
+      return {
+        ...meta,
+        grouped: false,
+        chapters: (cfg.chapters || []).map(buildChapterTemplate).filter(Boolean),
+      };
+    }
+
+    function buildSubjectTemplateFromData(subjectData, fallbackCfg = {}) {
+      const meta = { hue: fallbackCfg.hue, icon: fallbackCfg.icon };
+      if (Array.isArray(subjectData)) {
+        return {
+          ...meta,
+          grouped: false,
+          chapters: subjectData.map(ch => buildChapterTemplate(ch)).filter(Boolean),
+        };
+      }
+      if (!isGroupedSubjectData(subjectData)) return null;
+      const groups = {};
+      Object.entries(subjectData.groups || {}).forEach(([groupLabel, entry]) => {
+        const subGroups = {};
+        Object.entries(getGroupSubGroups(entry)).forEach(([subGroupLabel, list]) => {
+          subGroups[subGroupLabel] = (list || []).map(ch => buildChapterTemplate(ch)).filter(Boolean);
+        });
+        groups[groupLabel] = {
+          chapters: getGroupChapters(entry).map(ch => buildChapterTemplate(ch)).filter(Boolean),
+          subGroups,
+        };
+      });
+      return { ...meta, grouped: true, groups };
+    }
+
+    function buildSelectionSource(sourceExamId, baseMode) {
+      const source = {};
+      let hasSourceData = false;
+      const sourceData = appData[sourceExamId];
+      if (sourceData && typeof sourceData === 'object') {
+        Object.entries(sourceData).forEach(([subject, data]) => {
+          if (String(subject).startsWith('_')) return;
+          const tpl = buildSubjectTemplateFromData(data, getModeSubjectMeta(sourceExamId, subject));
+          if (!tpl) return;
+          source[subject] = tpl;
+          hasSourceData = true;
+        });
+      }
+      if (hasSourceData) return source;
+      Object.entries(config[baseMode] || {}).forEach(([subject, cfg]) => {
+        source[subject] = buildSubjectTemplateFromConfig(cfg);
+      });
+      return source;
+    }
+
+    function buildSelectionPath(groupLabel, subGroupLabel = '') {
+      return `${groupLabel}::${subGroupLabel || ''}`;
+    }
+
+    function parseSelectionPath(path) {
+      const [groupLabel, subGroupLabel = ''] = String(path || '').split('::');
+      return { groupLabel, subGroupLabel };
+    }
+
+    function buildFullSelectionFromSource(source) {
+      const out = {};
+      Object.entries(source || {}).forEach(([subject, spec]) => {
+        if (!spec?.grouped) {
+          out[subject] = (spec.chapters || []).map(ch => ch.name);
+          return;
+        }
+        out[subject] = {};
+        Object.entries(spec.groups || {}).forEach(([groupLabel, groupSpec]) => {
+          out[subject][buildSelectionPath(groupLabel)] = (groupSpec.chapters || []).map(ch => ch.name);
+          Object.entries(groupSpec.subGroups || {}).forEach(([subGroupLabel, subList]) => {
+            out[subject][buildSelectionPath(groupLabel, subGroupLabel)] = (subList || []).map(ch => ch.name);
+          });
+        });
+      });
+      return out;
+    }
+
+    function normalizeStoredSelectionForSource(stored, source) {
+      const normalized = {};
+      Object.entries(source || {}).forEach(([subject, spec]) => {
+        const current = stored?.[subject];
+        if (!spec?.grouped) {
+          normalized[subject] = Array.isArray(current)
+            ? current.filter(name => (spec.chapters || []).some(ch => ch.name === name))
+            : [];
+          return;
+        }
+        const subjectSel = {};
+        Object.entries(spec.groups || {}).forEach(([groupLabel, groupSpec]) => {
+          const legacyTop = Array.isArray(current?.[groupLabel]) ? current[groupLabel] : [];
+          const directTop = Array.isArray(current?.[buildSelectionPath(groupLabel)]) ? current[buildSelectionPath(groupLabel)] : [];
+          subjectSel[buildSelectionPath(groupLabel)] = (directTop.length ? directTop : legacyTop)
+            .filter(name => (groupSpec.chapters || []).some(ch => ch.name === name));
+          Object.entries(groupSpec.subGroups || {}).forEach(([subGroupLabel, subList]) => {
+            const key = buildSelectionPath(groupLabel, subGroupLabel);
+            subjectSel[key] = (Array.isArray(current?.[key]) ? current[key] : [])
+              .filter(name => (subList || []).some(ch => ch.name === name));
+          });
+        });
+        normalized[subject] = subjectSel;
+      });
+      return normalized;
+    }
+
+    function getModeSubjectMeta(mode, subject) {
+      return appData[mode]?._subjectMeta?.[subject]
+        || config[mode]?.[subject]
+        || config[appData[mode]?._baseExamId || mode]?.[subject]
+        || null;
+    }
+
+    function getModeConfigMap(mode) {
+      return config[mode] || config[appData[mode]?._baseExamId || mode] || {};
+    }
+
+    function cloneSubjectMetaFromSource(sourceExamId, baseMode) {
+      const meta = {};
+      const source = buildSelectionSource(sourceExamId, baseMode);
+      Object.entries(source).forEach(([subject, spec]) => {
+        meta[subject] = {
+          hue: spec.hue ?? 217,
+          icon: spec.icon || '📖',
+        };
+      });
+      return meta;
+    }
+
     function getBaseExamId(examId) {
       return appData[examId]?._baseExamId || examId;
     }
@@ -10663,16 +10861,6 @@
         if (id === baseExamId) return true;
         return appData[id] && appData[id]._baseExamId === baseExamId;
       });
-    }
-
-    function generateCopyId(baseExamId) {
-      let n = 2;
-      let candidate = baseExamId + '_copy' + n;
-      while (loadedExams.includes(candidate) || appData[candidate]) {
-        n++;
-        candidate = baseExamId + '_copy' + n;
-      }
-      return candidate;
     }
 
     function startExamLoadFlow(examId) {
@@ -10705,28 +10893,87 @@
     }
 
     function startCreateExamCopy() {
-      hideConflictPane();
-      const pane = document.getElementById('copyNamePane');
-      pane.style.display = 'block';
       const baseId = _conflictState.baseExamId;
       const existingCount = getExamsWithSameBase(baseId).length;
       const baseName = getExamDisplayName(baseId);
       const defaultName = existingCount > 0 ? `${baseName} — Copy ${existingCount + 1}` : `${baseName} — Copy`;
+      _derivedExamFlow = {
+        kind: 'copy',
+        baseExamId: baseId,
+        sourceExamId: _conflictState.targetExamId || baseId,
+        defaultName,
+        title: 'Name this copy',
+        description: 'Give this exam a unique name to tell it apart from your existing one.',
+        continueLabel: 'Continue to Chapter Selection →',
+        placeholder: 'e.g. JEE — Mock Test 1',
+        backTarget: 'conflict',
+      };
+      openDerivedExamNamePane();
+    }
+
+    function openDerivedExamNamePane() {
+      if (!_derivedExamFlow) return;
+      hideConflictPane();
+      hideSyllabusPane();
+      document.getElementById('examCardsGrid').style.display = 'none';
+      const pane = document.getElementById('copyNamePane');
+      pane.style.display = 'block';
+      document.getElementById('derivedExamNameTitle').textContent = _derivedExamFlow.title;
+      document.getElementById('derivedExamNameDesc').textContent = _derivedExamFlow.description;
+      document.getElementById('derivedExamNameContinueBtn').textContent = _derivedExamFlow.continueLabel;
       const input = document.getElementById('copyExamNameInput');
-      input.value = defaultName;
+      input.placeholder = _derivedExamFlow.placeholder || '';
+      input.value = _derivedExamFlow.defaultName || '';
       setTimeout(() => input.focus(), 80);
     }
 
-    function confirmCreateExamCopy() {
-      const baseId = _conflictState.baseExamId;
+    function handleDerivedExamNameBack() {
+      if (_derivedExamFlow?.backTarget === 'conflict') {
+        showConflictDialog(_conflictState.baseExamId, _conflictState.targetExamId);
+        return;
+      }
+      _derivedExamFlow = null;
+      closeModal('examModal');
+    }
+
+    function confirmDerivedExamName() {
+      if (!_derivedExamFlow) return;
       const typed = (document.getElementById('copyExamNameInput').value || '').trim();
       if (!typed) return;
-      const newExamId = generateCopyId(baseId);
-      if (!appData[newExamId]) appData[newExamId] = {};
-      appData[newExamId]._baseExamId = baseId;
-      examNames[newExamId] = typed;
-      localStorage.setItem(EXAM_NAMES_KEY, JSON.stringify(examNames));
-      openSyllabusPane(newExamId, false, baseId);
+      const newExamId = generateDerivedExamId(_derivedExamFlow.baseExamId, _derivedExamFlow.kind, typed);
+      openSyllabusPane(newExamId, false, _derivedExamFlow.baseExamId, {
+        sourceExamId: _derivedExamFlow.sourceExamId,
+        pendingExamName: typed,
+        pendingExamMeta: {
+          _baseExamId: _derivedExamFlow.baseExamId,
+          _sourceExamId: _derivedExamFlow.sourceExamId,
+          _derivedKind: _derivedExamFlow.kind,
+          _subjectMeta: cloneSubjectMetaFromSource(_derivedExamFlow.sourceExamId, _derivedExamFlow.baseExamId),
+        },
+      });
+    }
+
+    function openSubExamFlow() {
+      if (!currentMode) return;
+      const baseExamId = getBaseExamId(currentMode);
+      const baseName = getExamDisplayName(currentMode);
+      let nextIndex = 1;
+      getExamsWithSameBase(baseExamId).forEach(examId => {
+        if (appData[examId]?._derivedKind === 'sub_exam') nextIndex++;
+      });
+      _derivedExamFlow = {
+        kind: 'sub_exam',
+        baseExamId,
+        sourceExamId: currentMode,
+        defaultName: `${baseName} — Sub-Exam ${nextIndex}`,
+        title: 'Sub-Exam Name',
+        description: 'Create an independent reduced-portion exam without changing the original one.',
+        continueLabel: 'Create Sub-Exam →',
+        placeholder: 'e.g. Physics Midterm',
+        backTarget: 'close-modal',
+      };
+      openExamModal();
+      openDerivedExamNamePane();
     }
 
     function startEditExistingFromConflict() {
@@ -10775,6 +11022,9 @@
       delete examNames[examId];
       delete examSelections[examId];
       delete cardOrder[examId];
+      if (localStorage.getItem(LAST_ACTIVE_EXAM_KEY) === examId) {
+        localStorage.removeItem(LAST_ACTIVE_EXAM_KEY);
+      }
       deletedExamTombstones[examId] = new Date().toISOString();
       if (isCustomMode(examId)) delete config[examId];
       loadedExams = loadedExams.filter(id => id !== examId);
@@ -10801,52 +11051,38 @@
       openSyllabusPane(replaceId, false, baseId);
     }
 
-    function normalizeSelection(mode) {
-      const out = {};
-      Object.entries(config[mode] || {}).forEach(([subject, cfg]) => {
-        if (cfg.groups) {
-          out[subject] = {};
-          Object.entries(cfg.groups).forEach(([groupLabel, groupCfg]) => {
-            out[subject][groupLabel] = [];
-            (groupCfg.chapters || []).forEach(ch => {
-              if (typeof ch === 'string') out[subject][groupLabel].push(ch);
-              else if (ch && ch.name) out[subject][groupLabel].push(ch.name);
-            });
-          });
-        } else {
-          out[subject] = [...(cfg.chapters || [])];
-        }
-      });
-      return out;
-    }
-
-    function getCurrentSelectedNames(mode) {
+    function getCurrentSelectedNames(mode, source) {
       const fromSaved = examSelections[mode];
-      if (fromSaved) return JSON.parse(JSON.stringify(fromSaved));
-      if (appData[mode]) {
-        const selected = {};
-        Object.entries(appData[mode]).forEach(([subject, data]) => {
-          if (Array.isArray(data)) selected[subject] = data.map(c => c.name);
-          else if (isGroupedSubjectData(data)) {
-            selected[subject] = {};
-            Object.entries(data.groups).forEach(([g, entry]) => {
-              selected[subject][g] = getGroupChapters(entry).map(c => c.name);
-            });
-          }
-        });
-        return selected;
-      }
-      return normalizeSelection(mode);
+      if (fromSaved) return normalizeStoredSelectionForSource(deepClone(fromSaved), source);
+      const sourceData = appData[mode];
+      const hasRealSubjects = sourceData && Object.keys(sourceData).some(key => !String(key).startsWith('_'));
+      if (hasRealSubjects) return normalizeStoredSelectionForSource(buildFullSelectionFromSource(buildSelectionSource(mode, getBaseExamId(mode))), source);
+      return buildFullSelectionFromSource(source);
     }
 
-    function openSyllabusPane(examId, editing = false, baseExamId = null) {
+    function handleSyllabusBack() {
+      if (syllabusSelection?.pendingExamMeta) {
+        openDerivedExamNamePane();
+        return;
+      }
+      showExamCardsPane();
+    }
+
+    function openSyllabusPane(examId, editing = false, baseExamId = null, options = {}) {
       const configSource = baseExamId || appData[examId]?._baseExamId || examId;
+      const sourceExamId = options.sourceExamId || examId;
+      const source = buildSelectionSource(sourceExamId, configSource);
       syllabusSelection = {
         mode: examId,
         baseMode: configSource,
+        sourceExamId,
+        source,
         editing,
         expanded: {},
-        selected: getCurrentSelectedNames(examId),
+        query: '',
+        pendingExamName: options.pendingExamName || '',
+        pendingExamMeta: options.pendingExamMeta || null,
+        selected: getCurrentSelectedNames(examId, source),
       };
       hideCustomNamePane();
       hideMhtcetPane();
@@ -10857,6 +11093,12 @@
       pane.style.display = 'block';
       const m = getExamMeta(examId) || { icon: '📚', name: configSource };
       document.getElementById('syllabusTitle').textContent = `${m.icon} ${getExamDisplayName(examId)} — Select Chapters`;
+      document.getElementById('syllabusSearchInput').value = '';
+      document.getElementById('syllabusLoadBtn').textContent = options.pendingExamMeta?._derivedKind === 'sub_exam'
+        ? 'Create Sub-Exam →'
+        : options.pendingExamMeta?._derivedKind === 'copy'
+          ? 'Create Copy →'
+          : 'Load Exam →';
       renderSyllabusPane();
     }
 
@@ -10865,13 +11107,13 @@
       renderSyllabusPane();
     }
 
-    function chapterChecked(subject, groupLabel, chapterName) {
+    function chapterChecked(subject, groupPath, chapterName) {
       const sel = syllabusSelection.selected[subject];
       if (Array.isArray(sel)) return sel.includes(chapterName);
-      return !!(sel && sel[groupLabel] && sel[groupLabel].includes(chapterName));
+      return !!(sel && sel[groupPath] && sel[groupPath].includes(chapterName));
     }
 
-    function setChapterChecked(subject, groupLabel, chapterName, checked) {
+    function setChapterChecked(subject, groupPath, chapterName, checked) {
       let sel = syllabusSelection.selected[subject];
       if (Array.isArray(sel)) {
         if (checked && !sel.includes(chapterName)) sel.push(chapterName);
@@ -10879,28 +11121,40 @@
         return;
       }
       if (!sel) sel = syllabusSelection.selected[subject] = {};
-      if (!sel[groupLabel]) sel[groupLabel] = [];
-      if (checked && !sel[groupLabel].includes(chapterName)) sel[groupLabel].push(chapterName);
-      if (!checked) sel[groupLabel] = sel[groupLabel].filter(x => x !== chapterName);
+      if (!sel[groupPath]) sel[groupPath] = [];
+      if (checked && !sel[groupPath].includes(chapterName)) sel[groupPath].push(chapterName);
+      if (!checked) sel[groupPath] = sel[groupPath].filter(x => x !== chapterName);
     }
 
     function setSubjectAll(subject, checked) {
-      const cfg = config[syllabusSelection.baseMode]?.[subject];
-      if (!cfg) return;
-      if (!cfg.groups) {
-        syllabusSelection.selected[subject] = checked ? [...(cfg.chapters || [])] : [];
+      const spec = syllabusSelection.source?.[subject];
+      if (!spec) return;
+      if (!spec.grouped) {
+        syllabusSelection.selected[subject] = checked ? (spec.chapters || []).map(ch => ch.name) : [];
       } else {
         if (!syllabusSelection.selected[subject] || Array.isArray(syllabusSelection.selected[subject])) syllabusSelection.selected[subject] = {};
-        Object.entries(cfg.groups).forEach(([g, gCfg]) => {
-          const names = (gCfg.chapters || []).map(ch => typeof ch === 'string' ? ch : ch.name);
-          syllabusSelection.selected[subject][g] = checked ? names : [];
+        Object.entries(spec.groups || {}).forEach(([groupLabel, groupSpec]) => {
+          syllabusSelection.selected[subject][buildSelectionPath(groupLabel)] = checked
+            ? (groupSpec.chapters || []).map(ch => ch.name)
+            : [];
+          Object.entries(groupSpec.subGroups || {}).forEach(([subGroupLabel, subList]) => {
+            syllabusSelection.selected[subject][buildSelectionPath(groupLabel, subGroupLabel)] = checked
+              ? (subList || []).map(ch => ch.name)
+              : [];
+          });
         });
       }
       renderSyllabusPane();
     }
 
     function setAllSelection(checked) {
-      Object.keys(config[syllabusSelection.baseMode] || {}).forEach(sub => setSubjectAll(sub, checked));
+      Object.keys(syllabusSelection.source || {}).forEach(sub => setSubjectAll(sub, checked));
+      renderSyllabusPane();
+    }
+
+    function updateSyllabusSearch(value) {
+      if (!syllabusSelection) return;
+      syllabusSelection.query = String(value || '').trim().toLowerCase();
       renderSyllabusPane();
     }
 
@@ -10917,21 +11171,64 @@
     }
 
     function renderSyllabusPane() {
-      const mode = syllabusSelection.baseMode;
-      const cfg = config[mode] || {};
+      const source = syllabusSelection.source || {};
+      const query = syllabusSelection.query || '';
       const list = document.getElementById('syllabusList');
       list.innerHTML = '';
-      Object.entries(cfg).forEach(([subject, scfg]) => {
+      let visibleSubjects = 0;
+
+      const chapterMatches = chapter => {
+        if (!query) return true;
+        if ((chapter.name || '').toLowerCase().includes(query)) return true;
+        return Array.isArray(chapter.scenes) && chapter.scenes.some(scene => String(scene).toLowerCase().includes(query));
+      };
+
+      Object.entries(source).forEach(([subject, scfg]) => {
         const sec = document.createElement('div');
         const expanded = syllabusSelection.expanded[subject] !== false;
-        const chapTotal = scfg.groups
-          ? Object.values(scfg.groups).reduce((n, g) => n + (g.chapters || []).length, 0)
+        const chapTotal = scfg.grouped
+          ? Object.values(scfg.groups || {}).reduce((n, g) => {
+            return n + (g.chapters || []).length + Object.values(g.subGroups || {}).reduce((sum, list) => sum + list.length, 0);
+          }, 0)
           : (scfg.chapters || []).length;
         const selectedCount = (() => {
           const sel = syllabusSelection.selected[subject];
           if (Array.isArray(sel)) return sel.length;
           return Object.values(sel || {}).reduce((n, arr) => n + arr.length, 0);
         })();
+        const filteredFlat = !scfg.grouped
+          ? (scfg.chapters || []).filter(chapterMatches)
+          : [];
+        const filteredGroups = {};
+        if (scfg.grouped) {
+          Object.entries(scfg.groups || {}).forEach(([groupLabel, groupSpec]) => {
+            const topMatches = (groupSpec.chapters || []).filter(chapterMatches);
+            const subMatches = {};
+            Object.entries(groupSpec.subGroups || {}).forEach(([subGroupLabel, subList]) => {
+              const matches = (subList || []).filter(chapterMatches);
+              if (
+                matches.length
+                || groupLabel.toLowerCase().includes(query)
+                || subGroupLabel.toLowerCase().includes(query)
+              ) {
+                subMatches[subGroupLabel] = matches.length ? matches : subList;
+              }
+            });
+            if (
+              topMatches.length
+              || Object.keys(subMatches).length
+              || groupLabel.toLowerCase().includes(query)
+            ) {
+              filteredGroups[groupLabel] = {
+                chapters: topMatches.length || groupLabel.toLowerCase().includes(query) ? (topMatches.length ? topMatches : (groupSpec.chapters || [])) : [],
+                subGroups: subMatches,
+              };
+            }
+          });
+        }
+        const hasVisibleContent = scfg.grouped ? Object.keys(filteredGroups).length > 0 : filteredFlat.length > 0;
+        if (!hasVisibleContent) return;
+        visibleSubjects++;
         sec.innerHTML = `
       <div class="syll-subject">
         <div class="syll-subject-left" onclick="toggleSyllabusSubject('${subject.replace(/'/g, "\\'")}')">
@@ -10945,24 +11242,36 @@
         if (expanded) {
           const chWrap = document.createElement('div');
           chWrap.className = 'syll-chapters';
-          if (!scfg.groups) {
-            chWrap.innerHTML = (scfg.chapters || []).map(ch => `
-          <label class="syll-ch-row"><input class="custom-checkbox syll-chk" type="checkbox" ${chapterChecked(subject, '', ch) ? 'checked' : ''} onchange="setChapterChecked('${subject.replace(/'/g, "\\'")}','','${String(ch).replace(/'/g, "\\'")}', this.checked);renderSyllabusPane()"><span>${ch}</span></label>
+          if (!scfg.grouped) {
+            chWrap.innerHTML = filteredFlat.map(ch => `
+          <label class="syll-ch-row"><input class="custom-checkbox syll-chk" type="checkbox" ${chapterChecked(subject, '', ch.name) ? 'checked' : ''} onchange="setChapterChecked('${subject.replace(/'/g, "\\'")}','','${String(ch.name).replace(/'/g, "\\'")}', this.checked);renderSyllabusPane()"><span>${ch.name}</span></label>
         `).join('');
           } else {
             let html = '';
-            Object.entries(scfg.groups).forEach(([g, gCfg]) => {
+            Object.entries(filteredGroups).forEach(([g, gCfg]) => {
+              const topPath = buildSelectionPath(g);
               html += `<div class="syll-group-label">${g}</div>`;
               (gCfg.chapters || []).forEach(ch => {
-                const chapterName = typeof ch === 'string' ? ch : ch.name;
-                const isAct = !!(ch && typeof ch === 'object' && Array.isArray(ch.scenes));
-                const checked = chapterChecked(subject, g, chapterName);
-                html += `<label class="syll-ch-row"><input class="custom-checkbox syll-chk" type="checkbox" ${checked ? 'checked' : ''} onchange="setChapterChecked('${subject.replace(/'/g, "\\'")}','${g.replace(/'/g, "\\'")}','${chapterName.replace(/'/g, "\\'")}', this.checked);renderSyllabusPane()"><span>${chapterName}</span></label>`;
-                if (isAct) {
+                const checked = chapterChecked(subject, topPath, ch.name);
+                html += `<label class="syll-ch-row"><input class="custom-checkbox syll-chk" type="checkbox" ${checked ? 'checked' : ''} onchange="setChapterChecked('${subject.replace(/'/g, "\\'")}','${topPath.replace(/'/g, "\\'")}','${ch.name.replace(/'/g, "\\'")}', this.checked);renderSyllabusPane()"><span>${ch.name}</span></label>`;
+                if (Array.isArray(ch.scenes)) {
                   ch.scenes.forEach(sc => {
-                    html += `<label class="syll-ch-row syll-scene"><input class="custom-checkbox syll-chk" type="checkbox" ${checked ? 'checked' : ''} onchange="setChapterChecked('${subject.replace(/'/g, "\\'")}','${g.replace(/'/g, "\\'")}','${chapterName.replace(/'/g, "\\'")}', this.checked);renderSyllabusPane()"><span>${sc}</span></label>`;
+                    html += `<label class="syll-ch-row syll-scene"><input class="custom-checkbox syll-chk" type="checkbox" ${checked ? 'checked' : ''} onchange="setChapterChecked('${subject.replace(/'/g, "\\'")}','${topPath.replace(/'/g, "\\'")}','${ch.name.replace(/'/g, "\\'")}', this.checked);renderSyllabusPane()"><span>${sc}</span></label>`;
                   });
                 }
+              });
+              Object.entries(gCfg.subGroups || {}).forEach(([subGroupLabel, subList]) => {
+                const subPath = buildSelectionPath(g, subGroupLabel);
+                html += `<div class="syll-group-label" style="padding-left:1rem;font-size:0.82rem;opacity:0.9">${g} ▸ ${subGroupLabel}</div>`;
+                (subList || []).forEach(ch => {
+                  const checked = chapterChecked(subject, subPath, ch.name);
+                  html += `<label class="syll-ch-row" style="padding-left:2.25rem"><input class="custom-checkbox syll-chk" type="checkbox" ${checked ? 'checked' : ''} onchange="setChapterChecked('${subject.replace(/'/g, "\\'")}','${subPath.replace(/'/g, "\\'")}','${ch.name.replace(/'/g, "\\'")}', this.checked);renderSyllabusPane()"><span>${ch.name}</span></label>`;
+                  if (Array.isArray(ch.scenes)) {
+                    ch.scenes.forEach(sc => {
+                      html += `<label class="syll-ch-row syll-scene" style="padding-left:3.25rem"><input class="custom-checkbox syll-chk" type="checkbox" ${checked ? 'checked' : ''} onchange="setChapterChecked('${subject.replace(/'/g, "\\'")}','${subPath.replace(/'/g, "\\'")}','${ch.name.replace(/'/g, "\\'")}', this.checked);renderSyllabusPane()"><span>${sc}</span></label>`;
+                    });
+                  }
+                });
               });
             });
             chWrap.innerHTML = html;
@@ -10971,6 +11280,9 @@
         }
         list.appendChild(sec);
       });
+      if (!visibleSubjects) {
+        list.innerHTML = '<p style="color:var(--text-sub);padding:0.5rem 0">No chapters match your search.</p>';
+      }
       const sum = countSelectedSummary();
       const btn = document.getElementById('syllabusLoadBtn');
       btn.disabled = sum.total === 0;
@@ -10979,35 +11291,60 @@
 
     function applySyllabusSelection() {
       const mode = syllabusSelection.mode;
-      const baseMode = syllabusSelection.baseMode || mode;
       const editing = syllabusSelection.editing;
       if (editing && !confirm('Removing chapters will delete their progress. Continue?')) return;
       const selected = syllabusSelection.selected;
       const nextData = {};
-      Object.entries(config[baseMode] || {}).forEach(([subject, scfg]) => {
-        if (!scfg.groups) {
+      Object.entries(syllabusSelection.source || {}).forEach(([subject, spec]) => {
+        if (!spec.grouped) {
           const sel = new Set(Array.isArray(selected[subject]) ? selected[subject] : []);
-          const existing = appData[mode]?.[subject];
-          const oldByName = {};
-          if (Array.isArray(existing)) existing.forEach(c => { oldByName[c.name] = c; });
-          const kept = (scfg.chapters || []).filter(n => sel.has(n)).map(name => oldByName[name] || ({ id: nextId(), name, completed: false, revised: '', prep: 'none' }));
+          const kept = (spec.chapters || [])
+            .filter(ch => sel.has(ch.name))
+            .map(ch => ({
+              id: nextId(),
+              name: ch.name,
+              completed: false,
+              revised: '',
+              prep: 'none',
+              ...(Array.isArray(ch.scenes) ? { scenes: ch.scenes.map(scene => ({ id: nextId(), name: scene, completed: false })) } : {}),
+            }));
           if (kept.length) nextData[subject] = kept;
-        } else {
-          const subSel = selected[subject] || {};
-          const built = { groups: {} };
-          Object.entries(scfg.groups).forEach(([g, gCfg]) => {
-            const names = new Set(subSel[g] || []);
-            const chapters = [];
-            (gCfg.chapters || []).forEach(ch => {
-              const chapterName = typeof ch === 'string' ? ch : ch.name;
-              if (!names.has(chapterName)) return;
-              if (typeof ch === 'string') chapters.push({ id: nextId(), name: ch, completed: false, revised: '', prep: 'none' });
-              else chapters.push({ id: nextId(), name: chapterName, completed: false, revised: '', prep: 'none', scenes: (ch.scenes || []).map(s => ({ id: nextId(), name: s, completed: false })) });
-            });
-            if (chapters.length) built.groups[g] = chapters;
-          });
-          if (Object.keys(built.groups).length) nextData[subject] = built;
+          return;
         }
+        const subjectSel = selected[subject] || {};
+        const built = { groups: {} };
+        Object.entries(spec.groups || {}).forEach(([groupLabel, groupSpec]) => {
+          const topNames = new Set(subjectSel[buildSelectionPath(groupLabel)] || []);
+          const topChapters = (groupSpec.chapters || [])
+            .filter(ch => topNames.has(ch.name))
+            .map(ch => ({
+              id: nextId(),
+              name: ch.name,
+              completed: false,
+              revised: '',
+              prep: 'none',
+              ...(Array.isArray(ch.scenes) ? { scenes: ch.scenes.map(scene => ({ id: nextId(), name: scene, completed: false })) } : {}),
+            }));
+          const subGroups = {};
+          Object.entries(groupSpec.subGroups || {}).forEach(([subGroupLabel, subList]) => {
+            const subNames = new Set(subjectSel[buildSelectionPath(groupLabel, subGroupLabel)] || []);
+            const kept = (subList || [])
+              .filter(ch => subNames.has(ch.name))
+              .map(ch => ({
+                id: nextId(),
+                name: ch.name,
+                completed: false,
+                revised: '',
+                prep: 'none',
+                ...(Array.isArray(ch.scenes) ? { scenes: ch.scenes.map(scene => ({ id: nextId(), name: scene, completed: false })) } : {}),
+              }));
+            if (kept.length) subGroups[subGroupLabel] = kept;
+          });
+          if (topChapters.length || Object.keys(subGroups).length) {
+            built.groups[groupLabel] = Object.keys(subGroups).length ? { chapters: topChapters, subGroups } : topChapters;
+          }
+        });
+        if (Object.keys(built.groups).length) nextData[subject] = built;
       });
       const prev = appData[mode] || {};
       Object.entries(nextData).forEach(([subject, data]) => {
@@ -11017,21 +11354,35 @@
           old.forEach(c => { oldBy[c.name] = c; });
           data.forEach(c => { if (oldBy[c.name]) Object.assign(c, oldBy[c.name]); });
         } else if (isGroupedSubjectData(data) && isGroupedSubjectData(old)) {
-          Object.entries(data.groups).forEach(([g, list]) => {
-            const oldList = getGroupChapters(old.groups[g] || []);
-            const oldBy = {};
-            oldList.forEach(c => { oldBy[c.name] = c; });
-            list.forEach(c => { if (oldBy[c.name]) Object.assign(c, oldBy[c.name]); });
+          Object.entries(data.groups).forEach(([g, entry]) => {
+            const newLists = [{ list: getGroupChapters(entry), oldList: getGroupChapters(old.groups[g] || []) }];
+            Object.entries(getGroupSubGroups(entry)).forEach(([sg, list]) => {
+              newLists.push({ list, oldList: getChapterListByPath(old, g, sg, false) || [] });
+            });
+            newLists.forEach(({ list, oldList }) => {
+              const oldBy = {};
+              (oldList || []).forEach(c => { oldBy[c.name] = c; });
+              (list || []).forEach(c => { if (oldBy[c.name]) Object.assign(c, oldBy[c.name]); });
+            });
           });
         }
       });
-      if (appData[mode] && appData[mode]._baseExamId) nextData._baseExamId = appData[mode]._baseExamId;
+      if (syllabusSelection.pendingExamMeta) Object.assign(nextData, deepClone(syllabusSelection.pendingExamMeta));
+      if (appData[mode] && appData[mode]._baseExamId && !nextData._baseExamId) nextData._baseExamId = appData[mode]._baseExamId;
+      if (appData[mode]?._sourceExamId && !nextData._sourceExamId) nextData._sourceExamId = appData[mode]._sourceExamId;
+      if (appData[mode]?._derivedKind && !nextData._derivedKind) nextData._derivedKind = appData[mode]._derivedKind;
+      if (appData[mode]?._subjectMeta && !nextData._subjectMeta) nextData._subjectMeta = deepClone(appData[mode]._subjectMeta);
       appData[mode] = nextData;
+      if (syllabusSelection.pendingExamName) {
+        examNames[mode] = syllabusSelection.pendingExamName;
+        localStorage.setItem(EXAM_NAMES_KEY, JSON.stringify(examNames));
+      }
       if (!loadedExams.includes(mode)) loadedExams.push(mode);
-      examSelections[mode] = JSON.parse(JSON.stringify(selected));
+      examSelections[mode] = deepClone(selected);
       localStorage.setItem(SELECTIONS_KEY, JSON.stringify(examSelections));
-      cardOrder[mode] = Object.keys(nextData);
+      cardOrder[mode] = Object.keys(nextData).filter(key => !String(key).startsWith('_'));
       localStorage.setItem(CARD_ORDER_KEY, JSON.stringify(cardOrder));
+      _derivedExamFlow = null;
       closeModal('examModal');
       activateExam(mode);
     }
@@ -11124,10 +11475,12 @@
     }
 
     function restoreSubjectFromConfig(mode, subjectName) {
-      const cfg = config[mode] && config[mode][subjectName];
+      const cfg = getModeConfigMap(mode)[subjectName];
       if (!cfg) return;
       if (!appData[mode]) appData[mode] = {};
       appData[mode][subjectName] = buildSubjectDataFromConfig(cfg);
+      appData[mode]._subjectMeta = appData[mode]._subjectMeta || {};
+      appData[mode]._subjectMeta[subjectName] = { hue: cfg.hue, icon: cfg.icon };
       if (!cardOrder[mode]) cardOrder[mode] = [];
       if (!cardOrder[mode].includes(subjectName)) cardOrder[mode].push(subjectName);
       saveData();
@@ -11138,7 +11491,7 @@
     function renderSyllabusSubjectPicker() {
       const pane = document.getElementById('addSubjSyllabusPane');
       if (!pane || !currentMode) return;
-      const modeCfg = config[currentMode] || {};
+      const modeCfg = getModeConfigMap(currentMode);
       const modeData = appData[currentMode] || {};
       const missing = Object.keys(modeCfg).filter(s => !modeData[s]);
       if (!missing.length) {
@@ -11163,6 +11516,8 @@
       if (!config[currentMode]) config[currentMode] = {};
       config[currentMode][name] = { hue: pendingColor, icon: pendingEmoji, chapters: [] };
       if (!appData[currentMode]) appData[currentMode] = {};
+      appData[currentMode]._subjectMeta = appData[currentMode]._subjectMeta || {};
+      appData[currentMode]._subjectMeta[name] = { hue: pendingColor, icon: pendingEmoji };
       appData[currentMode][name] = [];
       if (!cardOrder[currentMode]) cardOrder[currentMode] = [];
       if (!cardOrder[currentMode].includes(name)) cardOrder[currentMode].push(name);
@@ -11176,6 +11531,7 @@
     function deleteSubject(subjectName) {
       if (!confirm(`Delete subject "${subjectName}" and all its chapters?`)) return;
       delete appData[currentMode][subjectName];
+      if (appData[currentMode]?._subjectMeta) delete appData[currentMode]._subjectMeta[subjectName];
       if (cardOrder[currentMode]) {
         cardOrder[currentMode] = cardOrder[currentMode].filter(s => s !== subjectName);
         localStorage.setItem(CARD_ORDER_KEY, JSON.stringify(cardOrder));
@@ -11807,29 +12163,31 @@
           dragSrcCard = null;
         };
         const modeData = appData[currentMode] || {};
-        const modeConfig = config[currentMode] || {};
+        const modeConfig = getModeConfigMap(currentMode);
         const isCustom = isCustomMode(currentMode);
-        const subjectOrder = cardOrder[currentMode] || Object.keys(modeData);
+        const subjectOrder = (cardOrder[currentMode] || Object.keys(modeData)).filter(sub => !String(sub).startsWith('_'));
         for (let sub of Object.keys(modeData)) {
+          if (String(sub).startsWith('_')) continue;
           if (!subjectOrder.includes(sub)) subjectOrder.push(sub);
         }
         cardOrder[currentMode] = subjectOrder;
         localStorage.setItem(CARD_ORDER_KEY, JSON.stringify(cardOrder));
 
         subjectOrder.forEach((subject, cardIndex) => {
-          if (subject === '_savedAt') return;
+          if (String(subject).startsWith('_')) return;
           const subjectData = modeData[subject];
           if (!subjectData) return;
           const { chapters, total: chapterTotal, completed: completedCount } = getSubjectCompletionStats(subjectData);
-          let cfg = modeConfig[subject];
+          let cfg = appData[currentMode]?._subjectMeta?.[subject] || modeConfig[subject];
           if (!cfg) {
             cfg = { hue: 217, icon: '📖' };
+            if (!appData[currentMode]._subjectMeta) appData[currentMode]._subjectMeta = {};
+            appData[currentMode]._subjectMeta[subject] = { ...cfg };
             if (isCustom) {
               if (!config[currentMode]) config[currentMode] = {};
               config[currentMode][subject] = { ...cfg, chapters: chapters.map(c => c.name) };
-              // Persist the recovered metadata
-              saveData();
             }
+            saveData();
           }
           const { hue, icon } = cfg;
           let totalChapters = chapterTotal;
@@ -12274,11 +12632,9 @@
       }
 
       renderTabBar();
-      const lastMode = appData._currentMode;
-      if (lastMode && (config[lastMode] !== undefined || isCustomMode(lastMode))) {
-        activateExam(lastMode);
-      } else if (loadedExams.length > 0) {
-        activateExam(loadedExams[0]);
+      const startupExamId = getPreferredStartupExamId();
+      if (startupExamId) {
+        activateExam(startupExamId);
       } else {
         openExamModal();
       }
