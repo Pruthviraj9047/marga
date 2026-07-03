@@ -8924,53 +8924,9 @@
 
     function showHeatmapTooltip(cell) {
       if (!heatmapTooltipEl || !cell) return;
-      const dayKey = cell.dataset.date;
       const dateLabel = cell.dataset.dateLabel || cell.dataset.date || '';
       const lines = (cell.dataset.lines || '').split('|').filter(Boolean);
       const tooltipLines = lines.length ? lines : ['No study activity'];
-
-      // Debug logs requested by user
-      const rawActivityData = (studyActivity && studyActivity.days) ? studyActivity.days[dayKey] : null;
-      let sessions = null;
-      if (rawActivityData && rawActivityData.exams) {
-        sessions = {};
-        Object.entries(rawActivityData.exams).forEach(([examId, examEntry]) => {
-          if (examEntry.sessions) {
-            sessions[examId] = examEntry.sessions;
-          }
-        });
-      }
-      
-      let derivedSessionActionCounts = {};
-      let dailyScore = 0;
-      let isNewModel = false;
-      if (rawActivityData && rawActivityData.exams) {
-        Object.entries(rawActivityData.exams).forEach(([examId, examEntry]) => {
-          const hasSessions = examEntry.sessions && Object.keys(examEntry.sessions).length > 0;
-          if (hasSessions) {
-            isNewModel = true;
-            Object.entries(examEntry.sessions).forEach(([entityKey, sessionData]) => {
-              dailyScore += getEntitySessionScore(entityKey, sessionData, examEntry.completedGroups, examId, sessionData.subject);
-            });
-            const sessionCounts = deriveSessionActionCounts(examEntry.sessions, examEntry.completedGroups, examId);
-            mergeActionCounts(derivedSessionActionCounts, sessionCounts);
-          } else {
-            dailyScore += getWeightedActionsTotal(examEntry.actions);
-          }
-        });
-      }
-
-      const heatmapLevel = getHeatmapLevel(dailyScore, isNewModel);
-
-      console.log('--- Heatmap Cell Hover Debug ---');
-      console.log('- raw activity data:', rawActivityData);
-      console.log('- sessions object:', sessions);
-      console.log('- derived session action counts:', derivedSessionActionCounts);
-      console.log('- daily score before thresholding:', dailyScore);
-      console.log('- heatmap level returned by getHeatmapLevel():', heatmapLevel);
-      console.log('- value stored in heatmapSeries:', dailyScore);
-      console.log('- final CSS class / intensity level assigned to the rendered square:', cell.className);
-      console.log('--------------------------------');
 
       heatmapTooltipEl.querySelector('.heatmap-tooltip-date').textContent = dateLabel;
       const linesEl = heatmapTooltipEl.querySelector('.heatmap-tooltip-lines');
@@ -9217,10 +9173,7 @@
       const root = document.getElementById('insightsView');
       if (!root) return;
       const trackedExams = getTrackedExamIds();
-      console.log('[Insights] exams', trackedExams);
       const summary = getActivitySummary(365);
-      console.log('[Insights] totals', summary);
-      console.log('[Insights] activity', studyActivity);
       const totalActiveDays = Object.keys(summary.dayTotals).length;
       const streakStats = getStreakStats(summary.dayTotals);
       const mostActiveDayEntry = getMostActiveDay(summary.dayTotals);
@@ -9420,6 +9373,109 @@
     function getSubGroups(grpEntry) {
       if (!grpEntry || Array.isArray(grpEntry)) return {};
       return grpEntry.subGroups || {};
+    }
+
+    function normalizeChapterRecord(chapter) {
+      const source = (chapter && typeof chapter === 'object') ? chapter : { name: chapter };
+      const out = {
+        ...source,
+        id: source.id ?? nextId(),
+        name: String(source.name || ''),
+        completed: !!source.completed,
+        revised: source.revised || '',
+        prep: source.prep || 'none',
+      };
+      if (Array.isArray(source.scenes)) {
+        out.scenes = source.scenes.map(scene => {
+          const sceneSource = (scene && typeof scene === 'object') ? scene : { name: scene };
+          return {
+            ...sceneSource,
+            id: sceneSource.id ?? nextId(),
+            name: String(sceneSource.name || ''),
+            completed: !!sceneSource.completed,
+          };
+        });
+      }
+      return out;
+    }
+
+    function normalizeGroupEntryShape(entry) {
+      if (Array.isArray(entry)) return entry.map(normalizeChapterRecord);
+      if (!entry || typeof entry !== 'object') return [];
+      const chapters = (Array.isArray(entry.chapters) ? entry.chapters : []).map(normalizeChapterRecord);
+      const subGroups = {};
+      Object.entries(entry.subGroups || {}).forEach(([subGroupLabel, list]) => {
+        subGroups[subGroupLabel] = (Array.isArray(list) ? list : []).map(normalizeChapterRecord);
+      });
+      return Object.keys(subGroups).length ? { chapters, subGroups } : chapters;
+    }
+
+    function normalizeSubjectDataShape(subjectData) {
+      if (Array.isArray(subjectData)) return subjectData.map(normalizeChapterRecord);
+      if (!subjectData || typeof subjectData !== 'object') return subjectData;
+      if (subjectData.groups) {
+        const groups = {};
+        Object.entries(subjectData.groups || {}).forEach(([groupLabel, entry]) => {
+          groups[groupLabel] = normalizeGroupEntryShape(entry);
+        });
+        return { groups };
+      }
+      if (Array.isArray(subjectData.chapters)) {
+        return subjectData.chapters.map(normalizeChapterRecord);
+      }
+      return subjectData;
+    }
+
+    function normalizeExamDataShapes(examId) {
+      const examData = appData[examId];
+      if (!examData || typeof examData !== 'object') return false;
+      let changed = false;
+      Object.entries(examData).forEach(([subject, subjectData]) => {
+        if (String(subject).startsWith('_')) return;
+        if (subjectData && typeof subjectData === 'object' && !Array.isArray(subjectData)) {
+          const hasTemplateMeta = 'hue' in subjectData || 'icon' in subjectData;
+          if (hasTemplateMeta) {
+            examData._subjectMeta = examData._subjectMeta || {};
+            examData._subjectMeta[subject] = {
+              hue: subjectData.hue ?? examData._subjectMeta[subject]?.hue ?? 217,
+              icon: subjectData.icon || examData._subjectMeta[subject]?.icon || '📖',
+            };
+          }
+          if (Array.isArray(subjectData.chapters) || hasTemplateMeta || subjectData.grouped !== undefined) {
+            changed = true;
+          }
+        }
+        const normalized = normalizeSubjectDataShape(subjectData);
+        if (normalized !== subjectData) {
+          examData[subject] = normalized;
+          changed = true;
+        }
+      });
+      return changed;
+    }
+
+    function normalizeStoredBlobExamShapes(blob) {
+      if (!blob || typeof blob !== 'object') return blob || {};
+      Object.keys(blob).forEach(examId => {
+        if (String(examId).startsWith('_')) return;
+        const examData = blob[examId];
+        if (!examData || typeof examData !== 'object') return;
+        Object.entries(examData).forEach(([subject, subjectData]) => {
+          if (String(subject).startsWith('_')) return;
+          if (subjectData && typeof subjectData === 'object' && !Array.isArray(subjectData)) {
+            const hasTemplateMeta = 'hue' in subjectData || 'icon' in subjectData;
+            if (hasTemplateMeta) {
+              examData._subjectMeta = examData._subjectMeta || {};
+              examData._subjectMeta[subject] = {
+                hue: subjectData.hue ?? examData._subjectMeta[subject]?.hue ?? 217,
+                icon: subjectData.icon || examData._subjectMeta[subject]?.icon || '📖',
+              };
+            }
+          }
+          examData[subject] = normalizeSubjectDataShape(subjectData);
+        });
+      });
+      return blob;
     }
 
     function ensureGroupedSubject(mode, subject) {
@@ -9777,13 +9833,23 @@
                 })),
               };
             }
-            return { id: nextId(), name: chapterDef, completed: false, revised: '', prep: 'none' };
+            return {
+              id: nextId(),
+              name: (chapterDef && typeof chapterDef === 'object') ? String(chapterDef.name || '') : String(chapterDef),
+              completed: false,
+              revised: '',
+              prep: 'none',
+            };
           });
         });
         return { groups };
       }
       return (cfg?.chapters || []).map((name) => ({
-        id: nextId(), name, completed: false, revised: '', prep: 'none',
+        id: nextId(),
+        name: (name && typeof name === 'object') ? String(name.name || '') : String(name),
+        completed: false,
+        revised: '',
+        prep: 'none',
       }));
     }
 
@@ -9910,6 +9976,7 @@
               knownModes.forEach(m => { if (v3[m]) appData[m] = v3[m]; });
               if (v3._customMeta) appData._customMeta = v3._customMeta;
               loadedExams = Array.isArray(v3._loadedExams) ? v3._loadedExams : [];
+              normalizeStoredBlobExamShapes(appData);
               localStorage.removeItem('studyTrackerPro_v3');
             } catch (e) { /* ignore corrupt v3 */ }
             return;
@@ -9917,6 +9984,7 @@
         }
         if (s) {
           appData = JSON.parse(s);
+          normalizeStoredBlobExamShapes(appData);
           loadedExams = appData._loadedExams || [];
           deletedExamTombstones = appData._deletedExams || {};
         }
@@ -9925,6 +9993,7 @@
 
     function ensureModeData(mode) {
       if (!appData[mode]) appData[mode] = {};
+      normalizeExamDataShapes(mode);
       if (isCustomMode(mode)) return; // custom exams are fully dynamic
       const baseId = appData[mode]?._baseExamId || mode;
       const modeConfig = config[baseId];
@@ -9934,6 +10003,7 @@
           appData[mode][subj] = buildSubjectDataFromConfig(cfg);
         }
       });
+      normalizeExamDataShapes(mode);
     }
 
     // ═══════════════════════════════════════════════════════════
@@ -10150,7 +10220,10 @@
       const baseExamId = appData[examId]?._baseExamId || examId;
       if (baseExamId !== examId) {
         const baseMeta = getExamMeta(baseExamId);
-        return { icon: baseMeta?.icon || '📋', name: getExamDisplayName(examId) };
+        // IMPORTANT: Do NOT call getExamDisplayName here — it calls getExamMeta,
+        // creating an infinite loop. Resolve the name directly instead.
+        const resolvedName = examNames[examId] || baseMeta?.name || examId;
+        return { icon: baseMeta?.icon || '📋', name: resolvedName };
       }
       if (examId === 'mhtcet_pcm') return { icon: '🎯', name: 'MHT-CET PCM' };
       if (examId === 'mhtcet_pcb') return { icon: '🎯', name: 'MHT-CET PCB' };
@@ -10165,6 +10238,8 @@
     }
 
     function getExamDisplayName(examId) {
+      // Reads examNames first (user rename), then falls back to metadata name.
+      // getExamMeta() does NOT call getExamDisplayName(), so no recursion.
       const meta = getExamMeta(examId);
       return examNames[examId] || (meta ? meta.name : examId);
     }
@@ -12477,6 +12552,7 @@
           if (!obj.mode || !obj.data) { showToast('Invalid export file.'); return; }
           if (!confirm(`Import data for "${obj.mode}"?\nThis will overwrite existing data for that exam.`)) return;
           appData[obj.mode] = obj.data;
+          normalizeExamDataShapes(obj.mode);
           // Restore custom subject config (hue/icon) when importing a custom exam
           if (isCustomMode(obj.mode) && obj._customMeta) {
             if (!config[obj.mode]) config[obj.mode] = {};
@@ -12642,6 +12718,7 @@
     }
 
     function saveData() {
+      loadedExams.forEach(examId => normalizeExamDataShapes(examId));
       loadedExams.forEach(examId => { delete deletedExamTombstones[examId]; });
       // Build per-custom-exam subject metadata (hue + icon for each subject)
       const customMetas = {};
@@ -13209,6 +13286,7 @@
         if (Array.isArray(localBlob._loadedExams)) {
           localBlob._loadedExams = localBlob._loadedExams.filter(examKey => !localBlob._deletedExams[examKey]);
         }
+        normalizeStoredBlobExamShapes(localBlob);
 
         // Write merged blob back to STORAGE_KEY so the app reads it correctly
         localStorage.setItem(STORAGE_KEY, JSON.stringify(localBlob));
