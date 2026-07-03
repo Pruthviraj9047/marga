@@ -17,6 +17,8 @@
 
   var MAX_MESSAGE_LENGTH = 3000;
 
+  var supabaseClient = null;
+  var supabaseLoadPromise = null;
   var isSubmitting = false;
 
   var SOCIAL_ICONS = {
@@ -29,22 +31,22 @@
   };
 
   function loadSupabaseClient() {
-    if (window._supabase) return Promise.resolve(window._supabase);
-    if (typeof window.supabase === 'undefined') {
-      return Promise.reject(new Error('Supabase SDK not loaded'));
-    }
-    var createClient = window.supabase.createClient;
-    window._supabase = createClient(SUPABASE_URL, SUPABASE_ANON, {
-      auth: {
-        persistSession: true,
-        autoRefreshToken: true,
-        detectSessionInUrl: true,
-        flowType: 'pkce',
-        storageKey: 'marga-supabase-auth',
-        storage: window.localStorage
-      }
+    if (supabaseClient) return Promise.resolve(supabaseClient);
+    if (supabaseLoadPromise) return supabaseLoadPromise;
+    supabaseLoadPromise = import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm').then(function (mod) {
+      supabaseClient = mod.createClient(SUPABASE_URL, SUPABASE_ANON, {
+        auth: {
+          persistSession: true,
+          autoRefreshToken: true,
+          detectSessionInUrl: true,
+          flowType: 'pkce',
+          storageKey: 'marga-supabase-auth',
+          storage: window.localStorage
+        }
+      });
+      return supabaseClient;
     });
-    return Promise.resolve(window._supabase);
+    return supabaseLoadPromise;
   }
 
   function showToast(message, type) {
@@ -112,11 +114,11 @@
   }
 
   function clearFieldErrors() {
-    ['feedbackSubject', 'feedbackType', 'feedbackMessage', 'feedbackEmail'].forEach(function (id) {
+    ['feedbackSubject', 'feedbackMessage', 'feedbackEmail'].forEach(function (id) {
       var field = document.getElementById(id);
       if (field) field.classList.remove('invalid');
     });
-    ['subjectError', 'feedbackTypeError', 'messageError', 'emailError'].forEach(function (id) {
+    ['subjectError', 'messageError', 'emailError'].forEach(function (id) {
       var error = document.getElementById(id);
       if (error) error.textContent = '';
     });
@@ -128,11 +130,6 @@
 
     if (!data.subject) {
       setFieldError('feedbackSubject', 'subjectError', 'Subject is required.');
-      valid = false;
-    }
-
-    if (!data.feedbackType) {
-      setFieldError('feedbackType', 'feedbackTypeError', 'Feedback type is required.');
       valid = false;
     }
 
@@ -161,7 +158,6 @@
       name: trim(form.name.value),
       email: trim(form.email.value),
       subject: trim(form.subject.value),
-      feedbackType: trim(form.feedbackType.value),
       message: trim(form.message.value),
       honeypot: trim(form.company && form.company.value)
     };
@@ -220,38 +216,12 @@
     counter.classList.toggle('over', length > MAX_MESSAGE_LENGTH);
   }
 
-  async function insertFeedbackRow(client, basePayload, feedbackType) {
-    var attempts = [
-      { ...basePayload, feedback_type: feedbackType },
-      { ...basePayload, type: feedbackType }
-    ];
-    var lastError = null;
-    for (var i = 0; i < attempts.length; i++) {
-      var result = await client.from('feedback').insert(attempts[i]);
-      if (!result.error) return result;
-      lastError = result.error;
-      var message = String(result.error.message || '');
-      var details = String(result.error.details || '');
-      if (
-        !/column/i.test(message + ' ' + details) &&
-        !/schema/i.test(message + ' ' + details)
-      ) {
-        break;
-      }
-    }
-    throw lastError || new Error('Feedback insert failed');
-  }
-
   async function submitFeedback(form) {
     if (isSubmitting) return;
 
     var data = collectFormData(form);
     if (data.honeypot) return;
     if (!validateForm(data)) return;
-    if (!navigator.onLine) {
-      showToast('Feedback requires an internet connection.', 'error');
-      return;
-    }
 
     var captchaOk = await verifyCaptchaBeforeSubmit();
     if (!captchaOk) {
@@ -275,7 +245,8 @@
         user_id: userId
       };
 
-      await insertFeedbackRow(client, payload, data.feedbackType);
+      var insertResult = await client.from('feedback').insert(payload);
+      if (insertResult.error) throw insertResult.error;
 
       showToast('Thanks! Your feedback was sent.', 'success');
       resetForm(form);
