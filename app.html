@@ -276,7 +276,6 @@
     .header-center {
       text-align: center;
       flex: 1;
-      position: relative;
       z-index: 1
     }
 
@@ -378,6 +377,7 @@
       box-shadow: var(--shadow);
       margin-bottom: 3rem;
       display: flex;
+      flex-wrap: wrap;
       align-items: center;
       gap: 2rem;
       border: 1px solid var(--border);
@@ -394,7 +394,8 @@
     }
 
     .progress-track {
-      flex: 1;
+      flex: 1 1 150px;
+      min-width: 150px;
       height: 14px;
       background: var(--bg-body);
       border-radius: 99px;
@@ -511,6 +512,61 @@
     @media(max-width:768px) {
       .sort-label {
         display: none
+      }
+    }
+
+    /* ── Card header: tablet/large-phone (431px – 600px) ────────
+       Two-column flex: title left, meta right — both vertically centred.
+    ─────────────────────────────────────────────────────────── */
+
+    /* ── Card header: compact phones (≤390px) ────────────────────
+       Stack the two groups vertically:
+         Row 1 – subject icon + name (left-aligned, full width)
+         Row 2 – sort pill + progress + status dot (left-aligned to match title)
+       Uses flex-column so each row is a natural block; no grid,
+       no transforms, no hard-coded offsets.
+    ─────────────────────────────────────────────────────────── */
+    @media(max-width:390px) {
+      .card-header {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto auto auto;
+        gap: 0.85rem 6px;
+        padding: 0.85rem 1rem;
+        align-items: center;
+      }
+
+      .card-title {
+        grid-row: 1;
+        grid-column: 1;
+        font-size: 1.05rem;
+        gap: 8px;
+        min-width: 0;
+        overflow-wrap: break-word;
+        word-break: break-word;
+        display: flex;
+        align-items: center;
+      }
+
+      .card-meta {
+        display: contents;
+      }
+
+      .health-dot,
+      .subj-count,
+      .del-subject-btn {
+        grid-row: 1;
+      }
+
+      .sort-wrap {
+        grid-row: 2;
+        grid-column: 1 / -1;
+        justify-self: center;
+      }
+
+      .sort-select {
+        font-size: 0.7rem;
+        padding: 3px 10px;
+        white-space: nowrap;
       }
     }
 
@@ -704,7 +760,7 @@
       gap: 1rem;
       padding: .875rem 1.5rem;
       border-bottom: 1px solid var(--border);
-      align-items: center;
+      align-items: start;
       background: var(--bg-card);
       transition: background 0.2s, opacity 0.2s;
     }
@@ -734,7 +790,8 @@
       opacity: 0.4;
       display: flex;
       align-items: center;
-      justify-content: center
+      justify-content: center;
+      padding-top: 4px;
     }
 
     .chapter-row:hover .drag-handle {
@@ -754,7 +811,8 @@
       border-radius: 6px;
       cursor: pointer;
       position: relative;
-      flex-shrink: 0
+      flex-shrink: 0;
+      margin-top: 1px;
     }
 
     .custom-checkbox:checked {
@@ -777,7 +835,8 @@
     .text-area {
       display: flex;
       flex-direction: column;
-      gap: 3px
+      gap: 3px;
+      padding-top: 1px;
     }
 
     .chap-name-group {
@@ -1058,7 +1117,8 @@
 
     .add-form {
       display: flex;
-      gap: 0.5rem
+      gap: 0.5rem;
+      align-items: center;
     }
 
     .add-input {
@@ -1117,7 +1177,10 @@
       padding: 0 10px;
       border-radius: 8px;
       cursor: pointer;
-      font-weight: 600
+      font-weight: 600;
+      align-self: stretch;
+      display: inline-flex;
+      align-items: center;
     }
 
     .group-create {
@@ -1935,6 +1998,54 @@
       }
     }
 
+    /* ── Hero header: compact phones (≤430px) ──────────────────
+       Stack vertically with pure Flexbox. The sync badge lives
+       inside .header-center and flows on its own row below the
+       centred logo / wordmark / tagline. No grid, no absolute,
+       no transforms.
+    ─────────────────────────────────────────────────────────── */
+    @media(max-width:430px) {
+      .app-header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0;
+        padding: 1rem 1rem 1.25rem
+      }
+
+      .header-center {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        padding: 0;
+        gap: 0.4rem
+      }
+
+      .marga-logo-img {
+        width: 38px !important;
+        height: 38px !important
+      }
+
+      .app-header h1 {
+        font-size: 1.85rem
+      }
+
+      .sync-indicator {
+        margin-top: 0.75rem
+      }
+    }
+
+    @media(max-width:320px) {
+      .marga-logo-img {
+        width: 32px !important;
+        height: 32px !important
+      }
+
+      .app-header h1 {
+        font-size: 1.6rem
+      }
+    }
+
     @media(max-width:700px) {
 
       .exam-grid-3col,
@@ -1969,6 +2080,7 @@
         padding: 6px 10px
       }
     }
+
 
     /* ── Sidebar ─────────────────────────────────────────────── */
     .sidebar {
@@ -12097,8 +12209,8 @@
         </button>` : '';
           li.className = 'chapter-row grouped-row' + (isAct ? ' act-row' : '');
           li.setAttribute('style', isAct
-            ? 'display:grid !important;grid-template-columns:16px 20px 24px minmax(0,1fr) auto !important;gap:1rem;padding:1rem 1.5rem;align-items:center;border-bottom:1px solid var(--border);background:var(--bg-card);box-sizing:border-box;width:100%;'
-            : 'display:grid !important;grid-template-columns:20px 24px minmax(0,1fr) auto !important;gap:1rem;padding:1rem 1.5rem;align-items:center;border-bottom:1px solid var(--border);background:var(--bg-card);box-sizing:border-box;width:100%;');
+            ? 'display:grid !important;grid-template-columns:16px 20px 24px minmax(0,1fr) auto !important;gap:1rem;padding:1rem 1.5rem;align-items:start;border-bottom:1px solid var(--border);background:var(--bg-card);box-sizing:border-box;width:100%;'
+            : 'display:grid !important;grid-template-columns:20px 24px minmax(0,1fr) auto !important;gap:1rem;padding:1rem 1.5rem;align-items:start;border-bottom:1px solid var(--border);background:var(--bg-card);box-sizing:border-box;width:100%;');
           const canDrag = featurePrefs.dragReorder && safeSort === 'custom';
           li.draggable = !!canDrag;
           if (canDrag) {

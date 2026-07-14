@@ -188,7 +188,8 @@ function getOrCreateIndicator() {
       indicator = document.createElement('div');
       indicator.id = 'margaSyncIndicator';
       indicator.className = 'sync-indicator';
-      appHeader.appendChild(indicator);
+      const headerCenter = appHeader.querySelector('.header-center');
+      (headerCenter || appHeader).appendChild(indicator);
     }
   }
   return indicator;
@@ -250,8 +251,18 @@ function updateSyncIndicator(forceStatus) {
     }
     @media (max-width: 768px) {
       .sync-indicator {
-        top: 1.5rem;
-        right: 1.25rem;
+        top: 1.25rem;
+        right: 1rem;
+      }
+    }
+    /* On compact phones the badge sits inside .header-center.
+       position:static lets it flow in the flex column;
+       order:1 places it after the tagline on its own row. */
+    @media (max-width: 430px) {
+      .sync-indicator {
+        position: static;
+        order: 1;
+        align-self: center;
       }
     }
     .sync-indicator.synced {
