@@ -1250,7 +1250,10 @@
     }
 
     .syllabus-pane {
-      display: none
+      display: none;
+      flex-direction: column;
+      flex: 1 1 0;
+      min-height: 0;
     }
 
     .syll-top {
@@ -1259,17 +1262,20 @@
       justify-content: space-between;
       gap: 0.6rem;
       flex-wrap: wrap;
-      margin-bottom: 0.8rem
+      margin-bottom: 0.8rem;
+      flex-shrink: 0
     }
 
     .syll-actions {
       display: flex;
       gap: 0.5rem;
-      flex-wrap: wrap
+      flex-wrap: wrap;
+      flex-shrink: 0
     }
 
     .syll-list {
-      max-height: 60vh;
+      flex: 1 1 0;
+      min-height: 0;
       overflow-y: auto;
       border-top: 1px solid var(--border);
       padding-top: 0.5rem
@@ -1337,8 +1343,6 @@
     }
 
     .syll-sticky {
-      position: sticky;
-      bottom: 0;
       background: var(--bg-card);
       padding: 1rem;
       border-top: 1px solid var(--border);
@@ -1346,6 +1350,7 @@
       justify-content: space-between;
       align-items: center;
       gap: 0.6rem;
+      flex-shrink: 0;
     }
 
     .conflict-pane {
@@ -1494,14 +1499,19 @@
       transform: translateY(20px);
       opacity: 0;
       transition: transform 0.28s cubic-bezier(.16, 1, .3, 1), opacity 0.28s ease;
+      display: flex;
+      flex-direction: column;
     }
 
     /* Exam picker */
     .exam-modal {
       max-width: 960px;
+      height: 100%;
       max-height: 88vh;
       overflow-y: auto;
-      padding: 2rem
+      padding: 2rem 2rem 0;
+      display: flex;
+      flex-direction: column;
     }
 
     .exam-modal-header {
@@ -9492,6 +9502,12 @@
       return grpEntry.subGroups || {};
     }
 
+    function sceneDisplayName(scene) {
+      if (!scene) return '';
+      if (typeof scene === 'string') return scene;
+      return scene.name || '';
+    }
+
     function normalizeChapterRecord(chapter) {
       const source = (chapter && typeof chapter === 'object') ? chapter : { name: chapter };
       const out = {
@@ -10900,7 +10916,9 @@
       if (!chapterDef || typeof chapterDef !== 'object') return null;
       return {
         name: chapterDef.name,
-        scenes: Array.isArray(chapterDef.scenes) ? [...chapterDef.scenes] : null,
+        scenes: Array.isArray(chapterDef.scenes)
+          ? chapterDef.scenes.map(s => (typeof s === 'string' ? s : { id: s.id, name: s.name, completed: !!s.completed }))
+          : null,
       };
     }
 
@@ -11282,7 +11300,7 @@
       hideConflictPane();
       document.getElementById('examCardsGrid').style.display = 'none';
       const pane = document.getElementById('syllabusPane');
-      pane.style.display = 'block';
+      pane.style.display = 'flex';
       const m = getExamMeta(examId) || { icon: '📚', name: configSource };
       document.getElementById('syllabusTitle').textContent = `${m.icon} ${getExamDisplayName(examId)} — Select Chapters`;
       document.getElementById('syllabusSearchInput').value = '';
@@ -11372,7 +11390,7 @@
       const chapterMatches = chapter => {
         if (!query) return true;
         if ((chapter.name || '').toLowerCase().includes(query)) return true;
-        return Array.isArray(chapter.scenes) && chapter.scenes.some(scene => String(scene).toLowerCase().includes(query));
+        return Array.isArray(chapter.scenes) && chapter.scenes.some(scene => sceneDisplayName(scene).toLowerCase().includes(query));
       };
 
       Object.entries(source).forEach(([subject, scfg]) => {
@@ -11448,7 +11466,7 @@
                 html += `<label class="syll-ch-row"><input class="custom-checkbox syll-chk" type="checkbox" ${checked ? 'checked' : ''} onchange="setChapterChecked('${subject.replace(/'/g, "\\'")}','${topPath.replace(/'/g, "\\'")}','${ch.name.replace(/'/g, "\\'")}', this.checked);renderSyllabusPane()"><span>${ch.name}</span></label>`;
                 if (Array.isArray(ch.scenes)) {
                   ch.scenes.forEach(sc => {
-                    html += `<label class="syll-ch-row syll-scene"><input class="custom-checkbox syll-chk" type="checkbox" ${checked ? 'checked' : ''} onchange="setChapterChecked('${subject.replace(/'/g, "\\'")}','${topPath.replace(/'/g, "\\'")}','${ch.name.replace(/'/g, "\\'")}', this.checked);renderSyllabusPane()"><span>${sc}</span></label>`;
+                    html += `<label class="syll-ch-row syll-scene"><input class="custom-checkbox syll-chk" type="checkbox" ${checked ? 'checked' : ''} onchange="setChapterChecked('${subject.replace(/'/g, "\\'")}','${topPath.replace(/'/g, "\\'")}','${ch.name.replace(/'/g, "\\'")}', this.checked);renderSyllabusPane()"><span>${sceneDisplayName(sc)}</span></label>`;
                   });
                 }
               });
@@ -11460,7 +11478,7 @@
                   html += `<label class="syll-ch-row" style="padding-left:2.25rem"><input class="custom-checkbox syll-chk" type="checkbox" ${checked ? 'checked' : ''} onchange="setChapterChecked('${subject.replace(/'/g, "\\'")}','${subPath.replace(/'/g, "\\'")}','${ch.name.replace(/'/g, "\\'")}', this.checked);renderSyllabusPane()"><span>${ch.name}</span></label>`;
                   if (Array.isArray(ch.scenes)) {
                     ch.scenes.forEach(sc => {
-                      html += `<label class="syll-ch-row syll-scene" style="padding-left:3.25rem"><input class="custom-checkbox syll-chk" type="checkbox" ${checked ? 'checked' : ''} onchange="setChapterChecked('${subject.replace(/'/g, "\\'")}','${subPath.replace(/'/g, "\\'")}','${ch.name.replace(/'/g, "\\'")}', this.checked);renderSyllabusPane()"><span>${sc}</span></label>`;
+                      html += `<label class="syll-ch-row syll-scene" style="padding-left:3.25rem"><input class="custom-checkbox syll-chk" type="checkbox" ${checked ? 'checked' : ''} onchange="setChapterChecked('${subject.replace(/'/g, "\\'")}','${subPath.replace(/'/g, "\\'")}','${ch.name.replace(/'/g, "\\'")}', this.checked);renderSyllabusPane()"><span>${sceneDisplayName(sc)}</span></label>`;
                     });
                   }
                 });
@@ -11486,50 +11504,60 @@
       const editing = syllabusSelection.editing;
       if (editing && !confirm('Removing chapters will delete their progress. Continue?')) return;
       const selected = syllabusSelection.selected;
+      const srcData = appData[syllabusSelection.sourceExamId] || {};
+
+      function cloneChapterFromSource(srcChapter) {
+        return normalizeChapterRecord(deepClone(srcChapter));
+      }
+
+      function buildChapterFallback(ch) {
+        return normalizeChapterRecord({
+          name: ch.name,
+          scenes: Array.isArray(ch.scenes)
+            ? ch.scenes.map(s => (typeof s === 'string' ? { name: s } : s))
+            : undefined,
+        });
+      }
+
       const nextData = {};
       Object.entries(syllabusSelection.source || {}).forEach(([subject, spec]) => {
         if (!spec.grouped) {
           const sel = new Set(Array.isArray(selected[subject]) ? selected[subject] : []);
+          const srcSubjectData = srcData[subject];
+          const srcChapters = Array.isArray(srcSubjectData) ? srcSubjectData : [];
           const kept = (spec.chapters || [])
             .filter(ch => sel.has(ch.name))
-            .map(ch => ({
-              id: nextId(),
-              name: ch.name,
-              completed: false,
-              revised: '',
-              prep: 'none',
-              ...(Array.isArray(ch.scenes) ? { scenes: ch.scenes.map(scene => ({ id: nextId(), name: scene, completed: false })) } : {}),
-            }));
+            .map(ch => {
+              const src = srcChapters.find(c => c.name === ch.name);
+              return src ? cloneChapterFromSource(src) : buildChapterFallback(ch);
+            });
           if (kept.length) nextData[subject] = kept;
           return;
         }
         const subjectSel = selected[subject] || {};
+        const srcSubjectData = srcData[subject];
+        const srcGroups = isGroupedSubjectData(srcSubjectData) ? srcSubjectData.groups : {};
         const built = { groups: {} };
         Object.entries(spec.groups || {}).forEach(([groupLabel, groupSpec]) => {
           const topNames = new Set(subjectSel[buildSelectionPath(groupLabel)] || []);
+          const srcGroupEntry = srcGroups[groupLabel];
+          const srcTopChapters = srcGroupEntry ? getGroupChapters(srcGroupEntry) : [];
           const topChapters = (groupSpec.chapters || [])
             .filter(ch => topNames.has(ch.name))
-            .map(ch => ({
-              id: nextId(),
-              name: ch.name,
-              completed: false,
-              revised: '',
-              prep: 'none',
-              ...(Array.isArray(ch.scenes) ? { scenes: ch.scenes.map(scene => ({ id: nextId(), name: scene, completed: false })) } : {}),
-            }));
+            .map(ch => {
+              const src = srcTopChapters.find(c => c.name === ch.name);
+              return src ? cloneChapterFromSource(src) : buildChapterFallback(ch);
+            });
           const subGroups = {};
           Object.entries(groupSpec.subGroups || {}).forEach(([subGroupLabel, subList]) => {
             const subNames = new Set(subjectSel[buildSelectionPath(groupLabel, subGroupLabel)] || []);
+            const srcSubList = srcGroupEntry ? (getGroupSubGroups(srcGroupEntry)[subGroupLabel] || []) : [];
             const kept = (subList || [])
               .filter(ch => subNames.has(ch.name))
-              .map(ch => ({
-                id: nextId(),
-                name: ch.name,
-                completed: false,
-                revised: '',
-                prep: 'none',
-                ...(Array.isArray(ch.scenes) ? { scenes: ch.scenes.map(scene => ({ id: nextId(), name: scene, completed: false })) } : {}),
-              }));
+              .map(ch => {
+                const src = srcSubList.find(c => c.name === ch.name);
+                return src ? cloneChapterFromSource(src) : buildChapterFallback(ch);
+              });
             if (kept.length) subGroups[subGroupLabel] = kept;
           });
           if (topChapters.length || Object.keys(subGroups).length) {
