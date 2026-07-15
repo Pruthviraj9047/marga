@@ -255,9 +255,8 @@ function updateSyncIndicator(forceStatus) {
         right: 1rem;
       }
     }
-    /* On compact phones the badge sits inside .header-center.
-       position:static lets it flow in the flex column;
-       order:1 places it after the tagline on its own row. */
+    /* Mobile badge layout is handled by app.html with !important.
+       This rule is kept as a fallback only. */
     @media (max-width: 430px) {
       .sync-indicator {
         position: static;
