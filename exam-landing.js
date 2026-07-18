@@ -56,11 +56,58 @@
     const lines = config.cards.map((card, i) => `<button class="chapter-line preview-row" type="button" aria-pressed="${i === 0 ? 'true' : 'false'}"><span class="chapter-dot ${i === 1 ? 'pending' : i === 2 ? 'review' : ''}"></span><span>${card[1]}</span><small>${card[2]}</small></button>`).join('');
     const floats = config.cards.map((card, i) => `<span class="float-card ${['one', 'two', 'three'][i]} ${card[3]}"><span class="float-glyph" aria-hidden="true">${card[0]}</span><span class="float-copy"><b>${card[1]}</b><small>${card[2]}</small></span></span>`).join('');
     panel.insertAdjacentHTML('afterbegin', `<div class="app-preview preview-${config.key}" aria-label="${config.label} interactive study planner preview"><div class="phone-shell"><div class="phone-notch"></div><div class="phone-title"><b>${config.label}</b><span class="preview-week">This week</span></div><div class="preview-score"><strong>${config.progress}</strong><span>syllabus mapped</span></div><div class="progress-track"><span></span></div>${config.detail}<div class="preview-list">${lines}</div></div>${floats}</div>`);
+    const preview = panel.querySelector('.app-preview');
     panel.querySelectorAll('.preview-row').forEach((row) => row.addEventListener('click', () => {
       const isPressed = row.getAttribute('aria-pressed') === 'true';
       row.setAttribute('aria-pressed', String(!isPressed));
       row.classList.toggle('is-complete', !isPressed);
     }));
+    generateHalo(preview);
+  }
+
+  function generateHalo(container) {
+    const frag = document.createDocumentFragment();
+    const isExcluded = (xp, yp) => {
+      if (xp > 20 && xp < 77 && yp > 5 && yp < 95) return true;
+      if (xp < 22 && yp > 8 && yp < 30) return true;
+      if (xp > 78 && yp > 32 && yp < 55) return true;
+      if (xp < 23 && yp > 75 && yp < 98) return true;
+      return false;
+    };
+    const zones = [
+      { x:[0,22], y:[0,9], w:22, h:9 },       // top-left
+      { x:[23,77], y:[0,5], w:54, h:5 },      // top-center
+      { x:[78,100], y:[0,9], w:22, h:9 },     // top-right
+      { x:[0,23], y:[32,76], w:23, h:44 },    // left gap
+      { x:[77,100], y:[0,32], w:23, h:32 },   // right upper
+      { x:[77,100], y:[56,100], w:23, h:44 }, // right lower
+      { x:[0,23], y:[96,100], w:23, h:4 },    // bottom-left
+      { x:[23,77], y:[96,100], w:54, h:4 },   // bottom-center
+      { x:[77,100], y:[96,100], w:23, h:4 },  // bottom-right
+    ];
+    const weights = [3,2,3,5,5,5,2,2,3];
+    const totalWeight = weights.reduce((a,b)=>a+b,0);
+    const colors = ['var(--exam-accent)','var(--exam-primary)','rgba(255,255,255,.35)'];
+    for (let i = 0; i < 55; i++) {
+      let r = Math.random() * totalWeight, zi = 0;
+      for (let j = 0; j < weights.length; j++) { r -= weights[j]; if (r <= 0) { zi = j; break; } }
+      const zone = zones[zi];
+      const pctX = zone.x[0] + Math.random() * zone.w;
+      const pctY = zone.y[0] + Math.random() * zone.h;
+      if (isExcluded(pctX, pctY)) continue;
+      const color = colors[Math.floor(Math.random() * 3)];
+      const s = 1.5 + Math.random() * 2.5;
+      const o = 0.2 + Math.random() * 0.25;
+      const dd = 3.5 + Math.random() * 4.5;
+      const da = Math.random() * -8;
+      const tx = (Math.random() - 0.5) * 10;
+      const ty = (Math.random() - 0.5) * 10;
+      const dot = document.createElement('i');
+      dot.className = 'halo-particle';
+      dot.style.cssText = 'left:'+pctX+'%;top:'+pctY+'%;width:'+s+'px;height:'+s+'px;opacity:'+o+';animation-duration:'+dd+'s;animation-delay:'+da+'s;--tx:'+tx+'px;--ty:'+ty+'px;background:'+color+';box-shadow:0 0 '+(2+s)+'px '+color;
+      frag.appendChild(dot);
+    }
+    container.appendChild(frag);
   }
 
   const compactFaq = document.querySelector('#faq > .container > .grid');
