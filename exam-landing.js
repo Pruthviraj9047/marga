@@ -4,7 +4,7 @@
   const configs = {
     'jee-study-tracker': {
       key: 'jee', label: 'JEE command center', progress: '68%',
-      cards: [['⚛', 'Physics', '78% complete', 'is-blue'], ['◈', 'Mock test', 'Tomorrow', 'is-gold'], ['π', 'Mathematics', 'Revision', 'is-violet']],
+      cards: [['⚛', 'Physics', '82% Complete', 'is-blue'], ['◈', 'Mock Test', 'Tomorrow', 'is-gold'], ['π', 'Mathematics', 'Review', 'is-violet']],
       workflowTitle: 'Turn a large PCM syllabus into a clear weekly target.',
       workflow: [['01', 'Map PCM', 'See Physics, Chemistry and Mathematics without mixing their priorities.'], ['02', 'Test the weak links', 'Use confidence after practice to choose the next revision block.'], ['03', 'Protect revision', 'Keep high-weightage chapters in view before every mock.']],
       detail: '<div class="preview-matrix"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>'
@@ -18,7 +18,7 @@
     },
     'isc-study-organizer': {
       key: 'isc', label: 'ISC study desk', progress: '74%',
-      cards: [['◈', 'Economics', '72% complete', 'is-violet'], ['▰', 'Accounts', 'Revision', 'is-lilac'], ['✎', 'Literature', 'Review', 'is-plum']],
+      cards: [['▰', 'Accounts', '76%', 'is-violet'], ['◈', 'Economics', 'Review Today', 'is-lilac'], ['⚛', 'Physics', '68%', 'is-plum']],
       workflowTitle: 'Give every ISC subject a desk of its own.',
       workflow: [['01', 'Lay out subjects', 'Organize commerce, science and literature work around school pace.'], ['02', 'Make space for boards', 'Track chapter completion beside assignments and internal deadlines.'], ['03', 'Review calmly', 'Use revision status to keep the final run-up deliberate.']],
       detail: '<div class="preview-ledger"><span>Accounts</span><span>Economics</span><span>Literature</span></div>'
@@ -45,11 +45,29 @@
       detail: '<div class="preview-chart"><i></i><i></i><i></i><i></i><i></i><i></i></div>'
     }
   };
+  configs['jee-study-planner'] = configs['jee-study-tracker'];
+  configs['isc-study-planner'] = configs['isc-study-organizer'];
 
   const segment = location.pathname.split('/').filter(Boolean)[0] || '';
   const config = configs[segment];
   if (!config) return;
   document.body.classList.add('exam-page', `exam-${config.key}`);
+
+  const nav = document.querySelector('.nav-links');
+  if (nav) {
+    const items = [
+      { href: '/', label: 'Home' },
+      { href: '/jee-study-planner', label: 'JEE', key: 'jee' },
+      { href: '/neet-study-planner', label: 'NEET', key: 'neet' },
+      { href: '/isc-study-planner', label: 'ISC', key: 'isc' },
+      { href: '/cbse-study-planner', label: 'CBSE', key: 'cbse' },
+      { href: '/kcet-study-planner', label: 'KCET', key: 'kcet' },
+      { href: '/mhtcet-study-planner', label: 'MHT CET', key: 'mhtcet' },
+      { href: '/contact', label: 'Contact' },
+      { href: '/app', label: 'Open App' },
+    ];
+    nav.innerHTML = items.map(item => `<a href="${item.href}"${item.key === config.key ? ' aria-current="page"' : ''}>${item.label}</a>`).join('');
+  }
 
   const panel = document.querySelector('.hero .panel');
   if (panel) {
