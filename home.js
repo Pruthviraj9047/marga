@@ -66,6 +66,30 @@
     };
   }
 
+  function initHeroPreview() {
+    var preview = document.querySelector('.marga-home .mockup-card');
+    if (!preview || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    var rows = preview.querySelectorAll('.mockup-row');
+    var badge = preview.querySelector('.mockup-badge');
+    var progress = preview.querySelector('.mockup-progress-fill');
+    if (!rows.length || !badge || !progress) return;
+    var index = 0;
+    window.setInterval(function () {
+      var row = rows[index % rows.length];
+      var check = row.querySelector('.mockup-check-empty, .mockup-check');
+      if (check && check.classList.contains('mockup-check-empty')) {
+        check.className = 'mockup-check';
+        check.textContent = '✓';
+        row.classList.add('done');
+        var label = row.querySelector('span:nth-of-type(2)');
+        if (label) label.textContent = 'Done';
+        badge.textContent = '9/12';
+        progress.style.width = '75%';
+      }
+      index += 1;
+    }, 4200);
+  }
+
   function initAuthUi() {
     if (authUiReady) return;
     authUiReady = true;
@@ -405,6 +429,7 @@
     }
 
     scheduleFaq();
+    initHeroPreview();
 
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function () {

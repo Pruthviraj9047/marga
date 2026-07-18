@@ -8,7 +8,7 @@
   </url>
 
   <url>
-    <loc>https://mymarga.in/jee-study-tracker</loc>
+    <loc>https://mymarga.in/jee-study-planner</loc>
     <priority>0.9</priority>
   </url>
 
@@ -18,12 +18,22 @@
   </url>
 
   <url>
-    <loc>https://mymarga.in/isc-study-organizer</loc>
+    <loc>https://mymarga.in/isc-study-planner</loc>
     <priority>0.85</priority>
   </url>
 
   <url>
     <loc>https://mymarga.in/cbse-study-planner</loc>
+    <priority>0.85</priority>
+  </url>
+
+  <url>
+    <loc>https://mymarga.in/kcet-study-planner</loc>
+    <priority>0.85</priority>
+  </url>
+
+  <url>
+    <loc>https://mymarga.in/mhtcet-study-planner</loc>
     <priority>0.85</priority>
   </url>
 

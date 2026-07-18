@@ -85,9 +85,9 @@
   status = 301
   force = false
 
-# Sub-tool clean URLs
+# Canonical landing pages (rewritten to their static documents)
 [[redirects]]
-  from = "/jee-study-tracker"
+  from = "/jee-study-planner"
   to   = "/jee-study-tracker/index.html"
   status = 200
 
@@ -97,7 +97,7 @@
   status = 200
 
 [[redirects]]
-  from = "/isc-study-organizer"
+  from = "/isc-study-planner"
   to   = "/isc-study-organizer/index.html"
   status = 200
 
@@ -107,9 +107,61 @@
   status = 200
 
 [[redirects]]
+  from = "/kcet-study-planner"
+  to   = "/kcet-study-planner/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/mhtcet-study-planner"
+  to   = "/mhtcet-study-planner/index.html"
+  status = 200
+
+[[redirects]]
   from = "/contact"
   to   = "/contact/index.html"
   status = 200
+
+# Synonymous landing-page URLs always resolve directly to their canonical page.
+[[redirects]]
+  from = "/jee-study-tracker"
+  to   = "/jee-study-planner"
+  status = 301
+  force = true
+[[redirects]]
+  from = "/jee-study-organizer"
+  to   = "/jee-study-planner"
+  status = 301
+  force = true
+[[redirects]]
+  from = "/neet-study-tracker"
+  to   = "/neet-study-planner"
+  status = 301
+  force = true
+[[redirects]]
+  from = "/cbse-study-tracker"
+  to   = "/cbse-study-planner"
+  status = 301
+  force = true
+[[redirects]]
+  from = "/isc-study-organizer"
+  to   = "/isc-study-planner"
+  status = 301
+  force = true
+[[redirects]]
+  from = "/isc-study-tracker"
+  to   = "/isc-study-planner"
+  status = 301
+  force = true
+[[redirects]]
+  from = "/kcet-study-tracker"
+  to   = "/kcet-study-planner"
+  status = 301
+  force = true
+[[redirects]]
+  from = "/mhtcet-study-tracker"
+  to   = "/mhtcet-study-planner"
+  status = 301
+  force = true
 
 # -----------------------------------------------------------------------------
 # Redirect Netlify subdomain → canonical domain
