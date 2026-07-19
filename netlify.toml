@@ -102,6 +102,11 @@
   status = 200
 
 [[redirects]]
+  from = "/icse-study-planner"
+  to   = "/icse-study-planner/index.html"
+  status = 200
+
+[[redirects]]
   from = "/cbse-study-planner"
   to   = "/cbse-study-planner/index.html"
   status = 200
@@ -160,6 +165,21 @@
 [[redirects]]
   from = "/mhtcet-study-tracker"
   to   = "/mhtcet-study-planner"
+  status = 301
+  force = true
+[[redirects]]
+  from = "/icse-study-tracker"
+  to   = "/icse-study-planner"
+  status = 301
+  force = true
+[[redirects]]
+  from = "/icse-chapter-tracker"
+  to   = "/icse-study-planner"
+  status = 301
+  force = true
+[[redirects]]
+  from = "/icse-revision-planner"
+  to   = "/icse-study-planner"
   status = 301
   force = true
 

@@ -23,6 +23,11 @@
   </url>
 
   <url>
+    <loc>https://mymarga.in/icse-study-planner</loc>
+    <priority>0.85</priority>
+  </url>
+
+  <url>
     <loc>https://mymarga.in/cbse-study-planner</loc>
     <priority>0.85</priority>
   </url>

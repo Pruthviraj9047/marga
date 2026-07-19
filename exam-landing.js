@@ -28,7 +28,7 @@
       cards: [['⌁', 'Electrostatics', 'Complete', 'is-blue'], ['▣', 'NCERT chapter', 'Review', 'is-gold'], ['π', 'Mathematics', 'On track', 'is-teal']],
       workflowTitle: 'Move from NCERT coverage to board confidence.',
       workflow: [['01', 'Cover NCERT', 'Make every chapter visible before it becomes a revision problem.'], ['02', 'Add school tests', 'Keep regular assessments close to your study plan.'], ['03', 'Build board readiness', 'Return to low-confidence chapters before the exam window.']],
-      detail: '<div class="preview-timeline"><i></i><i></i><i></i><i></i></div>'
+      detail: '<div class="preview-timeline"><i></i><i></i><i></i><i></i><i></i></div>'
     },
     'kcet-study-planner': {
       key: 'kcet', label: 'KCET balance', progress: '76%',
@@ -43,10 +43,20 @@
       workflowTitle: 'Balance PCM or PCB work with a revision rhythm you can keep.',
       workflow: [['01', 'Choose your mix', 'Keep Physics and Chemistry paired with Mathematics or Biology.'], ['02', 'Review mocks', 'Translate each test into a clear set of chapters to revisit.'], ['03', 'Keep momentum', 'Let a realistic revision schedule protect your study streak.']],
       detail: '<div class="preview-chart"><i></i><i></i><i></i><i></i><i></i><i></i></div>'
+    },
+    'icse-study-planner': {
+      key: 'icse', label: 'ICSE Study Desk', progress: '81%',
+      cards: [['◇', 'English', 'Revision Today', 'is-leaf'], ['✦', 'Mathematics', 'Confidence High', 'is-gold'], ['⌂', 'History', 'Review', 'is-teal']],
+      workflowTitle: 'Give every ICSE subject a clear path to board readiness.',
+      workflow: [['01', 'Organise subjects', 'See English, Mathematics, Science and Social Studies without mixing their priorities.'], ['02', 'Mark chapter progress', 'Update completion and confidence to surface weak topics before preboards.'], ['03', 'Prepare for boards', 'Use revision status to keep the final run-up steady and deliberate.']],
+      detail: '<div class="preview-syllabus"><span>English</span><span>Mathematics</span><span>Physics</span><span>Chemistry</span><span>History</span><span>Geography</span></div>'
     }
   };
   configs['jee-study-planner'] = configs['jee-study-tracker'];
   configs['isc-study-planner'] = configs['isc-study-organizer'];
+  configs['icse-study-tracker'] = configs['icse-study-planner'];
+  configs['icse-chapter-tracker'] = configs['icse-study-planner'];
+  configs['icse-revision-planner'] = configs['icse-study-planner'];
 
   const segment = location.pathname.split('/').filter(Boolean)[0] || '';
   const config = configs[segment];
@@ -60,6 +70,7 @@
       { href: '/jee-study-planner', label: 'JEE', key: 'jee' },
       { href: '/neet-study-planner', label: 'NEET', key: 'neet' },
       { href: '/isc-study-planner', label: 'ISC', key: 'isc' },
+      { href: '/icse-study-planner', label: 'ICSE', key: 'icse' },
       { href: '/cbse-study-planner', label: 'CBSE', key: 'cbse' },
       { href: '/kcet-study-planner', label: 'KCET', key: 'kcet' },
       { href: '/mhtcet-study-planner', label: 'MHT CET', key: 'mhtcet' },
