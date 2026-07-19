@@ -1,55 +1,77 @@
 (() => {
   'use strict';
 
+  function renderJeePreview() {
+    return '<div class="preview-matrix"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>';
+  }
+  function renderNeetPreview() {
+    return '<div class="preview-analytics" aria-hidden="true"><div><span>Recall trend</span><b>+12%</b></div><p><i></i><i></i><i></i><i></i><i></i><i></i><i></i></p></div>';
+  }
+  function renderIscPreview() {
+    return '<div class="preview-chips"><span><i></i>English</span><span><i></i>Maths</span><span><i></i>Physics</span><span><i></i>Chemistry</span><span><i></i>Biology</span><span><i></i>History</span></div>';
+  }
+  function renderIcsePreview() {
+    return '<div class="preview-chips"><span><i></i>English</span><span><i></i>Maths</span><span><i></i>Science</span><span><i></i>History</span><span><i></i>Geography</span><span><i></i>Computer</span></div>';
+  }
+  function renderCbsePreview() {
+    return '<div class="preview-performance"><span></span><span></span><span></span><span></span><span></span></div>';
+  }
+  function renderKcetPreview() {
+    return '<div class="preview-flow"><span>Boards</span><b>↓</b><span>KCET</span><b>↓</b><span>Ready</span></div>';
+  }
+  function renderMhtcetPreview() {
+    return '<div class="preview-chart"><i></i><i></i><i></i><i></i><i></i><i></i></div>';
+  }
+
   const configs = {
     'jee-study-tracker': {
       key: 'jee', label: 'JEE command center', progress: '68%',
       cards: [['⚛', 'Physics', '82% Complete', 'is-blue'], ['◈', 'Mock Test', 'Tomorrow', 'is-gold'], ['π', 'Mathematics', 'Review', 'is-violet']],
       workflowTitle: 'Turn a large PCM syllabus into a clear weekly target.',
       workflow: [['01', 'Map PCM', 'See Physics, Chemistry and Mathematics without mixing their priorities.'], ['02', 'Test the weak links', 'Use confidence after practice to choose the next revision block.'], ['03', 'Protect revision', 'Keep high-weightage chapters in view before every mock.']],
-      detail: '<div class="preview-matrix"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>'
+      detail: renderJeePreview()
     },
     'neet-study-planner': {
       key: 'neet', label: 'NEET biology desk', progress: '82%',
       cards: [['✚', 'Human physiology', '82% mapped', 'is-teal'], ['⌬', 'NCERT revision', 'Today', 'is-leaf'], ['✦', 'Genetics', 'Review', 'is-coral']],
       workflowTitle: 'Keep NCERT detail, practice and revision in one rhythm.',
       workflow: [['01', 'Read with intent', 'Turn NCERT coverage into a chapter-by-chapter plan.'], ['02', 'Mark recall', 'Tag concepts that need another pass after questions.'], ['03', 'Cycle back', 'Bring the right Biology, Physics and Chemistry chapters forward.']],
-      detail: '<div class="preview-analytics" aria-hidden="true"><div><span>Recall trend</span><b>+12%</b></div><p><i></i><i></i><i></i><i></i><i></i><i></i><i></i></p></div>'
+      detail: renderNeetPreview()
     },
     'isc-study-organizer': {
       key: 'isc', label: 'ISC study desk', progress: '74%',
       cards: [['▰', 'Accounts', '76%', 'is-violet'], ['◈', 'Economics', 'Review Today', 'is-lilac'], ['⚛', 'Physics', '68%', 'is-plum']],
       workflowTitle: 'Give every ISC subject a desk of its own.',
       workflow: [['01', 'Lay out subjects', 'Organize commerce, science and literature work around school pace.'], ['02', 'Make space for boards', 'Track chapter completion beside assignments and internal deadlines.'], ['03', 'Review calmly', 'Use revision status to keep the final run-up deliberate.']],
-      detail: '<div class="preview-ledger"><span>Accounts</span><span>Economics</span><span>Literature</span></div>'
+      detail: renderIscPreview()
     },
     'cbse-study-planner': {
       key: 'cbse', label: 'CBSE Class 12', progress: '71%',
       cards: [['⌁', 'Electrostatics', 'Complete', 'is-blue'], ['▣', 'NCERT chapter', 'Review', 'is-gold'], ['π', 'Mathematics', 'On track', 'is-teal']],
       workflowTitle: 'Move from NCERT coverage to board confidence.',
       workflow: [['01', 'Cover NCERT', 'Make every chapter visible before it becomes a revision problem.'], ['02', 'Add school tests', 'Keep regular assessments close to your study plan.'], ['03', 'Build board readiness', 'Return to low-confidence chapters before the exam window.']],
-      detail: '<div class="preview-timeline"><i></i><i></i><i></i><i></i><i></i></div>'
+      detail: renderCbsePreview()
     },
     'kcet-study-planner': {
       key: 'kcet', label: 'KCET balance', progress: '76%',
       cards: [['⌂', 'Boards', 'Complete', 'is-teal'], ['◈', 'KCET practice', 'Next', 'is-cyan'], ['⌁', 'PCM / PCB', 'Balanced', 'is-blue']],
       workflowTitle: 'Connect board work to KCET readiness—without two competing plans.',
       workflow: [['01', 'Board preparation', 'Keep school chapters grounded in one shared syllabus view.'], ['02', 'KCET practice', 'Move from covered chapters into targeted entrance work.'], ['03', 'Exam readiness', 'Use revision status to decide what deserves the next session.']],
-      detail: '<div class="preview-flow"><span>Boards</span><b>↓</b><span>KCET</span><b>↓</b><span>Ready</span></div>'
+      detail: renderKcetPreview()
     },
     'mhtcet-study-planner': {
       key: 'mhtcet', label: 'MHT CET flow', progress: '72%',
       cards: [['✦', 'Physics', '72% complete', 'is-pink'], ['◈', 'Mock review', 'Tonight', 'is-gold'], ['↗', 'Study streak', '8 days', 'is-violet']],
       workflowTitle: 'Balance PCM or PCB work with a revision rhythm you can keep.',
       workflow: [['01', 'Choose your mix', 'Keep Physics and Chemistry paired with Mathematics or Biology.'], ['02', 'Review mocks', 'Translate each test into a clear set of chapters to revisit.'], ['03', 'Keep momentum', 'Let a realistic revision schedule protect your study streak.']],
-      detail: '<div class="preview-chart"><i></i><i></i><i></i><i></i><i></i><i></i></div>'
+      detail: renderMhtcetPreview()
     },
     'icse-study-planner': {
       key: 'icse', label: 'ICSE Study Desk', progress: '81%',
       cards: [['◇', 'English', 'Revision Today', 'is-leaf'], ['✦', 'Mathematics', 'Confidence High', 'is-gold'], ['⌂', 'History', 'Review', 'is-teal']],
       workflowTitle: 'Give every ICSE subject a clear path to board readiness.',
       workflow: [['01', 'Organise subjects', 'See English, Mathematics, Science and Social Studies without mixing their priorities.'], ['02', 'Mark chapter progress', 'Update completion and confidence to surface weak topics before preboards.'], ['03', 'Prepare for boards', 'Use revision status to keep the final run-up steady and deliberate.']],
-      detail: '<div class="preview-syllabus"><span>English</span><span>Mathematics</span><span>Physics</span><span>Chemistry</span><span>History</span><span>Geography</span></div>'
+      detail: renderIcsePreview()
     }
   };
   configs['jee-study-planner'] = configs['jee-study-tracker'];
