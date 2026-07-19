@@ -1,6 +1,6 @@
 # =============================================================================
 # netlify.toml — mymarga.in
-# Fixed: 2026-05-19
+# Fixed: 2026-07-19
 #
 # Changes from previous version:
 #   1. Removed force=true from domain-level redirects — force=true overrides
@@ -15,6 +15,15 @@
 #   5. Removed netlify.app → custom domain redirects from here; set the
 #      primary domain in the Netlify dashboard instead (no SSL-level conflict).
 # =============================================================================
+
+# -----------------------------------------------------------------------------
+# 0. BUILD  (runs on every Netlify deploy, before publishing)
+#     Injects the current commit SHA into every ?v=... asset URL so that
+#     each deployment automatically gets a unique, non-cached version.
+# -----------------------------------------------------------------------------
+[build]
+  command = "npm run update-version"
+  publish = "."
 
 # -----------------------------------------------------------------------------
 # 1. SEO / SYSTEM FILE PASS-THROUGHS  (must come first — order matters)

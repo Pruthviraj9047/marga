@@ -1,4 +1,7 @@
 {
+  "scripts": {
+    "update-version": "bash scripts/update-version.sh"
+  },
   "devDependencies": {
     "playwright": "^1.61.1"
   }
