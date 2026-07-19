@@ -234,16 +234,16 @@
   [headers.values]
     Cache-Control = "no-cache, no-store, must-revalidate"
 
-# --- Immutable static assets ---
+# --- JS/CSS: revalidate on every request to pick up deployments ---
 [[headers]]
   for = "/*.css"
   [headers.values]
-    Cache-Control = "public, max-age=31536000, immutable"
+    Cache-Control = "public, max-age=0, must-revalidate"
 
 [[headers]]
   for = "/*.js"
   [headers.values]
-    Cache-Control = "public, max-age=31536000, immutable"
+    Cache-Control = "public, max-age=0, must-revalidate"
 
 # --- Icons ---
 [[headers]]
