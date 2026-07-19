@@ -1,7 +1,7 @@
 {
   "name": "Marga",
   "short_name": "Marga",
-  "description": "JEE, NEET, ISC and CBSE study tracker for chapter tracking, syllabus completion and revision planning.",
+  "description": "JEE, NEET, CBSE, ISC, ICSE, KCET and MHT CET study tracker for chapter tracking, syllabus completion and revision planning.",
   "id": "https://mymarga.in/",
   "start_url": "/app",
   "scope": "/",
