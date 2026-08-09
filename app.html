@@ -5678,7 +5678,7 @@
           auth: {
             persistSession: true,
             autoRefreshToken: true,
-            detectSessionInUrl: true,
+            detectSessionInUrl: false,
             flowType: 'pkce',
             storageKey: 'marga-supabase-auth',
             storage: window.localStorage
@@ -5709,6 +5709,35 @@
         authState = AUTH_STATE.AUTHENTICATED;
         hideBootOverlay();                              // ← smooth fade-out
         window.dispatchEvent(new Event('marga-session-ready'));
+      }
+
+      // ── Step 0: Inspect URL for Auth Callback / Errors ─────────────
+      const urlParams = new URLSearchParams(window.location.search);
+      const authCode = urlParams.get('code');
+      const authError = urlParams.get('error_description') || urlParams.get('error');
+
+      if (authError) {
+        console.error('[Marga Auth] Redirected with error:', authError);
+        redirectToLogin('auth_error');
+        return;
+      }
+
+      if (authCode) {
+        console.log('[Marga Auth] PKCE callback detected');
+        setBootMsg('Completing sign in…');
+        const { data: exchangeData, error: exchangeError } = await _sb.auth.exchangeCodeForSession(authCode);
+
+        if (exchangeError || !exchangeData?.session) {
+          console.error('[Marga Auth] PKCE exchange failed:', exchangeError?.message || exchangeError);
+          redirectToLogin('pkce_failed');
+          return;
+        }
+
+        console.log('[Marga Auth] PKCE exchange succeeded');
+        // Clean ?code= from URL ONLY after exchange succeeds
+        window.history.replaceState({}, document.title, window.location.pathname);
+        await bootWithSession(exchangeData.session);
+        return;
       }
 
       // ── Step 1: Restore session from localStorage (no network needed) ──

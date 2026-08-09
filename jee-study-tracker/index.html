@@ -30,8 +30,21 @@
   <link rel="apple-touch-icon" sizes="192x192" href="/icon-192.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/seo-page.css?v=78a4295">
+  <!-- Keep the LCP hero complete while the shared stylesheet and webfont load. -->
+  <style>
+    :root{--bg-body:#090b14;--text-main:#f4f6ff;--text-sub:#aab3d0;--border:rgba(157,170,227,.17);--exam-accent:#5ac8ff;--exam-primary:#7771ff;--exam-glow:rgba(90,200,255,.24)}
+    *{box-sizing:border-box;margin:0;padding:0}body{min-width:320px;font-family:'Plus Jakarta Sans',system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--text-main);background:#090b14;background-image:radial-gradient(circle at 15% 5%,var(--exam-glow),transparent 26rem),radial-gradient(circle at 90% 15%,rgba(57,214,224,.09),transparent 30rem)}a{color:inherit;text-decoration:none}.container{width:100%;max-width:1200px;margin:0 auto;padding-inline:clamp(16px,4vw,32px)}
+    .navbar{position:sticky;top:0;z-index:20;background:rgba(9,11,20,.72);border-bottom:1px solid var(--border)}.nav-inner{min-height:72px;display:flex;align-items:center;justify-content:space-between;gap:1rem}.brand{display:flex;align-items:center;gap:.65rem;font-weight:800}.brand img{width:34px;height:34px}.nav-links{display:flex;align-items:center;gap:1rem;color:var(--text-sub);font-weight:700;font-size:.9rem}
+    .hero{position:relative;isolation:isolate;padding:clamp(5rem,11vw,9rem) 0 5.5rem;overflow:hidden;background:radial-gradient(ellipse at 20% 15%,var(--exam-glow),transparent 46%),radial-gradient(ellipse at 85% 52%,rgba(255,255,255,.055),transparent 37%)}.hero-grid{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(360px,.95fr);gap:clamp(2rem,6vw,5rem);align-items:center}.eyebrow{display:inline-flex;align-items:center;border:1px solid rgba(90,200,255,.52);border-radius:999px;background:rgba(90,200,255,.09);color:var(--exam-accent);padding:8px 13px;font-size:.79rem;font-weight:800;letter-spacing:.04em;text-transform:uppercase;margin-bottom:1.2rem}h1{max-width:760px;font-size:clamp(2.7rem,6.2vw,5.7rem);line-height:.99;letter-spacing:-.065em}.hero p{max-width:640px;margin-top:1.35rem;color:var(--text-sub);font-size:clamp(1rem,1.7vw,1.12rem);line-height:1.75}.hero-actions{display:flex;flex-wrap:wrap;gap:.8rem;margin-top:2rem}.btn{display:inline-flex;align-items:center;justify-content:center;border:1px solid rgba(255,255,255,.16);border-radius:999px;padding:13px 21px;background:linear-gradient(135deg,var(--exam-primary),var(--exam-accent));color:#07101b;font-weight:800}.btn.secondary{border-color:var(--border);background:rgba(255,255,255,.035);color:var(--text-main)}
+    .panel{position:relative;min-height:390px;padding:1.2rem;overflow:hidden;border:1px solid rgba(203,215,255,.22);border-radius:28px;background:linear-gradient(145deg,rgba(26,31,57,.92),rgba(10,13,27,.84));box-shadow:0 35px 95px rgba(0,0,0,.42)}.metric{display:flex;position:relative;z-index:2;justify-content:space-between;gap:1rem;padding:.7rem .1rem;border-top:1px solid rgba(255,255,255,.09);color:var(--text-sub);font-size:.78rem}.metric strong{color:var(--text-main);font-size:.82rem}
+    .app-preview{position:relative;width:min(100%,330px);height:260px;margin:0 auto 1rem}.phone-shell{position:absolute;inset:8px 43px 2px;padding:19px 13px;border:1px solid rgba(255,255,255,.25);border-radius:27px;background:linear-gradient(165deg,#1c2341,#0c1022)}.phone-notch{width:68px;height:7px;margin:0 auto 17px;border-radius:999px;background:#070914}.phone-title{display:flex;justify-content:space-between;color:var(--text-sub);font-size:.67rem}.phone-title b{color:var(--text-main);font-size:.81rem}.preview-score{margin:10px 0 0}.preview-score strong{font-size:1.35rem}.preview-score span{margin-left:5px;color:var(--text-sub);font-size:.56rem}.progress-track{height:7px;margin:10px 0 16px;overflow:hidden;border-radius:99px;background:rgba(255,255,255,.1)}.progress-track span{display:block;width:68%;height:100%;border-radius:inherit;background:linear-gradient(90deg,var(--exam-primary),var(--exam-accent))}.chapter-line{display:flex;align-items:center;gap:7px;width:100%;padding:7px 0;border:0;border-top:1px solid rgba(255,255,255,.07);background:transparent;color:#dce3ff;font-size:.61rem;text-align:left}.chapter-line small{margin-left:auto;color:var(--text-sub);font-size:.52rem}.chapter-dot{width:9px;height:9px;border-radius:50%;background:var(--exam-accent)}.chapter-dot.pending{background:#f5c45d}.chapter-dot.review{background:#ff87c4}.float-card{position:absolute;z-index:2;display:grid;grid-template-columns:20px minmax(0,1fr);align-items:center;gap:6px;width:min(20%,88px);min-height:51px;padding:7px;border:1px solid rgba(255,255,255,.2);border-radius:12px;background:linear-gradient(145deg,rgba(30,36,69,.92),rgba(12,16,35,.88));font-size:.64rem;font-weight:800}.float-card.one{top:32px;left:0}.float-card.two{top:102px;right:0;width:min(18%,80px)}.float-card.three{bottom:13px;left:12px;width:min(21%,92px)}.float-glyph{display:grid;place-items:center;width:20px;height:20px;border-radius:7px;background:rgba(90,200,255,.14);color:var(--exam-accent);font-size:.7rem}.float-copy{min-width:0}.float-copy b,.float-copy small{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.float-copy b{color:#f7f8ff;font-size:.53rem}.float-copy small{margin-top:3px;color:var(--text-sub);font-size:.45rem}.float-card.is-gold .float-glyph{color:#ffd26b;background:rgba(255,210,107,.12)}.float-card.is-violet .float-glyph{color:#d7a1ff;background:rgba(215,161,255,.12)}
+    @media(max-width:900px){.hero-grid{grid-template-columns:1fr}.nav-links{display:none}.hero{padding-top:5rem}.panel{width:100%;max-width:520px;margin:auto}}@media(max-width:640px){.hero{padding-bottom:3.5rem}.hero-actions .btn{width:100%}.panel{min-height:360px;border-radius:22px}.app-preview{height:320px;transform:scale(.92);transform-origin:top center;margin-bottom:-6px}}@media(max-width:360px){h1{font-size:2.4rem}.panel{min-height:335px}.app-preview{height:280px;transform:scale(.83);margin-bottom:-22px}}
+  </style>
+  <link rel="preload" as="font" type="font/woff2" href="https://fonts.gstatic.com/s/plusjakartasans/v12/LDIoaomQNQcsA88c7O9yZ4KMCoOg4Ko20yygg_vb.woff2" crossorigin>
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"></noscript>
+  <link rel="preload" as="style" href="/seo-page.css?v=0f4940a" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="/seo-page.css?v=0f4940a"></noscript>
   <link rel="stylesheet" href="/faq.css" media="print" onload="this.media='all'">
   <noscript><link rel="stylesheet" href="/faq.css"></noscript>
   <script type="application/ld+json">
@@ -132,23 +145,6 @@
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
-    "@type": "SoftwareApplication",
-    "@id": "https://mymarga.in/#software",
-    "name": "Marga",
-    "applicationCategory": "EducationalApplication",
-    "operatingSystem": "Web",
-    "url": "https://mymarga.in/",
-    "description": "Free study tracker for Indian students preparing for JEE, NEET, CBSE, ISC, ICSE, KCET and MHT CET.",
-    "offers": {
-      "@type": "Offer",
-      "price": "0",
-      "priceCurrency": "INR"
-    }
-  }
-  </script>
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
     "@type": "WebPage",
     "@id": "https://mymarga.in/jee-study-planner#webpage",
     "url": "https://mymarga.in/jee-study-planner",
@@ -181,6 +177,7 @@
           </div>
         </div>
         <aside class="panel" aria-label="JEE tracker highlights">
+          <div class="app-preview preview-jee" aria-label="JEE command center interactive study planner preview"><div class="phone-shell"><div class="phone-notch"></div><div class="phone-title"><b>JEE command center</b><span class="preview-week">This week</span></div><div class="preview-score"><strong>68%</strong><span>syllabus mapped</span></div><div class="progress-track"><span></span></div><div class="preview-matrix"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="preview-list"><button class="chapter-line preview-row" type="button" aria-pressed="true"><span class="chapter-dot"></span><span>Physics</span><small>82% Complete</small></button><button class="chapter-line preview-row" type="button" aria-pressed="false"><span class="chapter-dot pending"></span><span>Mock Test</span><small>Tomorrow</small></button><button class="chapter-line preview-row" type="button" aria-pressed="false"><span class="chapter-dot review"></span><span>Mathematics</span><small>Review</small></button></div></div><span class="float-card one is-blue"><span class="float-glyph" aria-hidden="true">⚛</span><span class="float-copy"><b>Physics</b><small>82% Complete</small></span></span><span class="float-card two is-gold"><span class="float-glyph" aria-hidden="true">◈</span><span class="float-copy"><b>Mock Test</b><small>Tomorrow</small></span></span><span class="float-card three is-violet"><span class="float-glyph" aria-hidden="true">π</span><span class="float-copy"><b>Mathematics</b><small>Review</small></span></span></div>
           <div class="metric"><strong>PCM chapters</strong><span>One tracker</span></div>
           <div class="metric"><strong>Backlog</strong><span>Visible by subject</span></div>
           <div class="metric"><strong>Revision</strong><span>Date and confidence based</span></div>
@@ -338,6 +335,6 @@
       <div class="link-row"><a class="chip" href="/">Home</a><a class="chip" href="/jee-study-planner">JEE</a><a class="chip" href="/neet-study-planner">NEET</a><a class="chip" href="/isc-study-planner">ISC</a><a class="chip" href="/icse-study-planner">ICSE</a><a class="chip" href="/cbse-study-planner">CBSE</a><a class="chip" href="/kcet-study-planner">KCET</a><a class="chip" href="/mhtcet-study-planner">MHT CET</a><a class="chip" href="/app">App</a><a class="chip" href="/contact">Contact</a></div>
     </div>
   </footer>
-  <script src="/defer-faq.js" defer></script><script src="/exam-landing.js?v=78a4295" defer></script>
+  <script src="/defer-faq.js" defer></script><script src="/exam-landing.js?v=0f4940a" defer></script>
 </body>
 </html>

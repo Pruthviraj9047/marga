@@ -30,8 +30,19 @@
   <link rel="apple-touch-icon" sizes="192x192" href="/icon-192.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/seo-page.css?v=78a4295">
+  <!-- Keep the first viewport complete while the full shared stylesheet downloads. -->
+  <style>
+    :root{--bg-body:#090b14;--text-main:#f4f6ff;--text-sub:#aab3d0;--border:rgba(157,170,227,.17);--exam-accent:#cb8cff;--exam-primary:#8e63ff;--exam-glow:rgba(149,98,255,.26)}
+    *{box-sizing:border-box;margin:0;padding:0}body{min-width:320px;font-family:'Plus Jakarta Sans',system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--text-main);background:#090b14;background-image:radial-gradient(circle at 15% 5%,var(--exam-glow),transparent 26rem),radial-gradient(circle at 90% 15%,rgba(57,214,224,.09),transparent 30rem)}a{color:inherit;text-decoration:none}.container{width:100%;max-width:1200px;margin:0 auto;padding-inline:clamp(16px,4vw,32px)}
+    .navbar{position:sticky;top:0;z-index:20;background:rgba(9,11,20,.72);border-bottom:1px solid var(--border)}.nav-inner{min-height:72px;display:flex;align-items:center;justify-content:space-between;gap:1rem}.brand{display:flex;align-items:center;gap:.65rem;font-weight:800}.brand img{width:34px;height:34px}.nav-links{display:flex;align-items:center;gap:1rem;color:var(--text-sub);font-weight:700;font-size:.9rem}
+    .hero{position:relative;isolation:isolate;padding:clamp(5rem,11vw,9rem) 0 5.5rem;overflow:hidden;background:radial-gradient(ellipse at 20% 15%,var(--exam-glow),transparent 46%),radial-gradient(ellipse at 85% 52%,rgba(255,255,255,.055),transparent 37%)}.hero-grid{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(360px,.95fr);gap:clamp(2rem,6vw,5rem);align-items:center}.eyebrow{display:inline-flex;align-items:center;border:1px solid rgba(203,140,255,.52);border-radius:999px;background:rgba(203,140,255,.09);color:var(--exam-accent);padding:8px 13px;font-size:.79rem;font-weight:800;letter-spacing:.04em;text-transform:uppercase;margin-bottom:1.2rem}h1{max-width:760px;font-size:clamp(2.7rem,6.2vw,5.7rem);line-height:.99;letter-spacing:-.065em}.hero p{max-width:640px;margin-top:1.35rem;color:var(--text-sub);font-size:clamp(1rem,1.7vw,1.12rem);line-height:1.75}.hero-actions{display:flex;flex-wrap:wrap;gap:.8rem;margin-top:2rem}.btn{display:inline-flex;align-items:center;justify-content:center;border:1px solid rgba(255,255,255,.16);border-radius:999px;padding:13px 21px;background:linear-gradient(135deg,var(--exam-primary),var(--exam-accent));color:#07101b;font-weight:800}.btn.secondary{border-color:var(--border);background:rgba(255,255,255,.035);color:var(--text-main)}
+    .panel{position:relative;min-height:390px;padding:1.2rem;overflow:hidden;border:1px solid rgba(203,215,255,.22);border-radius:28px;background:linear-gradient(145deg,rgba(26,31,57,.92),rgba(10,13,27,.84));box-shadow:0 35px 95px rgba(0,0,0,.42)}.metric{display:flex;position:relative;z-index:2;justify-content:space-between;gap:1rem;padding:.7rem .1rem;border-top:1px solid rgba(255,255,255,.09);color:var(--text-sub);font-size:.78rem}.metric strong{color:var(--text-main);font-size:.82rem}
+    @media(max-width:900px){.hero-grid{grid-template-columns:1fr}.nav-links{display:none}.hero{padding-top:5rem}.panel{width:100%;max-width:520px;margin:auto}}@media(max-width:640px){.hero{padding-bottom:3.5rem}.hero-actions .btn{width:100%}.panel{min-height:360px;border-radius:22px}}@media(max-width:360px){h1{font-size:2.4rem}.panel{min-height:335px}}
+  </style>
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"></noscript>
+  <link rel="preload" as="style" href="/seo-page.css?v=0f4940a" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="/seo-page.css?v=0f4940a"></noscript>
   <link rel="stylesheet" href="/faq.css" media="print" onload="this.media='all'">
   <noscript><link rel="stylesheet" href="/faq.css"></noscript>
   <script type="application/ld+json">
@@ -125,6 +136,16 @@
             "item": "https://mymarga.in/isc-study-planner"
           }
         ]
+      },
+      {
+        "@type": "WebPage",
+        "@id": "https://mymarga.in/isc-study-planner#webpage",
+        "url": "https://mymarga.in/isc-study-planner",
+        "name": "ISC Study Planner | Marga",
+        "description": "Plan ISC Class 11 and 12 preparation with chapter tracking, revision planning, syllabus completion and progress views.",
+        "isPartOf": { "@id": "https://mymarga.in/#website" },
+        "about": { "@id": "https://mymarga.in/#app" },
+        "breadcrumb": { "@id": "https://mymarga.in/isc-study-planner#breadcrumb" }
       }
     ]
   }
@@ -311,6 +332,6 @@
       <div class="link-row"><a class="chip" href="/">Home</a><a class="chip" href="/jee-study-planner">JEE</a><a class="chip" href="/neet-study-planner">NEET</a><a class="chip" href="/isc-study-planner">ISC</a><a class="chip" href="/icse-study-planner">ICSE</a><a class="chip" href="/cbse-study-planner">CBSE</a><a class="chip" href="/kcet-study-planner">KCET</a><a class="chip" href="/mhtcet-study-planner">MHT CET</a><a class="chip" href="/app">App</a><a class="chip" href="/contact">Contact</a></div>
     </div>
   </footer>
-  <script src="/defer-faq.js" defer></script><script src="/exam-landing.js?v=78a4295" defer></script>
+  <script src="/defer-faq.js" defer></script><script src="/exam-landing.js?v=0f4940a" defer></script>
 </body>
 </html>

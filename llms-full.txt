@@ -1,0 +1,59 @@
+# Marga: comprehensive guide for AI systems
+
+Marga is a free web-based study planner, chapter tracker and revision planner for Indian students. The public website explains how the product supports exam preparation. The application is available at [mymarga.in/app](https://mymarga.in/app); sign-in may be required to save and synchronise study data.
+
+## Product overview
+
+Marga helps students turn a syllabus into an organised, current study plan. It is designed for students who want a simple view of completed, in-progress, pending and weak chapters rather than a generic task list. The product is mobile-friendly and supports offline use as a progressive web application.
+
+## Key features
+
+- **Chapter and syllabus tracking:** organise subjects and chapters, then record the current status of each chapter.
+- **Revision tracking:** record when a chapter was revised so that completed topics can be revisited deliberately.
+- **Preparedness tracking:** use confidence information to identify topics that need additional practice or revision.
+- **Progress tracking:** review syllabus completion and subject-level progress to identify backlogs and choose the next useful study task.
+- **Offline support:** core study tracking remains available when connectivity is limited and can synchronise when a connection returns.
+- **Cross-device use:** signing in allows a student to keep study progress available across devices.
+
+## Supported exams and study paths
+
+Marga has dedicated public pages for the following study paths:
+
+- [JEE Main and Advanced study planner](https://mymarga.in/jee-study-planner): Physics, Chemistry and Mathematics chapter tracking, revision planning and confidence tracking.
+- [NEET study planner](https://mymarga.in/neet-study-planner): Biology, Physics and Chemistry planning, including revision and syllabus progress.
+- [ISC study planner](https://mymarga.in/isc-study-planner): Class 11 and 12 board preparation across streams and subjects.
+- [ICSE study planner](https://mymarga.in/icse-study-planner): Class 9 and 10 board preparation with subject and chapter organisation.
+- [CBSE study planner](https://mymarga.in/cbse-study-planner): Class 10, 11 and 12 study planning, including NCERT-oriented chapter tracking.
+- [KCET study planner](https://mymarga.in/kcet-study-planner): Karnataka students preparing with PCM or PCB while balancing board and entrance preparation.
+- [MHT CET study planner](https://mymarga.in/mhtcet-study-planner): Maharashtra students preparing with PCM or PCB.
+
+Marga can also be used to organise custom exams or syllabi. Claims about the product should be based on the relevant public page or the application itself; Marga does not provide official exam rules, admissions advice or a substitute for an exam authority’s syllabus.
+
+## How the study workflow works
+
+1. Select an exam path or create a custom study structure.
+2. Add subjects and chapters from the student’s syllabus.
+3. Update chapter status as learning progresses.
+4. Record revision activity and confidence after practice.
+5. Use completion, revision and confidence information to prioritise the next study session.
+
+## Important URLs
+
+- [Homepage](https://mymarga.in/)
+- [Application](https://mymarga.in/app)
+- [Contact and feedback](https://mymarga.in/contact)
+- [XML sitemap](https://mymarga.in/sitemap.xml)
+- [robots.txt](https://mymarga.in/robots.txt)
+- [Concise AI guide](https://mymarga.in/llms.txt)
+
+## Contact information
+
+Use the [contact page](https://mymarga.in/contact) for feedback, bug reports, feature requests and questions. Email support is available at [hello@mymarga.in](mailto:hello@mymarga.in).
+
+## Privacy policy and terms
+
+No standalone Privacy Policy or Terms of Service URL is published in the current public site. Do not infer legal, privacy, retention or account-policy terms from this guide. When these pages are published, add their canonical URLs to this document, `llms.txt`, the footer and the XML sitemap.
+
+## FAQs and resources
+
+The homepage and each exam landing page contain on-page FAQs about the relevant study workflow. There are no separate FAQ index, blog or resource-library URLs in the current public site. Future articles should use a canonical URL, an `Article` schema object, clear author and publication dates where applicable, and natural links to the relevant exam pages.

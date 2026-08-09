@@ -425,6 +425,8 @@
       history.replaceState({}, '', window.location.origin + window.location.pathname);
       var ctxMsg = 'Sign in to continue to your study dashboard';
       if (msgParam === 'expired') ctxMsg = 'Your session expired. Please sign in again.';
+      if (msgParam === 'pkce_failed') ctxMsg = 'Confirmation link expired or opened in a different browser. Please open the link in the same browser where you signed up, or sign in.';
+      if (msgParam === 'auth_error') ctxMsg = 'Authentication link invalid or expired. Please sign in again.';
       requestAuth(openParam, ctxMsg);
     }
 

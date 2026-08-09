@@ -1,29 +1,39 @@
 # Marga
 
-Marga is a study tracker and revision planner for Indian students.
+Marga is a free, mobile-friendly study planner and syllabus tracker for Indian students preparing for board and entrance exams. It helps students track chapters, plan revision, assess preparedness, and understand subject-wise progress.
 
-Supported exams:
-- JEE (Main & Advanced)
-- NEET
-- ISC
-- CBSE
-- KCET
-- MHT-CET
-- custom exams
+## Purpose
 
-Primary pages:
-https://mymarga.in/
-https://mymarga.in/jee-study-tracker
-https://mymarga.in/neet-study-planner
-https://mymarga.in/isc-study-organizer
-https://mymarga.in/cbse-study-planner
+Marga makes exam preparation more visible and manageable. Students can organise a syllabus by subject and chapter, record revision activity and confidence, and use progress information to decide what to study next.
 
-Application:
-https://mymarga.in/app
+## Audience
 
-Notes:
-- /app requires login
-- public pages describe the product
+Marga is for Indian school and entrance-exam students, including JEE, NEET, ISC, ICSE, CBSE, KCET and MHT CET aspirants. It also supports custom exam or syllabus organisation.
 
-Offline Support:
-Core study tracking supports offline usage and syncs changes when connectivity returns.
+## Main Website
+
+- [Marga home](https://mymarga.in/)
+
+## Core Pages
+
+- [JEE study planner](https://mymarga.in/jee-study-planner)
+- [NEET study planner](https://mymarga.in/neet-study-planner)
+- [ISC study planner](https://mymarga.in/isc-study-planner)
+- [ICSE study planner](https://mymarga.in/icse-study-planner)
+- [CBSE study planner](https://mymarga.in/cbse-study-planner)
+- [KCET study planner](https://mymarga.in/kcet-study-planner)
+- [MHT CET study planner](https://mymarga.in/mhtcet-study-planner)
+- [Marga app](https://mymarga.in/app) (sign-in may be required to save and sync progress)
+
+## Support
+
+- [Contact Marga](https://mymarga.in/contact)
+- [Email support](mailto:hello@mymarga.in)
+
+## Sitemap
+
+- [XML sitemap](https://mymarga.in/sitemap.xml)
+
+## Robots
+
+- [robots.txt](https://mymarga.in/robots.txt)

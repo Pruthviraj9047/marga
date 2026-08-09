@@ -85,8 +85,13 @@
   if (!config) return;
   document.body.classList.add('exam-page', `exam-${config.key}`);
 
+  const whenIdle = (task) => {
+    if ('requestIdleCallback' in window) requestIdleCallback(task, { timeout: 1800 });
+    else setTimeout(task, 0);
+  };
+
   const nav = document.querySelector('.nav-links');
-  if (nav) {
+  if (nav && !nav.querySelector('[aria-current="page"]')) whenIdle(() => {
     const items = [
       { href: '/', label: 'Home' },
       { href: '/jee-study-planner', label: 'JEE', key: 'jee' },
@@ -100,20 +105,23 @@
       { href: '/app', label: 'Open App' },
     ];
     nav.innerHTML = items.map(item => `<a href="${item.href}"${item.key === config.key ? ' aria-current="page"' : ''}>${item.label}</a>`).join('');
-  }
+  });
 
   const panel = document.querySelector('.hero .panel');
   if (panel) {
-    const lines = config.cards.map((card, i) => `<button class="chapter-line preview-row" type="button" aria-pressed="${i === 0 ? 'true' : 'false'}"><span class="chapter-dot ${i === 1 ? 'pending' : i === 2 ? 'review' : ''}"></span><span>${card[1]}</span><small>${card[2]}</small></button>`).join('');
-    const floats = config.cards.map((card, i) => `<span class="float-card ${['one', 'two', 'three'][i]} ${card[3]}"><span class="float-glyph" aria-hidden="true">${card[0]}</span><span class="float-copy"><b>${card[1]}</b><small>${card[2]}</small></span></span>`).join('');
-    panel.insertAdjacentHTML('afterbegin', `<div class="app-preview preview-${config.key}" aria-label="${config.label} interactive study planner preview"><div class="phone-shell"><div class="phone-notch"></div><div class="phone-title"><b>${config.label}</b><span class="preview-week">This week</span></div><div class="preview-score"><strong>${config.progress}</strong><span>syllabus mapped</span></div><div class="progress-track"><span></span></div>${config.detail}<div class="preview-list">${lines}</div></div>${floats}</div>`);
-    const preview = panel.querySelector('.app-preview');
+    let preview = panel.querySelector('.app-preview');
+    if (!preview) {
+      const lines = config.cards.map((card, i) => `<button class="chapter-line preview-row" type="button" aria-pressed="${i === 0 ? 'true' : 'false'}"><span class="chapter-dot ${i === 1 ? 'pending' : i === 2 ? 'review' : ''}"></span><span>${card[1]}</span><small>${card[2]}</small></button>`).join('');
+      const floats = config.cards.map((card, i) => `<span class="float-card ${['one', 'two', 'three'][i]} ${card[3]}"><span class="float-glyph" aria-hidden="true">${card[0]}</span><span class="float-copy"><b>${card[1]}</b><small>${card[2]}</small></span></span>`).join('');
+      panel.insertAdjacentHTML('afterbegin', `<div class="app-preview preview-${config.key}" aria-label="${config.label} interactive study planner preview"><div class="phone-shell"><div class="phone-notch"></div><div class="phone-title"><b>${config.label}</b><span class="preview-week">This week</span></div><div class="preview-score"><strong>${config.progress}</strong><span>syllabus mapped</span></div><div class="progress-track"><span></span></div>${config.detail}<div class="preview-list">${lines}</div></div>${floats}</div>`);
+      preview = panel.querySelector('.app-preview');
+    }
     panel.querySelectorAll('.preview-row').forEach((row) => row.addEventListener('click', () => {
       const isPressed = row.getAttribute('aria-pressed') === 'true';
       row.setAttribute('aria-pressed', String(!isPressed));
       row.classList.toggle('is-complete', !isPressed);
     }));
-    generateHalo(preview);
+    whenIdle(() => generateHalo(preview));
   }
 
   function generateHalo(container) {
@@ -139,7 +147,7 @@
     const weights = [3,2,3,5,5,5,2,2,3];
     const totalWeight = weights.reduce((a,b)=>a+b,0);
     const colors = ['var(--exam-accent)','var(--exam-primary)','rgba(255,255,255,.35)'];
-    for (let i = 0; i < 55; i++) {
+    for (let i = 0; i < 28; i++) {
       let r = Math.random() * totalWeight, zi = 0;
       for (let j = 0; j < weights.length; j++) { r -= weights[j]; if (r <= 0) { zi = j; break; } }
       const zone = zones[zi];
@@ -161,6 +169,7 @@
     container.appendChild(frag);
   }
 
+  function initBelowFold() {
   const compactFaq = document.querySelector('#faq > .container > .grid');
   if (compactFaq && !compactFaq.matches('[data-faq-accordion]')) {
     const entries = Array.from(compactFaq.querySelectorAll(':scope > .card')).map((card, index) => ({
@@ -205,4 +214,10 @@
     card.style.setProperty('--mouse-x', `${((event.clientX - box.left) / box.width) * 100}%`);
     card.style.setProperty('--mouse-y', `${((event.clientY - box.top) / box.height) * 100}%`);
   }));
+  }
+
+  // The journey, reveal observers and card hover effects are all below the
+  // initial viewport. Leave their DOM work until the page has painted.
+  if (document.readyState === 'complete') whenIdle(initBelowFold);
+  else window.addEventListener('load', () => whenIdle(initBelowFold), { once: true });
 })();
