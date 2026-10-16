@@ -10166,6 +10166,26 @@
       if (!appData[mode]) appData[mode] = {};
       normalizeExamDataShapes(mode);
       if (isCustomMode(mode)) return; // custom exams are fully dynamic
+      // A persisted exam's subject keys are authoritative.  Previously this
+      // function filled every missing preset subject on every activation,
+      // which turned an intentional subject deletion into a default subject
+      // again after reload/login.  Only initialize a genuinely new/empty
+      // exam; once initialized, an absent subject means the user removed it.
+      const modeData = appData[mode];
+      const hasSubjectData = Object.keys(modeData).some(key => !String(key).startsWith('_'));
+      if (modeData._subjectsInitialized || hasSubjectData) {
+        if (!modeData._subjectsInitialized && hasSubjectData) {
+          modeData._subjectsInitialized = true;
+        }
+        return;
+      }
+      // Older data may predate the marker and contain no subjects because the
+      // user removed them all.  The saved syllabus selection still proves
+      // that this is an existing configured exam, not a new one.
+      if (examSelections[mode]) {
+        modeData._subjectsInitialized = true;
+        return;
+      }
       const baseId = appData[mode]?._baseExamId || mode;
       const modeConfig = config[baseId];
       if (!modeConfig) return;
@@ -10174,6 +10194,7 @@
           appData[mode][subj] = buildSubjectDataFromConfig(cfg);
         }
       });
+      modeData._subjectsInitialized = true;
       normalizeExamDataShapes(mode);
     }
 
@@ -11626,6 +11647,7 @@
         }
       });
       if (syllabusSelection.pendingExamMeta) Object.assign(nextData, deepClone(syllabusSelection.pendingExamMeta));
+      nextData._subjectsInitialized = true;
       if (appData[mode] && appData[mode]._baseExamId && !nextData._baseExamId) nextData._baseExamId = appData[mode]._baseExamId;
       if (appData[mode]?._sourceExamId && !nextData._sourceExamId) nextData._sourceExamId = appData[mode]._sourceExamId;
       if (appData[mode]?._derivedKind && !nextData._derivedKind) nextData._derivedKind = appData[mode]._derivedKind;
@@ -12901,7 +12923,17 @@
     }
 
     function saveData() {
-      loadedExams.forEach(examId => normalizeExamDataShapes(examId));
+      loadedExams.forEach(examId => {
+        normalizeExamDataShapes(examId);
+        const modeData = appData[examId];
+        if (modeData && typeof modeData === 'object' && !isCustomMode(examId)
+          && !modeData._subjectsInitialized
+          && Object.keys(modeData).some(key => !String(key).startsWith('_'))) {
+          // Mark legacy non-empty exams as initialized without changing their
+          // subject set; this preserves old users' custom deletions.
+          modeData._subjectsInitialized = true;
+        }
+      });
       loadedExams.forEach(examId => { delete deletedExamTombstones[examId]; });
       // Build per-custom-exam subject metadata (hue + icon for each subject)
       const customMetas = {};
