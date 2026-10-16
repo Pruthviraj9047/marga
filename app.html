@@ -6350,8 +6350,8 @@
       { id: 'cbse10', icon: '📒', name: 'CBSE Class 10', sub: 'Science · Maths · Social Science', accent: '#db2777', category: 'cbse' },
       { id: 'cbse11', icon: '📘', name: 'CBSE Class 11', sub: 'Science · Maths · English · CS', accent: '#3b82f6', category: 'cbse' },
       { id: 'cbse12', icon: '📗', name: 'CBSE Class 12', sub: 'Science · Maths · English · CS', accent: '#0891b2', category: 'cbse' },
-      { id: 'icse9', icon: '📓', name: 'ICSE Class 9', sub: 'English Language · English Literature', accent: '#9333ea', category: 'icse' },
-      { id: 'icse10', icon: '📒', name: 'ICSE Class 10', sub: 'Physics · Chemistry · English Language · English Literature · Maths · Biology', accent: '#7c3aed', category: 'icse' },
+      { id: 'icse9', icon: '📓', name: 'ICSE Class 9', sub: 'English · History & Civics · Geography', accent: '#9333ea', category: 'icse' },
+      { id: 'icse10', icon: '📒', name: 'ICSE Class 10', sub: 'Physics · Chemistry · English · Maths · Biology · History & Civics · Geography', accent: '#7c3aed', category: 'icse' },
       { id: 'isc11', icon: '📙', name: 'ISC Class 11', sub: 'Physics · Chemistry · English Language · English Literature · Maths · CS', accent: '#d97706', category: 'isc' },
       { id: 'isc12', icon: '📕', name: 'ISC Class 12', sub: 'Physics · Chemistry · English Language · English Literature · Maths · CS', accent: '#dc2626', category: 'isc' },
       { id: 'jee', icon: '⚛️', name: 'JEE', sub: 'Physics · Chemistry · Maths', accent: '#6366f1', category: 'competitive' },
@@ -6878,6 +6878,30 @@
             },
           }
         },
+        // CISCE ICSE Examination Year 2028 syllabus (January 2026 PDFs).
+        // History & Civics is H.C.G. Paper 1; Geography is H.C.G. Paper 2.
+        'History & Civics': {
+          hue: 24, icon: '🏛️', chapters: [
+            'Civics: Our Constitution', 'Civics: Elections', 'Civics: The State Legislatures',
+            'History: The Harappan Civilisation', 'History: The Vedic Period',
+            'History: Jainism and Buddhism', 'History: The Mauryan Empire',
+            'History: The Sangam Age', 'History: The Age of the Guptas',
+            'History: Medieval India — The Cholas, Delhi Sultanate and Mughal Empire',
+            'History: Composite Culture — Bhakti, Sufi Movement and Christian Missionaries',
+            'History: The Modern Age in Europe — Renaissance, Reformation and Industrial Revolution',
+          ]
+        },
+        'Geography': {
+          hue: 160, icon: '🌍', chapters: [
+            'Our World — Earth as a Planet, Geographic Grid, Rotation and Revolution',
+            'Structure of the Earth — Landforms, Rocks, Volcanoes, Earthquakes, Weathering and Denudation',
+            'Hydrosphere — Tides and Ocean Currents',
+            'Atmosphere — Composition, Insolation, Pressure, Winds, Humidity and Rainfall',
+            'Pollution — Types, Sources, Effects and Preventive Measures',
+            'Natural Regions of the World — Location, Climate, Vegetation and Human Adaptation',
+            'Map Work — World Natural Regions, Water Bodies, Rivers, Mountains and Plateaus',
+          ]
+        },
       },
 
       /* ── ICSE Class 10 ────────────────────────────────────── */
@@ -6983,6 +7007,27 @@
               ],
             },
           }
+        },
+        // CISCE ICSE Examination Year 2028 syllabus (January 2026 PDFs).
+        // Keep the two H.C.G. papers as independently trackable subjects.
+        'History & Civics': {
+          hue: 24, icon: '🏛️', chapters: [
+            'Civics: The Union Legislature', 'Civics: The Union Executive', 'Civics: The Judiciary',
+            'History: The Indian National Movement (1857–1917)',
+            'History: Mass Phase of the National Movement (1915–1947)',
+            'History: The Contemporary World — World Wars, Dictatorships, United Nations and Non-Aligned Movement',
+          ]
+        },
+        'Geography': {
+          hue: 160, icon: '🌍', chapters: [
+            'Map Work: Interpretation of Topographical Maps',
+            'Map Work: Map of India — Physical Features, Winds, Minerals, Soils, Cities and Population',
+            'Geography of India: Climate', 'Geography of India: Soil Resources',
+            'Geography of India: Natural Vegetation', 'Geography of India: Water Resources',
+            'Geography of India: Mineral and Energy Resources', 'Geography of India: Agriculture',
+            'Geography of India: Manufacturing Industries', 'Geography of India: Transport',
+            'Geography of India: Waste Management',
+          ]
         },
       },
 
@@ -10143,7 +10188,7 @@
           if (v3raw) {
             try {
               const v3 = JSON.parse(v3raw);
-              const knownModes = ['jee', 'neet', 'cbse11', 'cbse12', 'isc11', 'isc12', 'icse10', 'cbse10', 'custom'];
+              const knownModes = ['jee', 'neet', 'cbse11', 'cbse12', 'isc11', 'isc12', 'icse9', 'icse10', 'cbse10', 'custom'];
               knownModes.forEach(m => { if (v3[m]) appData[m] = v3[m]; });
               if (v3._customMeta) appData._customMeta = v3._customMeta;
               loadedExams = Array.isArray(v3._loadedExams) ? v3._loadedExams : [];
@@ -10160,6 +10205,31 @@
           deletedExamTombstones = appData._deletedExams || {};
         }
       } catch (e) { appData = {}; }
+    }
+
+    // Add the new H.C.G. paper subjects to pre-existing ICSE exams once.
+    // A marker is kept on the exam, so deleting either subject later remains
+    // authoritative and it is not re-created on refresh or sign-in.
+    const ICSE_HCG_SYLLABUS_VERSION = '2028-2026-01';
+    function migrateIcseHcgSubjects() {
+      let changed = false;
+      ['icse9', 'icse10'].forEach(mode => {
+        const modeData = appData[mode];
+        if (!modeData || typeof modeData !== 'object' || modeData._icseHcgSyllabusVersion) return;
+        const hasExistingSubjects = Object.keys(modeData).some(key => !String(key).startsWith('_'));
+        if (hasExistingSubjects) {
+          const modeConfig = config[mode] || {};
+          ['History & Civics', 'Geography'].forEach(subject => {
+            if (!modeData[subject] && modeConfig[subject]) {
+              modeData[subject] = buildSubjectDataFromConfig(modeConfig[subject]);
+              changed = true;
+            }
+          });
+        }
+        modeData._icseHcgSyllabusVersion = ICSE_HCG_SYLLABUS_VERSION;
+        changed = true;
+      });
+      return changed;
     }
 
     function ensureModeData(mode) {
@@ -12815,6 +12885,7 @@
       }
       loadData();
       syncIdCounter();
+      if (migrateIcseHcgSubjects()) saveData();
       [['isc11', 'English'], ['isc12', 'English'], ['icse10', 'English']].forEach(([mode, oldKey]) => {
         const modeData = appData[mode];
         if (!modeData || !modeData[oldKey]) return;
