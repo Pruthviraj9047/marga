@@ -177,6 +177,8 @@
       tabSignup.classList.remove('active');
     }
 
+    window._margaShowReset = showReset;
+
     function showEmailVerificationScreen(email) {
       pendingVerifyEmail = email;
       tabLogin.classList.remove('active');
@@ -319,7 +321,7 @@
       var submit = document.getElementById('resetSubmit');
       setLoading(submit, true, 'Send Reset Link');
       var result = await supabaseClient.auth.resetPasswordForEmail(email, {
-        redirectTo: window.location.origin + '/'
+        redirectTo: window.location.origin + '/app?mode=reset-password'
       });
       setLoading(submit, false, 'Send Reset Link');
       if (result.error) {
@@ -420,14 +422,18 @@
     var openParam = params.get('open');
     var nextParam = params.get('next');
     var msgParam = params.get('msg');
-    if (openParam === 'login' || openParam === 'signup') {
+    if (openParam === 'login' || openParam === 'signup' || openParam === 'reset') {
       if (nextParam) window._authNextDestination = nextParam;
       history.replaceState({}, '', window.location.origin + window.location.pathname);
       var ctxMsg = 'Sign in to continue to your study dashboard';
       if (msgParam === 'expired') ctxMsg = 'Your session expired. Please sign in again.';
       if (msgParam === 'pkce_failed') ctxMsg = 'Confirmation link expired or opened in a different browser. Please open the link in the same browser where you signed up, or sign in.';
       if (msgParam === 'auth_error') ctxMsg = 'Authentication link invalid or expired. Please sign in again.';
-      requestAuth(openParam, ctxMsg);
+      if (msgParam === 'password_updated') ctxMsg = 'Password updated successfully. Sign in with your new password.';
+      var shouldShowReset = openParam === 'reset';
+      requestAuth(shouldShowReset ? 'login' : openParam, ctxMsg).then(function () {
+        if (shouldShowReset) window._margaShowReset();
+      });
     }
 
     scheduleFaq();

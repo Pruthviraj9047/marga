@@ -5596,6 +5596,36 @@
     </style>
   </div>
 
+  <!-- Password recovery is shown only after the recovery session is validated. -->
+  <div id="passwordRecoveryOverlay" role="dialog" aria-modal="true" aria-labelledby="passwordRecoveryTitle"
+    style="display:none;position:fixed;inset:0;z-index:100001;background:#0D0F1A;color:#EEF0FF;align-items:center;justify-content:center;padding:1rem;font-family:'Plus Jakarta Sans',system-ui,sans-serif">
+    <div style="width:min(100%,420px);background:#15182A;border:1px solid #252A45;border-radius:18px;padding:2rem;box-shadow:0 24px 80px rgba(0,0,0,.45)">
+      <h1 id="passwordRecoveryTitle" style="margin:0 0 .5rem;font-size:1.45rem">Set a new password</h1>
+      <p id="passwordRecoveryIntro" style="color:#8892B8;line-height:1.5;margin:.5rem 0 1.4rem">Choose a new password for your Marga account.</p>
+      <form id="passwordRecoveryForm" novalidate>
+        <label for="recoveryNewPassword" style="display:block;color:#8892B8;font-size:.82rem;margin-bottom:.35rem">New password</label>
+        <div style="position:relative;margin-bottom:.8rem">
+          <input id="recoveryNewPassword" type="password" autocomplete="new-password" minlength="6" required
+            style="box-sizing:border-box;width:100%;background:#0D0F1A;color:#EEF0FF;border:1.5px solid #252A45;border-radius:10px;padding:11px 42px 11px 12px;font:inherit">
+          <button type="button" data-recovery-toggle="recoveryNewPassword" aria-label="Show new password"
+            style="position:absolute;right:8px;top:50%;transform:translateY(-50%);border:0;background:none;color:#8892B8;cursor:pointer">👁</button>
+        </div>
+        <label for="recoveryConfirmPassword" style="display:block;color:#8892B8;font-size:.82rem;margin-bottom:.35rem">Confirm password</label>
+        <div style="position:relative;margin-bottom:.35rem">
+          <input id="recoveryConfirmPassword" type="password" autocomplete="new-password" minlength="6" required
+            style="box-sizing:border-box;width:100%;background:#0D0F1A;color:#EEF0FF;border:1.5px solid #252A45;border-radius:10px;padding:11px 42px 11px 12px;font:inherit">
+          <button type="button" data-recovery-toggle="recoveryConfirmPassword" aria-label="Show password confirmation"
+            style="position:absolute;right:8px;top:50%;transform:translateY(-50%);border:0;background:none;color:#8892B8;cursor:pointer">👁</button>
+        </div>
+        <div id="passwordRecoveryError" role="alert" style="display:none;color:#FF7B89;font-size:.82rem;line-height:1.4;margin:.5rem 0"></div>
+        <div id="passwordRecoverySuccess" role="status" aria-live="polite" style="display:none;color:#38E8C5;font-size:.86rem;line-height:1.4;margin:.7rem 0"></div>
+        <button id="passwordRecoverySubmit" type="submit"
+          style="width:100%;background:linear-gradient(135deg,#6C63FF,#9B8FFF);color:#fff;border:0;border-radius:10px;padding:12px;font:inherit;font-weight:700;cursor:pointer;margin-top:.65rem">Update password</button>
+      </form>
+      <a id="passwordRecoveryFreshLink" href="/?open=reset" style="display:none;color:#9B8FFF;font-size:.86rem;text-decoration:none;margin-top:1rem">Request a fresh reset email</a>
+    </div>
+  </div>
+
   <!-- Supabase must load synchronously (no defer/async) so the auth init
      script below can safely reference `supabase` on DOMContentLoaded. -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -5711,57 +5741,81 @@
         window.dispatchEvent(new Event('marga-session-ready'));
       }
 
-      // ── Step 0: Inspect URL for Auth Callback / Errors ─────────────
       const urlParams = new URLSearchParams(window.location.search);
-      const authCode = urlParams.get('code');
-      const authError = urlParams.get('error_description') || urlParams.get('error');
+      const recoveryMode = urlParams.get('mode') === 'reset-password';
+      const recoveryOverlay = document.getElementById('passwordRecoveryOverlay');
+      const recoveryForm = document.getElementById('passwordRecoveryForm');
+      const recoveryError = document.getElementById('passwordRecoveryError');
+      const recoverySuccess = document.getElementById('passwordRecoverySuccess');
+      const recoverySubmit = document.getElementById('passwordRecoverySubmit');
+      const recoveryFreshLink = document.getElementById('passwordRecoveryFreshLink');
+      let recoverySession = null;
+      let recoveryCompleted = false;
 
-      if (authError) {
-        console.error('[Marga Auth] Redirected with error:', authError);
-        redirectToLogin('auth_error');
-        return;
+      function showRecoveryError(message) {
+        if (recoveryOverlay) recoveryOverlay.style.display = 'flex';
+        if (recoveryForm) recoveryForm.style.display = 'none';
+        if (recoveryError) {
+          recoveryError.textContent = message;
+          recoveryError.style.display = 'block';
+        }
+        if (recoveryFreshLink) recoveryFreshLink.style.display = 'inline-block';
+        hideBootOverlay();
       }
 
-      if (authCode) {
-        console.log('[Marga Auth] PKCE callback detected');
-        setBootMsg('Completing sign in…');
-        const { data: exchangeData, error: exchangeError } = await _sb.auth.exchangeCodeForSession(authCode);
+      function showRecoveryForm(session) {
+        if (!session?.user || !recoveryMode) return;
+        recoverySession = session;
+        if (recoveryOverlay) recoveryOverlay.style.display = 'flex';
+        if (recoveryForm) recoveryForm.style.display = 'block';
+        if (recoveryError) recoveryError.style.display = 'none';
+        hideBootOverlay();
+      }
 
-        if (exchangeError || !exchangeData?.session) {
-          console.error('[Marga Auth] PKCE exchange failed:', exchangeError?.message || exchangeError);
-          redirectToLogin('pkce_failed');
+      document.querySelectorAll('[data-recovery-toggle]').forEach((button) => {
+        button.addEventListener('click', () => {
+          const input = document.getElementById(button.dataset.recoveryToggle);
+          if (!input) return;
+          input.type = input.type === 'password' ? 'text' : 'password';
+          button.setAttribute('aria-label', input.type === 'password' ? 'Show password' : 'Hide password');
+        });
+      });
+
+      if (recoveryForm) recoveryForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        if (!recoverySession) return showRecoveryError('This reset link is no longer valid. Request a fresh reset email.');
+        const password = document.getElementById('recoveryNewPassword').value;
+        const confirmation = document.getElementById('recoveryConfirmPassword').value;
+        recoveryError.style.display = 'none';
+        recoverySuccess.style.display = 'none';
+        if (password.length < 6) return showRecoveryError('Password must be at least 6 characters.');
+        if (password !== confirmation) return showRecoveryError('Passwords do not match.');
+        recoverySubmit.disabled = true;
+        recoverySubmit.textContent = 'Updating…';
+        const { error } = await _sb.auth.updateUser({ password });
+        recoverySubmit.disabled = false;
+        recoverySubmit.textContent = 'Update password';
+        if (error) return showRecoveryError(error.message || 'Unable to update your password. Request a fresh reset email.');
+        recoveryForm.style.display = 'none';
+        recoverySuccess.textContent = 'Your password was updated. Returning you to login…';
+        recoverySuccess.style.display = 'block';
+        recoveryCompleted = true;
+        await _sb.auth.signOut();
+        setTimeout(() => window.location.replace('/?open=login&msg=password_updated'), 700);
+      });
+
+      // Register the sole auth listener before exchanging a callback code so a
+      // PASSWORD_RECOVERY event cannot be missed.
+      _sb.auth.onAuthStateChange(async (event, newSession) => {
+        if (event === 'PASSWORD_RECOVERY' && recoveryMode) {
+          showRecoveryForm(newSession);
           return;
         }
-
-        console.log('[Marga Auth] PKCE exchange succeeded');
-        // Clean ?code= from URL ONLY after exchange succeeds
-        window.history.replaceState({}, document.title, window.location.pathname);
-        await bootWithSession(exchangeData.session);
-        return;
-      }
-
-      // ── Step 1: Restore session from localStorage (no network needed) ──
-      const { data: { session }, error: sessionError } = await _sb.auth.getSession();
-
-      if (sessionError || !session) {
-        authState = AUTH_STATE.UNAUTHENTICATED;
-        // Send user to homepage with modal auto-open — not a confusing bounce
-        redirectToLogin();
-        return;
-      }
-
-      // Valid persisted session found
-      await bootWithSession(session);
-
-      // ── Step 2: Subscribe to auth state changes ─────────────────────
-      // Events:
-      //   INITIAL_SESSION — fires on load with persisted session (handled above)
-      //   SIGNED_IN       — OAuth callback or email confirm landed on /app
-      //   TOKEN_REFRESHED — silent token refresh succeeded
-      //   USER_UPDATED    — profile/email changed
-      //   SIGNED_OUT      — user clicked Log Out OR server revoked session
-      _sb.auth.onAuthStateChange(async (event, newSession) => {
         if (event === 'SIGNED_OUT') {
+          if (recoveryCompleted) {
+            window.location.replace('/?open=login&msg=password_updated');
+            return;
+          }
           // Deliberate sign-out: go home without opening the modal
           if (!redirected) {
             redirected = true;
@@ -5792,6 +5846,64 @@
         // Boot if not yet booted (handles OAuth landing on /app)
         if (!booted) await bootWithSession(newSession);
       });
+
+      // ── Step 0: Handle recovery and PKCE callback URLs ───────────────
+      const authCode = urlParams.get('code');
+      const authError = urlParams.get('error_description') || urlParams.get('error');
+
+      if (recoveryMode) {
+        if (authError) {
+          showRecoveryError('This reset link is invalid or expired.');
+          return;
+        }
+        if (!authCode) {
+          showRecoveryError('This reset link is incomplete or has already been used.');
+          return;
+        }
+        setBootMsg('Validating your reset link…');
+        const { data: exchangeData, error: exchangeError } = await _sb.auth.exchangeCodeForSession(authCode);
+        if (exchangeError || !exchangeData?.session) {
+          console.error('[Marga Auth] Recovery code exchange failed:', exchangeError?.message || exchangeError);
+          showRecoveryError('This reset link is invalid, expired, or was opened in a different browser.');
+          return;
+        }
+        window.history.replaceState({}, document.title, window.location.pathname + '?mode=reset-password');
+        const { data: { user: recoveryUser }, error: recoveryUserError } = await _sb.auth.getUser();
+        if (recoveryUserError || !recoveryUser) {
+          showRecoveryError('Your recovery session is no longer valid. Request a fresh reset email.');
+          return;
+        }
+        showRecoveryForm({ ...exchangeData.session, user: recoveryUser });
+        return;
+      }
+
+      if (authError) {
+        console.error('[Marga Auth] Redirected with error:', authError);
+        redirectToLogin('auth_error');
+        return;
+      }
+
+      if (authCode) {
+        setBootMsg('Completing sign in…');
+        const { data: exchangeData, error: exchangeError } = await _sb.auth.exchangeCodeForSession(authCode);
+        if (exchangeError || !exchangeData?.session) {
+          console.error('[Marga Auth] PKCE exchange failed:', exchangeError?.message || exchangeError);
+          redirectToLogin('pkce_failed');
+          return;
+        }
+        window.history.replaceState({}, document.title, window.location.pathname);
+        await bootWithSession(exchangeData.session);
+        return;
+      }
+
+      // ── Step 1: Restore session from localStorage (no network needed) ──
+      const { data: { session }, error: sessionError } = await _sb.auth.getSession();
+      if (sessionError || !session) {
+        authState = AUTH_STATE.UNAUTHENTICATED;
+        redirectToLogin();
+        return;
+      }
+      await bootWithSession(session);
     });
   </script>
 
