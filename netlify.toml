@@ -25,6 +25,9 @@
   command = "npm run update-version"
   publish = "."
 
+[functions]
+  directory = "netlify/functions"
+
 # -----------------------------------------------------------------------------
 # 1. SEO / SYSTEM FILE PASS-THROUGHS  (must come first — order matters)
 #    These explicit 200 rules tell Netlify: serve the file as-is, no redirect.

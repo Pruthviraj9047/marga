@@ -1,6 +1,7 @@
 {
   "scripts": {
-    "update-version": "bash scripts/update-version.sh"
+    "update-version": "bash scripts/update-version.sh",
+    "test": "node --test test/feedback-notification.test.mjs"
   },
   "devDependencies": {
     "playwright": "^1.61.1"
