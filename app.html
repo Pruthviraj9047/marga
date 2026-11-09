@@ -5709,28 +5709,42 @@
       );
       window._supabase = _sb;
 
-      let booted = false;
+      let sessionReady = false;
+      let bootPromise = null;
 
       // ── Boot: activate the app after confirming a valid session ─────────
-      async function bootWithSession(session) {
-        if (!session?.user || booted) return;
-        booted = true;
-        authState = AUTH_STATE.BOOTING; // still verifying server-side
-        setBootMsg('Restoring your session…');
+      function bootWithSession(session) {
+        if (!session?.user || sessionReady) return Promise.resolve(sessionReady);
+        if (bootPromise) return bootPromise;
 
-        // Re-validate server-side (catches expired / revoked tokens)
-        const { data: { user: freshUser }, error } = await _sb.auth.getUser();
-        if (error || !freshUser) {
-          redirectToLogin('expired');
-          return;
-        }
+        bootPromise = (async () => {
+          authState = AUTH_STATE.BOOTING; // still verifying server-side
+          setBootMsg('Restoring your session…');
 
-        // Session is valid — boot the app
-        window._userSession = { ...session, user: freshUser };
-        window._userId = freshUser.id;
-        authState = AUTH_STATE.AUTHENTICATED;
-        hideBootOverlay();                              // ← smooth fade-out
-        window.dispatchEvent(new Event('marga-session-ready'));
+          try {
+            // Re-validate server-side (catches expired / revoked tokens)
+            const { data: { user: freshUser }, error } = await _sb.auth.getUser();
+            if (error || !freshUser) {
+              redirectToLogin('expired');
+              return false;
+            }
+
+            // Session is valid — boot the app
+            window._userSession = { ...session, user: freshUser };
+            window._userId = freshUser.id;
+            sessionReady = true;
+            authState = AUTH_STATE.AUTHENTICATED;
+            hideBootOverlay();                              // ← smooth fade-out
+            window.dispatchEvent(new Event('marga-session-ready'));
+            return true;
+          } catch (error) {
+            console.error('[Marga Auth] Session validation failed:', error?.message || error);
+            redirectToLogin('expired');
+            return false;
+          }
+        })();
+
+        return bootPromise;
       }
 
       const urlParams = new URLSearchParams(window.location.search);
@@ -5743,6 +5757,14 @@
       const recoveryFreshLink = document.getElementById('passwordRecoveryFreshLink');
       let recoverySession = null;
       let recoveryCompleted = false;
+      let recoveryLogoutInProgress = false;
+
+      // The callback URL is read before subscribing so INITIAL_SESSION cannot
+      // redirect away while a PKCE/recovery exchange is still pending.
+      const authCode = urlParams.get('code');
+      const authError = urlParams.get('error_description') || urlParams.get('error');
+      let authCallbackPending = Boolean(recoveryMode || authCode || authError);
+      let authCallbackProcessed = false;
 
       function showRecoveryError(message) {
         if (recoveryOverlay) recoveryOverlay.style.display = 'flex';
@@ -5792,24 +5814,30 @@
         recoverySuccess.textContent = 'Your password was updated. Returning you to login…';
         recoverySuccess.style.display = 'block';
         recoveryCompleted = true;
+        recoveryLogoutInProgress = true;
         await _sb.auth.signOut();
+        recoveryLogoutInProgress = false;
         setTimeout(() => window.location.replace('/?open=login&msg=password_updated'), 700);
       });
 
       // Register the sole auth listener before exchanging a callback code so a
-      // PASSWORD_RECOVERY event cannot be missed.
-      _sb.auth.onAuthStateChange(async (event, newSession) => {
+      // PASSWORD_RECOVERY event cannot be missed. Keep this callback
+      // synchronous: Supabase can deadlock if an auth callback awaits another
+      // Supabase operation while the auth notification lock is held.
+      _sb.auth.onAuthStateChange((event, newSession) => {
         if (event === 'PASSWORD_RECOVERY' && recoveryMode) {
           showRecoveryForm(newSession);
           return;
         }
         if (event === 'SIGNED_OUT') {
-          if (recoveryCompleted) {
+          window._userSession = null;
+          window._userId = null;
+          if (recoveryCompleted && !recoveryLogoutInProgress) {
             window.location.replace('/?open=login&msg=password_updated');
             return;
           }
           // Deliberate sign-out: go home without opening the modal
-          if (!redirected) {
+          if (!window._margaLogoutInProgress && !redirected) {
             redirected = true;
             authState = AUTH_STATE.REDIRECTING;
             window.location.replace('/');
@@ -5819,9 +5847,9 @@
 
         if (!newSession) {
           // Unexpected missing session after a non-SIGNED_OUT event
-          // Only redirect if we haven't booted yet (avoids spurious redirects
-          // during token refresh edge cases)
-          if (!booted && !redirected) redirectToLogin();
+          // Do not treat INITIAL_SESSION's transient null as failure while an
+          // OAuth or recovery callback is about to exchange its code.
+          if (!sessionReady && !authCallbackPending && !redirected) redirectToLogin();
           return;
         }
 
@@ -5835,30 +5863,36 @@
           }));
         }
 
-        // Boot if not yet booted (handles OAuth landing on /app)
-        if (!booted) await bootWithSession(newSession);
+        // Defer work until after Supabase finishes notifying subscribers. This
+        // prevents getUser() from deadlocking the current auth operation.
+        if (!authCallbackPending && !sessionReady) {
+          window.setTimeout(() => {
+            if (!authCallbackPending && !sessionReady) void bootWithSession(newSession);
+          }, 0);
+        }
       });
 
       // ── Step 0: Handle recovery and PKCE callback URLs ───────────────
-      const authCode = urlParams.get('code');
-      const authError = urlParams.get('error_description') || urlParams.get('error');
-
       if (recoveryMode) {
         if (authError) {
+          authCallbackPending = false;
           showRecoveryError('This reset link is invalid or expired.');
           return;
         }
         if (!authCode) {
+          authCallbackPending = false;
           showRecoveryError('This reset link is incomplete or has already been used.');
           return;
         }
         setBootMsg('Validating your reset link…');
         const { data: exchangeData, error: exchangeError } = await _sb.auth.exchangeCodeForSession(authCode);
         if (exchangeError || !exchangeData?.session) {
+          authCallbackPending = false;
           console.error('[Marga Auth] Recovery code exchange failed:', exchangeError?.message || exchangeError);
           showRecoveryError('This reset link is invalid, expired, or was opened in a different browser.');
           return;
         }
+        authCallbackPending = false;
         window.history.replaceState({}, document.title, window.location.pathname + '?mode=reset-password');
         const { data: { user: recoveryUser }, error: recoveryUserError } = await _sb.auth.getUser();
         if (recoveryUserError || !recoveryUser) {
@@ -5870,19 +5904,24 @@
       }
 
       if (authError) {
+        authCallbackPending = false;
         console.error('[Marga Auth] Redirected with error:', authError);
         redirectToLogin('auth_error');
         return;
       }
 
       if (authCode) {
+        if (authCallbackProcessed) return;
+        authCallbackProcessed = true;
         setBootMsg('Completing sign in…');
         const { data: exchangeData, error: exchangeError } = await _sb.auth.exchangeCodeForSession(authCode);
         if (exchangeError || !exchangeData?.session) {
+          authCallbackPending = false;
           console.error('[Marga Auth] PKCE exchange failed:', exchangeError?.message || exchangeError);
           redirectToLogin('pkce_failed');
           return;
         }
+        authCallbackPending = false;
         window.history.replaceState({}, document.title, window.location.pathname);
         await bootWithSession(exchangeData.session);
         return;
@@ -7892,13 +7931,18 @@
     }
 
     async function logoutUser() {
+      if (window._margaLogoutInProgress) return;
+      window._margaLogoutInProgress = true;
       try {
         await saveAccountMetaToCloud();
         if (window._supabase) await window._supabase.auth.signOut();
       } catch (err) {
         console.warn('Logout cleanup failed:', err);
+      } finally {
+        window._userSession = null;
+        window._userId = null;
+        window.location.replace('/');
       }
-      window.location.replace('/');
     }
     function handleLogout() { logoutUser(); }
     window.addEventListener('marga-session-ready', async () => {

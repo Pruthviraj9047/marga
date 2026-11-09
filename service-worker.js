@@ -1,5 +1,5 @@
 // ============================================================
-// Marga Service Worker — v12
+// Marga Service Worker — v13
 //
 // v12 changes:
 //   - Pre-cache faq.css, faq.js, defer-faq.js, home.js, analytics.js
@@ -7,7 +7,7 @@
 //   - SEO/system files still bypass SW entirely
 // ============================================================
 
-const VERSION      = 'marga-v12';
+const VERSION      = 'marga-v13';
 const STATIC_CACHE = `${VERSION}-static`;
 const HTML_CACHE   = `${VERSION}-html`;
 

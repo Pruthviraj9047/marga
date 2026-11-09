@@ -102,6 +102,7 @@
     var resetForm = document.getElementById('resetForm');
     var verifyScreen = document.getElementById('verifyScreen');
     var pendingVerifyEmail = '';
+    var googleAuthInProgress = false;
 
     var errIds = [
       'loginEmailErr', 'loginPasswordErr', 'signupNameErr', 'signupEmailErr',
@@ -334,10 +335,23 @@
 
     document.querySelectorAll('[data-google]').forEach(function (btn) {
       btn.addEventListener('click', async function () {
-        await supabaseClient.auth.signInWithOAuth({
-          provider: 'google',
-          options: { redirectTo: window.location.origin + '/app' }
-        });
+        if (googleAuthInProgress) return;
+        googleAuthInProgress = true;
+        btn.disabled = true;
+        btn.setAttribute('aria-busy', 'true');
+        try {
+          var result = await supabaseClient.auth.signInWithOAuth({
+            provider: 'google',
+            options: { redirectTo: window.location.origin + '/app' }
+          });
+          if (result && result.error) throw result.error;
+        } catch (err) {
+          googleAuthInProgress = false;
+          btn.disabled = false;
+          btn.removeAttribute('aria-busy');
+          var m = mapAuthError(err, 'login');
+          showErr(m.id, m.text);
+        }
       });
     });
 
