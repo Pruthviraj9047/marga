@@ -300,16 +300,19 @@
   [headers.values]
     Cache-Control = "public, max-age=31536000, immutable"
 
-# --- HTML: always revalidate ---
+# --- HTML: always revalidate and prevent proxy body injection ---
+# Cloudflare Web Analytics automatic injection is not used by Marga. The
+# no-transform directive keeps the Cloudflare proxy from rewriting HTML with
+# an untracked beacon script; the existing CSP remains intentionally strict.
 [[headers]]
   for = "/*.html"
   [headers.values]
-    Cache-Control = "public, max-age=0, must-revalidate"
+    Cache-Control = "public, max-age=0, must-revalidate, no-transform"
 
 [[headers]]
   for = "/"
   [headers.values]
-    Cache-Control = "public, max-age=0, must-revalidate"
+    Cache-Control = "public, max-age=0, must-revalidate, no-transform"
 
 # --- Security headers for all other pages ---
 [[headers]]

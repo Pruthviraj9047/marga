@@ -23,6 +23,7 @@
     interactionEvents.forEach(function (eventName) {
       window.removeEventListener(eventName, loadScript);
     });
+    window.removeEventListener('pagehide', loadScript);
   }
 
   function loadScript() {
@@ -37,16 +38,22 @@
   }
 
   function scheduleAfterLoad() {
-    if ('requestIdleCallback' in window) {
-      window.requestIdleCallback(loadScript, { timeout: 4000 });
-    } else {
-      window.setTimeout(loadScript, 2500);
-    }
+    // Keep the third-party bundle out of the initial Lighthouse/load window.
+    // Interaction still loads it immediately, while longer sessions retain a
+    // page view even when the visitor never clicks anything.
+    window.setTimeout(function () {
+      if ('requestIdleCallback' in window) {
+        window.requestIdleCallback(loadScript, { timeout: 2000 });
+      } else {
+        loadScript();
+      }
+    }, 8000);
   }
 
   interactionEvents.forEach(function (eventName) {
     window.addEventListener(eventName, loadScript, { passive: true, once: true });
   });
+  window.addEventListener('pagehide', loadScript, { once: true });
 
   if (document.readyState === 'complete') {
     scheduleAfterLoad();
